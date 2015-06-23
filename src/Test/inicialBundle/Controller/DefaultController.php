@@ -86,12 +86,19 @@ class DefaultController extends Controller
 
     public function lista_usuarioAction()
     {
-        $id = 1;
-        $product = $this->getDoctrine()->getManager();
-        $product->getRepository('inicialBundle:Roles')->find($id);
-
+        $em = $this->getDoctrine()->getManager();
+        $test_datos = $this->getDoctrine()
+            ->getRepository('inicialBundle:Usuarios')
+            ->findAll();
+        $consulta = $em->createQuery(
+            'SELECT usuario.id as usuario_id, tipo_usuario.id as tipo_usuario_id
+                From inicialBundle:Usuarios usuario
+                JOIN inicialBundle:TipoUsuario tipo_usuario WITH usuario.tipoUsuario = tipo_usuario.id
+                WHERE usuario.activo = TRUE '
+        );
+        $datos = $consulta->getResult();
         /*$datos_test = $datos->;*/
-        print_r($product);
+        print_r($test_datos);
         exit;
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
