@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Representantes list</h1>
+{% if entities %}
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Cedula</th>
+                <th>Apellidos</th>
+                <th>Nombres</th>
+                <th>Fechanacimiento</th>
+                <th>Lugarnacimiento</th>
+                <th>Direccion</th>
+                <th>Principal</th>
+                <th>Activo</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('representantes_detalle', { 'id': entity.id }) }}">{{ entity.cedula }}</a></td>
+                <td>{{ entity.apellidos }}</td>
+                <td>{{ entity.nombres }}</td>
+                <td>{% if entity.fechaNacimiento %}{{ entity.fechaNacimiento|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.lugarNacimiento }}</td>
+                <td>{{ entity.direccion }}</td>
+                <td>{{ entity.principal }}</td>
+                <td>{{ entity.activo }}</td>
+                <td>{{ entity.id }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('representantes_detalle', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('representantes_editar', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+        <ul>
+        <li>
+            <a href="{{ path('representantes_nuevo') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="{{ asset('public/images/fe-y-alegria_fav.png') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('public/css/bootstrap.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('public/css/datepicker3.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('public/css/estilos_proyecto.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('public/css/dataTables.bootstrap.css')}}">
+        <script type="text/javascript" src="{{ asset('public/js/jquery-2.1.4.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/jquery.dataTables.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/jquery.dataTables.columnFilter.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/dataTables.bootstrap.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/bootstrap.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/bootstrap-datepicker.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/locales/bootstrap-datepicker.es.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('public/js/funciones.js')}}"></script>
+        {% block extra_head %} {% endblock %}
+        <title>Sistema Maria Rosa Molas{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <div class="container" id="wrap">
+            <!--Encabezado-->
+            <div id="cabecera">
+                <div id="cabecera2">
+                    <img src= "{{ asset('public/images/logo-FyA.jpg') }}">
+                </div>
+            </div>
+            {% block nav_bar %}
+                {% include 'menu.html.twig' %}
+            {%  endblock %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center">
+                    {% for flashMessage in app.session.flashbag.get('mensaje') %}
+                        <span class="alert-success">
+                                {{ flashMessage }}
+                            </span>
+                    {% endfor %}
+                    </div>
+                    <div id="contenido" class="col-sm-12">
+                        {% block content %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+        </div>
+    </body>
+    <footer>
+        <div class="container" id="footer">
+            <div class="footer text-center">
+                <div>
+                    <strong>Unidad Educativa Maria Rosa Molas</strong>
+                    <br>
+                    Unidad Educativa Maria Rosa Molas: Urbanizacion Simón Bolivar Frente al Bloque 20 Caracas - Venezuela :: Teléfonos: 0212-870-25-98 / 0212-873-62-50
+                    <br>
+                    <a href="mailto:mariamolasfya@hotmail.com">mariamolasfya@hotmail.com</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</html>

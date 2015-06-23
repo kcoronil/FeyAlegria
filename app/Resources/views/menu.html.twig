@@ -1,0 +1,141 @@
+{% block nav_bar %}
+    {% if app.session.get('autenticado') %}
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Proyecto</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#">Inicio <span class="sr-only">(current)</span></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menú <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+
+                            {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preinscripciones</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consulta</a></li>
+                                        <li><a href="#" >Gestionar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inscripciones</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consulta</a></li>
+                                        {% if  (app.session.get('id_tipo_usuario')== 1)%}
+                                        <li><a href="#" >Gestionar</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Representantes</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consulta</a></li>
+                                        <li><a href="#" >Agregar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Año escolar</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#">agregar</a></li>
+                                        <li><a href="#">Asignar Alumnos</a></li>
+                                        <li class="dropdown-submenu">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">gestionar periodo escolar</a>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="#" >Consultas</a></li>
+                                                <li><a href="#">agregar</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown-submenu">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">gestionar cursos</a>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="#" >Consultas</a></li>
+                                                <li><a href="#">agregar</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown-submenu">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">gestionar Secciones</a>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="#" >Consultas</a></li>
+                                                <li><a href="#">agregar</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                            {% endif %}
+                            {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
+
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Facturacion</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consultas</a></li>
+                                        <li><a href="#">agregar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pagos</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consultas</a></li>
+                                        <li><a href="#">agregar</a></li>
+                                    </ul>
+                                </li>
+
+                            {% endif %}
+                            {% if  (app.session.get('id_tipo_usuario')== 1) %}
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuarios</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consultas</a></li>
+                                        <li><a href="{{ path('inicial_agregar_usuario') }}">agregar</a></li>
+                                        <li class="dropdown-submenu">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mantenimiento</a>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="#">Tipos de Usuarios</a></li>
+                                                <li><a href="{{ path('inicial_agregar_rol') }}" >Roles</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==5)%}
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preinscripcion</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" >Consultas</a></li>
+                                        <li><a href="#">agregar</a></li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            <!-- <li class="divider"></li>
+                            <li><a tabindex="-1" href="#">Separated link</a></li> -->
+                            </ul>
+                        </li>
+                        {% block enlace_atajo %}{% endblock %}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ app.session.get('nombres') }}<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Cambio Contraseña</a></li>
+                                <li><a href="{{ path('inicial_logout') }}">Cerrar Sesion</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    {% block buscar_datatable %}
+                    {% endblock %}
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+     {%  endif %}
+{% endblock %}

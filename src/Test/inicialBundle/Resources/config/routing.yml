@@ -1,0 +1,43 @@
+inicial_homepage:
+    path:     /inicio
+    defaults: { _controller: inicialBundle:Default:index }
+
+inicial_logout:
+    path:     /logout
+    defaults: { _controller: inicialBundle:Default:logout }
+
+inicial_agregar_usuario:
+    path:     /crear_usuario
+    defaults: { _controller: inicialBundle:Default:crear_usuario }
+
+inicial_lista_usuario:
+    path:     /lista_usuario
+    defaults: { _controller: inicialBundle:Default:lista_usuario }
+
+inicial_agregar_rol:
+    path:     /crear_rol
+    defaults: { _controller: inicialBundle:Default:crear_rol }
+
+inicial_agregar_perfil:
+    path:     /crear_perfil
+    defaults: { _controller: inicialBundle:Default:crear_perfil }
+
+inicial_agregar_alumno:
+    path:     /crear_alumno
+    defaults: { _controller: inicialBundle:Default:crear_alumno }
+
+representantes_home:
+    path:     /representantes
+    defaults: { _controller: inicialBundle:Representantes:index }
+
+representantes_detalle:
+    path:     /representantes/detalle/{id}
+    defaults: { _controller: inicialBundle:Representantes:show }
+
+representantes_nuevo:
+    path:     /representante/nuevo
+    defaults: { _controller: inicialBundle:Representantes:create }
+
+representantes_editar:
+    path:     /representante/editar/{id}
+    defaults: { _controller: inicialBundle:Representantes:edit }

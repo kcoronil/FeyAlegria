@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Test\inicialBundle\Entity\UsuariosRoles" table="usuarios_roles">
+    <indexes>
+      <index name="usuarios_roles_usuario_id" columns="usuario_id"/>
+      <index name="usuarios_roles_rol_id" columns="rol_id"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="usuarios_roles_usuario_id_rol_id_key" columns="usuario_id,rol_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-one field="usuario" target-entity="Usuarios">
+      <join-columns>
+        <join-column name="usuario_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="rol" target-entity="Roles">
+      <join-columns>
+        <join-column name="rol_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

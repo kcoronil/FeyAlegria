@@ -1,0 +1,16 @@
+{% extends '::plantilla.html.twig' %}
+{% form_theme form "::formulario_bootstrap_div.html.twig" %}
+
+{% block body -%}
+    <h1>Representantes creation</h1>
+
+    {{ form(form) }}
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('representantes_nuevo') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

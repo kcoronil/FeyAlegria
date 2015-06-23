@@ -1,0 +1,40 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% block extra_head %}
+    {% if creacion == 'Usuario' %}
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                var select_tipo_usuario =$("#test_inicialbundle_usuarios_tipoUsuario");
+                var div_form_principal= $("#test_inicialbundle_usuarios_principal");
+                div_form_principal.removeAttr('required');
+
+                if(select_tipo_usuario.val()==''||select_tipo_usuario.val()!=5){
+                    div_form_principal.closest('.form-group').attr('style', 'display:none');
+                }
+                else{
+                    div_form_principal.closest('.form-group').attr('style', 'display:inline');
+                }
+
+                select_tipo_usuario.change(function(){
+
+                    if(select_tipo_usuario.val()==5){
+                        div_form_principal.closest('.form-group').attr('style', 'display:inline');
+                    }
+                    else{
+                        div_form_principal.closest('.form-group').attr('style', 'display:none');
+                    }
+                });
+            })
+        </script>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <h1 class="clase">{{ creacion }}</h1>
+                {{ datos }}
+        </div>
+    </div>
+{% endblock %}

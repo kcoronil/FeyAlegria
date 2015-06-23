@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Test\inicialBundle\Entity\AlumnosRepresentantes" table="alumnos_representantes">
+    <indexes>
+      <index name="alumnos_representantes_representante_id" columns="representante_id"/>
+      <index name="alumnos_representantes_alumno_id" columns="alumno_id"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <many-to-one field="representante" target-entity="Usuarios">
+      <join-columns>
+        <join-column name="representante_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="alumno" target-entity="Alumnos">
+      <join-columns>
+        <join-column name="alumno_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

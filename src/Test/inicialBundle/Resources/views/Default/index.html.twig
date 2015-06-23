@@ -1,0 +1,59 @@
+{% extends '::plantilla.html.twig' %}
+{% block content %}
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+    {% if not app.session.get('autenticado') %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h2 class="panel-title">Ingreso al Sistema</h2>
+            </div>
+            <div class="panel-body">
+                <form class="form-signin" method="POST" action="{{path('inicial_homepage')}}">
+                    <div class="form-group">
+                        <label for="inputEmail" class="sr-only">Nombre de Usuario</label>
+                        <input type="text" id="usuario" class="form-control" name="usuario" placeholder="Nombre de Usuario" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class="sr-only">Clave</label>
+                        <input type="password" id="Password" class="form-control" name="password" placeholder="Clave" required>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-default" type="submit">Iniciar Sesion</button>
+                        <a class="btn btn-default" href="#">Registrarse</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    {% if app.session.get('autenticado') %}
+        <div>
+            <table class="table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Variable</th>
+                    <th>Dato</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Nombre de Usuario</td>
+                    <td>{{ app.session.get('nombre_usuario') }}</td>
+                </tr>
+                <tr>
+                    <td>Nombres</td>
+                    <td>{{ app.session.get('nombres') }}</td>
+                </tr>
+                <tr>
+                    <td>Tipo de Usuario</td>
+                    <td>{{ app.session.get('tipo_usuario') }}</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>{{ app.session.get('email') }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}
