@@ -12,15 +12,6 @@ class Usuarios
 {
 
     /**
-     * @ORM\OneToMany(targetEntity="Noticias", mappedBy="categoria")
-     */
-
-    protected $noticias;
-
-    public function __construct(){
-        $this->$noticias = new ArrayCollection();
-    }
-    /**
      * @ORM\Column(type="integer")
      */
     private $cedula;

@@ -13,25 +13,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Usuarios
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="usuario")
-     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
-     */
+
 
     /**
-     * @ORM\OneToOne(targetEntity="PerfilUsuario", mappedBy="usuario", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Alumnos", mappedBy="usuario")
      */
 
-    protected $perfil;
-
-    public function getPerfil(){
-        return $this->perfil;
-    }
-
-    public function setPerfil($perfil){
-        $this->perfil = $perfil;
-        return $this;
-    }
 
     /**
      * @var integer
@@ -109,7 +96,7 @@ class Usuarios
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -132,7 +119,7 @@ class Usuarios
     /**
      * Get cedula
      *
-     * @return integer 
+     * @return integer
      */
     public function getCedula()
     {
@@ -155,7 +142,7 @@ class Usuarios
     /**
      * Get apellidos
      *
-     * @return string 
+     * @return string
      */
     public function getApellidos()
     {
@@ -178,7 +165,7 @@ class Usuarios
     /**
      * Get nombres
      *
-     * @return string 
+     * @return string
      */
     public function getNombres()
     {
@@ -201,7 +188,7 @@ class Usuarios
     /**
      * Get fechaNacimiento
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getFechaNacimiento()
     {
@@ -224,7 +211,7 @@ class Usuarios
     /**
      * Get sexo
      *
-     * @return integer 
+     * @return integer
      */
     public function getSexo()
     {
@@ -247,7 +234,7 @@ class Usuarios
     /**
      * Get direccion
      *
-     * @return string 
+     * @return string
      */
     public function getDireccion()
     {
@@ -270,7 +257,7 @@ class Usuarios
     /**
      * Get principal
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPrincipal()
     {
@@ -293,7 +280,7 @@ class Usuarios
     /**
      * Get activo
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getActivo()
     {
@@ -316,7 +303,7 @@ class Usuarios
     /**
      * Get tipoUsuario
      *
-     * @return integer 
+     * @return integer
      */
     public function getTipoUsuario()
     {

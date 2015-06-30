@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Alumnos
@@ -17,6 +18,28 @@ class Alumnos
      * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno")
      * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
      */
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Usuarios", inversedBy="alumno")
+     * @ORM\JoinTable(
+     *     name="alumnos_representantes",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="alumno_id",
+     *             referencedColumnName="id",
+     *             nullable=false
+     *         )
+     *     },
+     *     inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="representante_id", nullable=false)}
+     * )
+     */
+
+    private $usuario;
+
+    public function __construct() {
+        $this->usuario = new ArrayCollection();
+    }
+
 
     /**
      * @var integer

@@ -39,11 +39,9 @@
             {% if form is defined %}
                 {{ form(form) }}
             {% endif %}
-
-                {% for dato in datos %}
-                    {{ datos }}
-                {% endfor %}
-
+            {% if datos is defined %}
+                {{ datos }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

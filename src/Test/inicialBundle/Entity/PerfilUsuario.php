@@ -16,17 +16,10 @@ class PerfilUsuario
 
     /**
      * @ORM\OneToOne(targetEntity="Usuarios", inversedBy="perfil")
-     * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id", unique=true)
      */
-    protected $usuario;
 
-    public function getUsuario(){
-        return $this->usuario;
-    }
-
-    public function setUsuario($usuario){
-        return $this->usuario = $usuario;
-    }
+    private $usuario;
 
 
     /**
