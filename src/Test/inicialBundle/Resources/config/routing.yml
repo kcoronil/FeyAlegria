@@ -1,3 +1,7 @@
+inicial_root:
+    path:     /
+    defaults: { _controller: inicialBundle:Default:index }
+
 inicial_homepage:
     path:     /inicio
     defaults: { _controller: inicialBundle:Default:index }
@@ -9,6 +13,10 @@ inicial_logout:
 inicial_agregar_usuario:
     path:     /crear_usuario
     defaults: { _controller: inicialBundle:Default:crear_usuario }
+
+inicial_editar_usuario:
+    path:     /editar_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:editar_usuario }
 
 inicial_lista_usuario:
     path:     /lista_usuario

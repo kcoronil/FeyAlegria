@@ -126,6 +126,40 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Usuario'));
     }
 
+    public function editar_usuarioAction($id, Request $request)
+    {
+        $datos = $this->getDoctrine()
+            ->getRepository('inicialBundle:Usuarios')
+            ->find($id);
+        if (!$datos)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+        $formulario = $this->createForm(new UsuariosType(), $datos);
+        $formulario -> remove('guardar_crear');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Usuario modificado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Modificar Usuario'));
+    }
+
     public function crear_rolAction(Request $request)
     {
         $p = new Roles();

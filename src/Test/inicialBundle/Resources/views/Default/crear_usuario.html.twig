@@ -4,9 +4,8 @@
     {% form_theme form "::bootstrap_3_layout.html.twig" %}
 {% endif %}
 {% block extra_head %}
-    {% if accion == 'Crear Usuario' %}
-        <script type="text/javascript">
-
+    <script type="text/javascript">
+            {% if accion == 'Crear Usuario' or 'Modificar Usuario' %}
             $(document).ready(function() {
                 var select_tipo_usuario =$("#test_inicialbundle_usuarios_tipoUsuario");
                 var div_form_principal= $("#test_inicialbundle_usuarios_principal");
@@ -28,19 +27,44 @@
                         div_form_principal.closest('.form-group').attr('style', 'display:none');
                     }
                 });
-            })
-        </script>
-    {% endif %}
+            });
+            {% endif %}
+    {% if accion == 'Listado de Usuarios' %}
+        $(document).ready(function() {
+            var datatable_usuarios = $('#tbl_usuarios').dataTable({
+                "dom": 'rtip',
+                "bInfo": true,
+                "bLengthChange": false,
+                "bPaginate": true,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            });
+        });
+        {% endif %}
+    </script>
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <h1 class="clase">{{ accion }}</h1>
-            {% if form is defined %}
-                {{ form(form) }}
-            {% endif %}
+    <div class="row text-center">
+        <h1 class="clase">{{ accion }}</h1>
+        {% if form is defined %}
+            <div class="col-md-12 text-center">
+                <div class="col-md-4 col-lg-offset-4 ">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
             {% if datos is defined %}
-                <table class="table-bordered table-hover">
+                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive">
                     <thead>
                         <tr>
                             {% for campo in datos.0|keys %}
@@ -51,11 +75,12 @@
                     <tbody>
                         {% for dato in datos %}
                             <tr>
-                            {% for elemento in dato %}
+                            {% for  key, elemento in dato %}
                                 <td>
-
                                 {% if elemento.timestamp is defined %}
                                     {{ elemento|date('d/m/Y') }}
+                                {% elseif key == 'cedula' %}
+                                    <a href="{{ path('inicial_editar_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
                                 {% else %}
                                     {{ elemento }}
                                 {% endif %}
@@ -66,6 +91,6 @@
                     </tbody>
                 </table>
             {% endif %}
-        </div>
+
     </div>
 {% endblock %}
