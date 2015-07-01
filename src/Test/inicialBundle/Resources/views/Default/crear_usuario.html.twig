@@ -40,7 +40,31 @@
                 {{ form(form) }}
             {% endif %}
             {% if datos is defined %}
-                {{ datos }}
+                <table class="table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            {% for campo in datos.0|keys %}
+                                <th>{{ campo }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dato in datos %}
+                            <tr>
+                            {% for elemento in dato %}
+                                <td>
+
+                                {% if elemento.timestamp is defined %}
+                                    {{ elemento|date('d/m/Y') }}
+                                {% else %}
+                                    {{ elemento }}
+                                {% endif %}
+                                </td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% endif %}
         </div>
     </div>

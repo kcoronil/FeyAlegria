@@ -56,18 +56,18 @@ class DefaultController extends Controller
                     }
                     else{
                         $this -> get('session') -> getFlashBag() -> add(
-                            'mensaje', 'Clave Inactiva debe actualizar su clave');
+                            'warning', 'Clave Inactiva debe actualizar su clave');
                     }
                 }
                 else{
                         $this -> get('session') -> getFlashBag() -> add(
-                            'mensaje', 'Usuario Inactivo Contactar con el administrador del sistema');
+                            'danger', 'Usuario Inactivo Contactar con el administrador del sistema');
                     return $this->render('inicialBundle:Default:index.html.twig');
                 }
             }
             else{
                     $this -> get('session') -> getFlashBag() -> add(
-                        'mensaje', 'Datos incorrectos'
+                        'danger', 'Datos incorrectos'
                     );
                 return $this->render('inicialBundle:Default:index.html.twig');
             }
@@ -79,7 +79,7 @@ class DefaultController extends Controller
         $session = $request ->getSession();
         $session -> clear();
         $this -> get('session') -> getFlashBag() -> add(
-            'mensaje', 'Sesion Cerrada'
+            'info', 'Sesión Cerrada'
         );
         return $this->redirect($this->generateUrl('inicial_homepage'));
     }
@@ -87,36 +87,22 @@ class DefaultController extends Controller
     public function lista_usuarioAction()
     {
 
-        $test_datos = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+        //hacer consulta simple a la bbdd
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
             ->createQueryBuilder('usuario')
                 ->where('usuario.activo = true')
                 ->getQuery();
 
-        $datos = $test_datos->getArrayResult();
+        $datos = $query->getArrayResult();
 
-
- /*       $em = $this->getDoctrine()->getManager();
-        $consulta = $em->createQuery(
-            'SELECT usuario
-                From inicialBundle:Usuarios usuario
-                WHERE usuario.activo = TRUE '
-        );
-        $datoscq = $consulta->getResult();
-        /*$datos_test = $datos->;
-         print_r($datos);
-        exit;*/
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
+        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('accion'=>'Listado de Usuarios', 'datos'=>$datos));
     }
 
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
         $formulario = $this->createForm(new UsuariosType(), $p);
-        $formulario -> remove('usuario');
-        $formulario -> remove('nombreUsuario');
-        $formulario -> remove('lugarNacimiento');
-        $formulario -> remove('preguntaSecreta');
-        $formulario -> remove('respuesta');
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
 
@@ -124,8 +110,9 @@ class DefaultController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
+
                 $this->get('session')->getFlashBag()->add(
-                    'mensaje', 'Usuario Creado con éxito'
+                    'success', 'Usuario Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
@@ -150,8 +137,9 @@ class DefaultController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
+
                 $this->get('session')->getFlashBag()->add(
-                    'mensaje', 'Rol Creado con éxito'
+                    'success', 'Rol Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
@@ -176,7 +164,7 @@ class DefaultController extends Controller
                 $em->persist($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'mensaje', 'Rol Creado con éxito'
+                    'success', 'Rol Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
@@ -202,7 +190,7 @@ class DefaultController extends Controller
                 $em->persist($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'mensaje', 'Rol Creado con éxito'
+                    'success', 'Rol Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));

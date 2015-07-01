@@ -34,10 +34,13 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                    {% for flashMessage in app.session.flashbag.get('mensaje') %}
-                        <span class="alert-success">
-                                {{ flashMessage }}
-                            </span>
+                    {%  for label, flashes in app.session.flashbag.all %}
+                        {% for flash in flashes %}
+                            <div class="alert alert-{{ label }} alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                {{ flash }}
+                            </div>
+                        {% endfor %}
                     {% endfor %}
                     </div>
                     <div id="contenido" class="col-sm-12">
