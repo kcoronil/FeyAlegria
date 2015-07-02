@@ -53,11 +53,14 @@
         {% endif %}
     </script>
 {% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path('inicial_lista_usuario') }}">Consultar Usuarios</a></li>
+{% endblock %}
 {% block content %}
     <div class="row text-center">
-        <h1 class="clase">{{ accion }}</h1>
+        <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
-            <div class="col-md-12 text-center">
+            <div class="col-md-12 text-left">
                 <div class="col-md-4 col-lg-offset-4 ">
                     {{ form(form) }}
                 </div>

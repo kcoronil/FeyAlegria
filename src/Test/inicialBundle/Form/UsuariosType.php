@@ -23,9 +23,10 @@ class UsuariosType extends AbstractType
             ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ) )
             ->add('direccion')
             ->add('sexo')
+            ->add('activo', 'checkbox', array('required'=>false))
             /*->add('perfil', new PerfilUsuarioType(), array('label' => false))*/
             ->add('guardar', 'submit')
-            ->add('guardar_crear', 'submit')
+            ->add('guardar_crear', 'submit', array('label'=>'Guardar y Crear Otro'))
         ;
     }
     

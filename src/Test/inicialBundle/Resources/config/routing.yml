@@ -14,9 +14,17 @@ inicial_agregar_usuario:
     path:     /crear_usuario
     defaults: { _controller: inicialBundle:Default:crear_usuario }
 
+inicial_detalle_usuario:
+    path:     /detalle_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:detalle_usuario }
+
 inicial_editar_usuario:
     path:     /editar_usuario/{id}
     defaults: { _controller: inicialBundle:Default:editar_usuario }
+
+inicial_borrar_usuario:
+    path:     /borrar_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_usuario }
 
 inicial_lista_usuario:
     path:     /lista_usuario

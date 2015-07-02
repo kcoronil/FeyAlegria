@@ -91,18 +91,42 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
             ->createQueryBuilder('usuario')
+                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
                 ->where('usuario.activo = true')
+                ->orderBy('usuario.id')
                 ->getQuery();
 
         $datos = $query->getArrayResult();
 
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('accion'=>'Listado de Usuarios', 'datos'=>$datos));
+        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>'Listado de Usuarios', 'datos'=>$datos));
     }
+    public function detalle_usuarioAction($id, Request $request)
+    {
 
+        //hacer consulta simple a la bbdd
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+            ->createQueryBuilder('usuario')
+            ->where('usuario.id = :id')
+            ->andWhere('usuario.activo = true')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+        if (!$datos)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+
+        return $this->render('inicialBundle:Default:detalle_usuario.html.twig', array('accion'=>'Detalle Usuario', 'datos'=>$datos));
+    }
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
         $formulario = $this->createForm(new UsuariosType(), $p);
+        $formulario -> remove('activo');
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
 
@@ -128,15 +152,16 @@ class DefaultController extends Controller
 
     public function editar_usuarioAction($id, Request $request)
     {
-        $datos = $this->getDoctrine()
+        $usuario = $this->getDoctrine()
             ->getRepository('inicialBundle:Usuarios')
             ->find($id);
-        if (!$datos)
+        if (!$usuario)
         {
             throw $this -> createNotFoundException('no usuario con este id: '.$id);
         }
-        $formulario = $this->createForm(new UsuariosType(), $datos);
+        $formulario = $this->createForm(new UsuariosType(), $usuario);
         $formulario -> remove('guardar_crear');
+        $formulario -> remove('activo');
         $formulario-> handleRequest($request);
 
         if($request->getMethod()=='POST') {
@@ -159,6 +184,59 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Modificar Usuario'));
     }
+
+    public function borrar_usuarioAction($id, Request $request)
+    {
+        $usuario = $this->getDoctrine()
+            ->getRepository('inicialBundle:Usuarios')
+            ->find($id);
+        if (!$usuario)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+        $formulario = $this->createForm(new UsuariosType(), $usuario);
+        $formulario -> remove('tipoUsuario');
+        $formulario -> remove('principal');
+        $formulario -> remove('cedula');
+        $formulario -> remove('nombres');
+        $formulario -> remove('apellidos');
+        $formulario -> remove('fechaNacimiento');
+        $formulario -> remove('direccion');
+        $formulario -> remove('sexo');
+        $formulario -> remove('guardar_crear');
+        $formulario-> handleRequest($request);
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+            ->createQueryBuilder('usuario')
+            ->where('usuario.id = :id')
+            ->andWhere('usuario.activo = true')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'warning', 'Usuario borrado con éxito'
+                );
+
+                return $this->redirect($this->generateUrl('inicial_lista_usuario'));
+
+            }
+        }
+        $this->get('session')->getFlashBag()->add(
+            'danger', 'Seguro que desea borrar este registro?'
+        );
+
+        return $this->render('inicialBundle:Default:detalle_usuario.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario'));
+    }
+
 
     public function crear_rolAction(Request $request)
     {
