@@ -4,6 +4,7 @@ namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Usuarios
@@ -33,13 +34,19 @@ class Usuarios
      * @var integer
      *
      * @ORM\Column(name="cedula", type="integer")
+     *
+     * @Assert\NotBlank()
      */
+
+
     private $cedula;
 
     /**
      * @var string
      *
      * @ORM\Column(name="apellidos", type="string", length=30)
+     *
+     * @Assert\NotBlank()
      */
     private $apellidos;
 
@@ -47,6 +54,8 @@ class Usuarios
      * @var string
      *
      * @ORM\Column(name="nombres", type="string", length=30)
+     *
+     * @Assert\NotBlank()
      */
     private $nombres;
 
@@ -54,6 +63,8 @@ class Usuarios
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_nacimiento", type="date")
+     *
+     * @Assert\NotBlank()
      */
     private $fechaNacimiento;
 
@@ -61,14 +72,21 @@ class Usuarios
      * @var integer
      *
      * @ORM\Column(name="sexo_id", type="integer")
+     *
+     * @Assert\NotBlank()
      */
+
     private $sexo;
 
     /**
      * @var string
      *
      * @ORM\Column(name="direccion", type="text")
+     *
+     * @Assert\NotBlank()
      */
+
+
     private $direccion;
 
     /**
@@ -90,6 +108,11 @@ class Usuarios
      *
      * @ORM\Column(name="tipo_usuario", type="integer")
      */
+
+    /**
+     * @Assert\NotBlank()
+     */
+
     private $tipoUsuario;
 
 

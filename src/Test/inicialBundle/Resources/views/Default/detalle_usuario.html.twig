@@ -27,7 +27,7 @@
 {% block content %}
     <div class="row text-center">
         <h2 class="clase">{{ accion }}</h2>
-        <div class="col-lg-6 col-lg-offset-3">
+        <div class="col-sm-6 col-sm-offset-3">
             {% if datos is defined %}
                 <table class="table-bordered table-hover table-responsive" width="100%">
                     <tbody>
@@ -54,8 +54,8 @@
                 </div>
             {% endif %}
             {% if form is defined %}
-                <div class="col-md-12 ">
-                    <div class="col-md-4 col-lg-offset-4 text-left">
+                <div class="col-sm-12 ">
+                    <div class="col-sm-4 col-sm-offset-4 text-left">
                         {{ form(form) }}
                     </div>
                 </div>
