@@ -5,8 +5,8 @@
       <index name="alumnos_sexo_id" columns="sexo_id"/>
     </indexes>
     <unique-constraints>
-      <unique-constraint name="alumnos_cedula_estudiantil_key" columns="cedula_estudiantil"/>
       <unique-constraint name="alumnos_cedula_key" columns="cedula"/>
+      <unique-constraint name="alumnos_cedula_estudiantil_key" columns="cedula_estudiantil"/>
     </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>

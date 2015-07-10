@@ -4,6 +4,7 @@ namespace Test\inicialBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Test\inicialBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Entity\Usuarios;
 use Test\inicialBundle\Form\UsuariosType;
 use Test\inicialBundle\Entity\Roles;
@@ -12,6 +13,12 @@ use Test\inicialBundle\Entity\PerfilUsuario;
 use Test\inicialBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Alumnos;
 use Test\inicialBundle\Form\AlumnosType;
+use Test\inicialBundle\Entity\Passwords;
+use Test\inicialBundle\Form\PasswordType;
+use Test\inicialBundle\Form\PasswordsType;
+use Test\inicialBundle\Form\RecuperarPasswordTmpType;
+
+
 
 class DefaultController extends Controller
 {
@@ -23,20 +30,23 @@ class DefaultController extends Controller
             $username=$request->get('usuario');
             $password= $request->get('password');
             $em = $this->getDoctrine()->getManager();
-            $consulta = $em -> createQuery(
-                'SELECT perfil.id as id_perfil, perfil.nombreUsuario, perfil.email, perfil.activo as perfil_activo, usuario.nombres, tipo_usuario.id as id_tipo_usuario, tipo_usuario.nombre as nombre_tipo_usuario, password.activo as pass_activo
-                From inicialBundle:PerfilUsuario  perfil
-                JOIN inicialBundle:Passwords password WITH perfil.id = password.usuario
-                JOIN inicialBundle:Usuarios usuario WITH perfil.usuario = usuario.id
-                JOIN inicialBundle:TipoUsuario tipo_usuario WITH usuario.tipoUsuario = tipo_usuario.id
-                WHERE perfil.nombreUsuario = :user AND password.password = :pass'
-            )->setParameter('user', $username)
-                ->setParameter('pass', $password);
 
-            /*$datos_cq = $consulta->getOneOrNullResult();
-            print_r($datos_cq);
-            exit;*/
-            $user = $consulta->getOneOrNullResult();
+
+            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
+                ->createQueryBuilder('perfil')
+                ->select('perfil.id as id_perfil', 'perfil.nombreUsuario', 'perfil.email', 'perfil.activo as perfil_activo', 'usuario.nombres', 'tipo_usuario.id as id_tipo_usuario', 'tipo_usuario.nombre as nombre_tipo_usuario', 'password.activo as pass_activo')
+                ->innerJoin('inicialBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
+                ->innerJoin('inicialBundle:Passwords', 'password', 'WITH', 'perfil.id = password.perfil')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('perfil.nombreUsuario = :user')
+                ->andwhere('password.password = :pass')
+                ->andwhere('password.activo = true')
+                ->setParameter('user', $username)
+                ->setParameter('pass', $password)
+                ->getQuery();
+
+            $user = $query->getOneOrNullResult();
+
             if ($user){
                 $session = $request ->getSession();
                 $session -> set("email", $user['email']);
@@ -125,6 +135,8 @@ class DefaultController extends Controller
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
+        $a = new Alumnos();
+        $p->getAlumno()->add($a);
         $formulario = $this->createForm(new UsuariosType(), $p);
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
@@ -302,7 +314,7 @@ class DefaultController extends Controller
                 $em->persist($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Rol Creado con éxito'
+                    'success', 'Alumno Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
@@ -315,4 +327,129 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Alumno'));
     }
+    public function solicitar_passAction(Request $request)
+    {
+        if ($request->getMethod() == 'POST') {
+            $email = $request->get('email');
+
+            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
+                ->createQueryBuilder('perfil')
+                ->where('perfil.email = :correo')
+                ->andWhere('perfil.activo = true')
+                ->setParameter('correo', $email)
+                ->getQuery();
+            $datos = $query->getArrayResult();
+
+            if (!$datos) {
+                $this->get('session')->getFlashBag()->add(
+                    'danger', 'Correo no registrado'
+                );
+                return $this->render('inicialBundle:Default:index.html.twig');
+            } else {
+                $token = sha1(uniqid($datos[0]['nombreUsuario'], true));
+
+
+                $perfil = $this->getDoctrine()
+                    ->getRepository('inicialBundle:PerfilUsuario')
+                    ->find(($datos[0]['id']));
+
+
+                $recup_pass = new RecuperarPasswordTmp();
+                $recup_pass->setidPerfil($perfil);
+                $recup_pass->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+                $recup_pass->setToken($token);
+                $em = $this->getDoctrine()->getManager();
+
+                $em->persist($recup_pass);
+                $em->flush();
+
+                $enlace = $this->generateUrl('inicial_recuperar_pass', array('token'=> $token), true);
+
+
+                $mensaje_email = \Swift_Message::newInstance()
+                    ->setSubject('Restaurar Contraseña Sistema Fe y Alegria')
+                    ->setFrom('ed.acevedo.programacion@gmail.com')
+                    ->setTo($datos[0]['email'])
+                    ->setBody('Usted ha solicitado cambiar la contaseña para acceder a nuestro sistema el dia '.date('d-m-Y H:i:s').'<br><br> Para recuperacion de contraseña haga click en el siguiente enlace: '.$enlace);
+                $this->get('mailer')->send($mensaje_email);
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'enlace de recuperacion de contraseña enviado'
+                );
+                return $this->render('inicialBundle:Default:index.html.twig');
+            }
+        }
+        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
+    }
+    public function recuperar_passAction($token, Request $request){
+        if($token && preg_match('/^[0-9A-F]{40}$/i', $token)) {
+
+            $query = $this->getDoctrine()->getRepository('inicialBundle:RecuperarPasswordTmp')
+                ->createQueryBuilder('rec_pass')
+                ->select('rec_pass', 'perfil')
+                ->innerJoin('rec_pass.idPerfil','perfil')
+                ->where('rec_pass.token = :token')
+                ->setParameter('token', $token)
+                ->getQuery();
+
+            $datos = $query->getArrayResult();
+            if (!$datos)
+            {
+                $this->get('session')->getFlashBag()->add(
+                    'danger', 'Enlace no valido'
+                );
+                return $this->render('inicialBundle:Default:index.html.twig');
+            }
+            else{
+                $delta = 72000;
+
+                if($request->server->get('REQUEST_TIME')-$datos[0]['fecha']->getTimestamp()<$delta){
+                    $perfil = $this->getDoctrine()
+                        ->getRepository('inicialBundle:PerfilUsuario')
+                        ->find($datos[0]['idPerfil']['id']);
+
+                    $p = new Passwords();
+                    $formulario = $this->createForm(new PasswordsType(), $p);
+                    //$formulario->setParent($perfil);
+                    $formulario-> handleRequest($request);
+                    if($request->getMethod()=='POST') {
+
+
+
+                        if ($formulario->isValid()) {
+                            $desact_pass = $this->getDoctrine()->getEntityManager();
+                            $test_desact = $desact_pass->getRepository('inicialBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
+                            $test_desact->setActivo(false);
+                            $desact_pass->flush();
+
+                            $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
+                            $p->setPerfil($perfil);
+                            $p->setActivo(true);
+                            $em = $this->getDoctrine()->getManager();
+                            $em->persist($p);
+                            $em->flush();
+                            $this->get('session')->getFlashBag()->add(
+                                'success', 'Contraseña Cambiada con éxito');
+
+                            $borrar_passtmp= $this->getDoctrine()->getEntityManager();
+                            $borrar_passtmp_query = $borrar_passtmp->getRepository('inicialBundle:RecuperarPasswordTmp')->find($datos[0]['id']);
+                            $borrar_passtmp->remove($borrar_passtmp_query);
+                            $borrar_passtmp->flush();
+
+                            return $this->redirect($this->generateUrl('inicial_homepage'));
+                        }
+                    }
+                    return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Recuperar Contraseña', 'form'=>$formulario->createView()));
+
+                }
+                else{
+                    $this->get('session')->getFlashBag()->add(
+                        'danger', 'enlace de excedio el tiempo para ser usado'
+                    );
+                    return $this->render('inicialBundle:Default:index.html.twig');
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
+    }
+
 }

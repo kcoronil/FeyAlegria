@@ -1,0 +1,28 @@
+{% extends '::plantilla.html.twig' %}
+{% if form is defined %}
+    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% endif %}
+{% block content %}
+    <div class="col-sm-4 col-sm-offset-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h2 class="panel-title">{{ accion }}</h2>
+            </div>
+            <div class="panel-body">
+                {% if form is not defined %}
+                <form class="form-signin" method="POST" action="{{ path('inicial_solicitar_pass') }}">
+                    <div class="form-group">
+                        <label for="inputEmail" class="sr-only">Correo Electronico</label>
+                        <input type="text" id="email" class="form-control" name="email" placeholder="Correo Electronico" required autofocus/>
+                        <div class="text-center">
+                            <button class="btn btn-primary btn-default" type="submit">solicitar</button>
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                    {{ form(form) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

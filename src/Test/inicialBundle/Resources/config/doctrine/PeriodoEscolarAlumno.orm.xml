@@ -2,8 +2,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Test\inicialBundle\Entity\PeriodoEscolarAlumno" table="periodo_escolar_alumno">
     <indexes>
-      <index name="periodo_escolar_alumno_alumno_id" columns="alumno_id"/>
       <index name="periodo_escolar_alumno_periodo_escolar_curso_id" columns="periodo_escolar_curso_id"/>
+      <index name="periodo_escolar_alumno_alumno_id" columns="alumno_id"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>

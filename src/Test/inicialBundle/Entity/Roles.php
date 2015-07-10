@@ -15,7 +15,7 @@ class Roles
 {
 
     /**
-     * @ORM\OneToMany(targetEntity="PerfilUsuario", mappedBy="roles")
+     * @ORM\OneToMany(targetEntity="PerfilUsuario", mappedBy="rol")
      **/
 
     protected $perfil;

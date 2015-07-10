@@ -38,16 +38,16 @@ class TrazaEventosUsuarios
     /**
      * @var integer
      *
-     * @ORM\Column(name="evento", type="integer")
+     * @ORM\Column(name="id_evento", type="integer")
      */
-    private $evento;
+    private $idEvento;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="objeto", type="integer")
+     * @ORM\Column(name="id_objeto", type="integer")
      */
-    private $objeto;
+    private $idObjeto;
 
 
     /**
@@ -109,12 +109,12 @@ class TrazaEventosUsuarios
     /**
      * Set evento
      *
-     * @param integer $evento
+     * @param integer $idEvento
      * @return TrazaEventosUsuarios
      */
-    public function setEvento($evento)
+    public function setidEvento($idEvento)
     {
-        $this->evento = $evento;
+        $this->idEvento = $idEvento;
 
         return $this;
     }
@@ -124,20 +124,20 @@ class TrazaEventosUsuarios
      *
      * @return integer 
      */
-    public function getEvento()
+    public function getidEvento()
     {
-        return $this->evento;
+        return $this->idEvento;
     }
 
     /**
      * Set objeto
      *
-     * @param integer $objeto
+     * @param integer $idObjeto
      * @return TrazaEventosUsuarios
      */
-    public function setObjeto($objeto)
+    public function setidObjeto($idObjeto)
     {
-        $this->objeto = $objeto;
+        $this->idObjeto = $idObjeto;
 
         return $this;
     }
@@ -147,8 +147,8 @@ class TrazaEventosUsuarios
      *
      * @return integer 
      */
-    public function getObjeto()
+    public function getidObjeto()
     {
-        return $this->objeto;
+        return $this->idObjeto;
     }
 }

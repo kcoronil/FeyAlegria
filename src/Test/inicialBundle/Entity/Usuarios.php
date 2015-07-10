@@ -15,11 +15,30 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Usuarios
 {
 
-
     /**
-     * @ORM\ManyToMany(targetEntity="Alumnos", mappedBy="usuario")
-     */
+     * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="alumno", cascade={"persist"})
+     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")}
+     * )
+     **/
 
+    protected $alumno;
+
+    public function __construct(){
+        $this->alumno = new ArrayCollection();
+    }
+    public function getAlumno()
+    {
+        return $this->alumno;
+    }
+
+
+    public function addAlumno(Alumnos $alumno)
+    {
+        $alumno->addUsuarios($this);
+
+        $this->alumno->add($alumno);
+    }
 
     /**
      * @var integer
@@ -101,7 +120,8 @@ class Usuarios
      *
      * @ORM\Column(name="activo", type="boolean")
      */
-    private $activo;
+
+    private $activo = true;
 
     /**
      * @var integer
@@ -132,6 +152,7 @@ class Usuarios
      * @param integer $cedula
      * @return Usuarios
      */
+
     public function setCedula($cedula)
     {
         $this->cedula = $cedula;
@@ -144,6 +165,7 @@ class Usuarios
      *
      * @return integer
      */
+
     public function getCedula()
     {
         return $this->cedula;
@@ -155,6 +177,7 @@ class Usuarios
      * @param string $apellidos
      * @return Usuarios
      */
+
     public function setApellidos($apellidos)
     {
         $this->apellidos = $apellidos;

@@ -2,8 +2,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Test\inicialBundle\Entity\TrazaEventosUsuarios" table="traza_eventos_usuarios">
     <indexes>
-      <index name="traza_eventos_usuarios_usuario_id" columns="usuario_id"/>
       <index name="traza_eventos_usuarios_id" columns="elemento_id"/>
+      <index name="traza_eventos_usuarios_usuario_id" columns="usuario_id"/>
       <index name="IDX_BCE73B5E61B1BEE8" columns="id_evento"/>
     </indexes>
     <id name="id" type="integer" column="id">

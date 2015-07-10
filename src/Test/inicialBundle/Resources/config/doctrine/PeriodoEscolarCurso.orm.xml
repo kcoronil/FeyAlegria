@@ -3,8 +3,8 @@
   <entity name="Test\inicialBundle\Entity\PeriodoEscolarCurso" table="periodo_escolar_curso">
     <indexes>
       <index name="periodo_escolar_curso_periodo_escolar_id" columns="periodo_escolar_id"/>
-      <index name="periodo_escolar_curso_seccion_id" columns="seccion_id"/>
       <index name="periodo_escolar_curso_curso_id" columns="curso_id"/>
+      <index name="periodo_escolar_curso_seccion_id" columns="seccion_id"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>

@@ -5,9 +5,6 @@
       <index name="alumnos_representantes_representante_id" columns="representante_id"/>
       <index name="alumnos_representantes_alumno_id" columns="alumno_id"/>
     </indexes>
-    <id name="id" type="integer" column="id">
-      <generator strategy="SEQUENCE"/>
-    </id>
     <many-to-one field="representante" target-entity="Usuarios">
       <join-columns>
         <join-column name="representante_id" referenced-column-name="id"/>

@@ -13,18 +13,23 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class PerfilUsuario
 {
-
     /**
      * @ORM\OneToOne(targetEntity="Usuarios", inversedBy="perfil")
      * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id", unique=true)
      */
 
-    private $usuario;
-
+    public $usuario;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="usuario")
-     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Passwords", inversedBy="perfil")
+     * @ORM\JoinColumn(name="perfil_id", referencedColumnName="id", unique=true)
+     */
+
+    public $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity="RecuperarPasswordTmp", inversedBy="perfil")
+     * @ORM\JoinColumn(name="id_perfil", referencedColumnName="id")
      */
 
 
@@ -33,20 +38,20 @@ class PerfilUsuario
      * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
      */
 
-    protected $roles;
+    public $rol;
 
-    public function __construct() {
-        $this->roles = new ArrayCollection();
-    }
+    /*   public function __construct() {
+           $this->rol = new ArrayCollection();
+       }
 
-    public function getRoles(){
-        return $this->roles->toArray();
-    }
+       public function getRoles(){
+           return $this->rol->toArray();
+       }
 
-    public function setRoles($roles){
-        $this->roles = $roles;
-        return $this;
-    }
+       public function setRoles($rol){
+           $this->rol = $rol;
+           return $this;
+       }*/
 
 
     /**

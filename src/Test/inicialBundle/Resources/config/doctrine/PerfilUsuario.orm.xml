@@ -3,10 +3,8 @@
   <entity name="Test\inicialBundle\Entity\PerfilUsuario" table="perfil_usuario">
     <indexes>
       <index name="perfil_usuario_usuario_id" columns="usuario_id"/>
+      <index name="IDX_FCB2339C4BAB96C" columns="rol_id"/>
     </indexes>
-    <unique-constraints>
-      <unique-constraint name="perfil_usuario_pregunta_secreta_key" columns="pregunta_secreta"/>
-    </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
@@ -22,20 +20,10 @@
         <join-column name="usuario_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="roles" target-entity="Roles">
+    <many-to-one field="rol" target-entity="Roles">
       <join-columns>
-          <join-column name="rol_id" referenced-column-name="id"/>
+        <join-column name="rol_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <!--<many-to-many field="roles" target-entity="Roles" inversed-by="perfil">
-        <join-table name="perfiles_roles">
-          <join-columns>
-              <join-column name="perfil_id" referenced-column-name="id"/>
-          </join-columns>
-          <inverse-join-columns>
-              <join-column name="roles_id" referenced-column-name="id"/>
-          </inverse-join-columns>
-        </join-table>
-    </many-to-many>  -->
   </entity>
 </doctrine-mapping>

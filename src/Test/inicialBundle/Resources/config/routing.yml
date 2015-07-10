@@ -42,6 +42,14 @@ inicial_agregar_alumno:
     path:     /crear_alumno
     defaults: { _controller: inicialBundle:Default:crear_alumno }
 
+inicial_solicitar_pass:
+    path:     /solicitar_pass/
+    defaults: { _controller: inicialBundle:Default:solicitar_pass }
+
+inicial_recuperar_pass:
+    path:     /recuperar_pass/{token}
+    defaults: { _controller: inicialBundle:Default:recuperar_pass, token: null  }
+
 representantes_home:
     path:     /representantes
     defaults: { _controller: inicialBundle:Representantes:index }

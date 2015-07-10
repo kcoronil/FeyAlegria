@@ -5,6 +5,7 @@ namespace Test\inicialBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 class AlumnosType extends AbstractType
 {
@@ -15,13 +16,16 @@ class AlumnosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('usuario','entity', array('required' => true,
+                'class' => 'inicialBundle:Usuarios','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>false))
             ->add('cedula')
             ->add('cedulaEstudiantil')
             ->add('apellidos')
             ->add('nombres')
             ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ))
             ->add('lugarNacimiento')
-            ->add('sexo')
+            ->add('sexo', 'entity', array('required' => true,
+                'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('guardar', 'submit')
             ->add('guardar_crear', 'submit')
         ;

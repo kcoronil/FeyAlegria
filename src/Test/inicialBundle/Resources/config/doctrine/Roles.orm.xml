@@ -9,6 +9,5 @@
     </id>
     <field name="nombre" type="string" column="nombre" length="20" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <!--<many-to-many field="perfil" target-entity="PerfilUsuario" mapped-by="roles"/>-->
   </entity>
 </doctrine-mapping>

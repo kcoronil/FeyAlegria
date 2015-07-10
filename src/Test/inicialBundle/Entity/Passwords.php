@@ -7,53 +7,56 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Passwords
  *
- * @ORM\Table()
- * @ORM\Entity(repositoryClass="Test\inicialBundle\Entity\PasswordsRepository")
+ * @ORM\Table(name="passwords", indexes={@ORM\Index(name="passwords_usuario_id", columns={"perfil_id"})})
+ * @ORM\Entity
  */
 class Passwords
 {
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\SequenceGenerator(sequenceName="passwords_id_seq", allocationSize=1, initialValue=1)
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=100)
+     * @ORM\Column(name="password", type="string", length=10, nullable=false)
      */
-    private $password;
+    public $password;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_creacion", type="date")
+     * @ORM\Column(name="fecha_creacion", type="date", nullable=false)
      */
-    private $fechaCreacion;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="usuario", type="integer")
-     */
-    private $usuario;
+    public $fechaCreacion;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="activo", type="boolean")
+     * @ORM\Column(name="activo", type="boolean", nullable=false)
      */
-    private $activo;
+    public $activo;
 
+    /**
+     * @var \PerfilUsuario
+     *
+     * @ORM\ManyToOne(targetEntity="PerfilUsuario")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="perfil_id", referencedColumnName="id")
+     * })
+     */
+    public $perfil;
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -76,7 +79,7 @@ class Passwords
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
@@ -99,7 +102,7 @@ class Passwords
     /**
      * Get fechaCreacion
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getFechaCreacion()
     {
@@ -107,14 +110,14 @@ class Passwords
     }
 
     /**
-     * Set usuario
+     * Set perfil
      *
-     * @param integer $usuario
+     * @param integer $perfil
      * @return Passwords
      */
-    public function setUsuario($usuario)
+    public function setPerfil($perfil)
     {
-        $this->usuario = $usuario;
+        $this->perfil = $perfil;
 
         return $this;
     }
@@ -122,11 +125,11 @@ class Passwords
     /**
      * Get usuario
      *
-     * @return integer 
+     * @return integer
      */
-    public function getUsuario()
+    public function getPerfil()
     {
-        return $this->usuario;
+        return $this->perfil;
     }
 
     /**
@@ -145,10 +148,13 @@ class Passwords
     /**
      * Get activo
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getActivo()
     {
         return $this->activo;
     }
+
+
+
 }

@@ -4,6 +4,7 @@ namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Proxies\__CG__\Test\inicialBundle\Entity\Usuarios;
 
 /**
  * Alumnos
@@ -19,25 +20,22 @@ class Alumnos
      * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
      */
 
+    // ...
     /**
-     * @ORM\ManyToMany(targetEntity="Usuarios", inversedBy="alumno")
-     * @ORM\JoinTable(
-     *     name="alumnos_representantes",
-     *     joinColumns={
-     *         @ORM\JoinColumn(
-     *             name="alumno_id",
-     *             referencedColumnName="id",
-     *             nullable=false
-     *         )
-     *     },
-     *     inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="representante_id", nullable=false)}
-     * )
-     */
+     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno")
+     **/
 
-    private $usuario;
+    public $usuario;
 
     public function __construct() {
         $this->usuario = new ArrayCollection();
+    }
+
+    public function addUsuarios(Usuarios $usuario)
+    {
+        if (!$this->usuario->contains($usuario)) {
+            $this->usuario->add($usuario);
+        }
     }
 
 

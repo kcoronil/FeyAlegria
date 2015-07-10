@@ -20,9 +20,7 @@ class UsuariosType extends AbstractType
                 'class' => 'inicialBundle:TipoUsuario','empty_value' => 'Seleccione Tipo', 'multiple'=>false,
             'query_builder' => function (EntityRepository $er) {
         return $er->createQueryBuilder('u')
-            ->where('u.id!=1');
-    },
-            ))
+            ->where('u.id!=1');},))
             ->add('principal', 'checkbox', array('required'=>false))
             ->add('cedula')
             ->add('apellidos')
@@ -33,6 +31,7 @@ class UsuariosType extends AbstractType
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true
             ))
             ->add('activo', 'checkbox', array('required'=>false))
+            ->add('alumno', 'collection', array('type'=>new AlumnosType(), 'allow_add' => true))
             /*->add('perfil', new PerfilUsuarioType(), array('label' => false))*/
             ->add('guardar', 'submit')
             ->add('guardar_crear', 'submit', array('label'=>'Guardar y Crear Otro'))
