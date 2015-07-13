@@ -4,7 +4,6 @@ namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Proxies\__CG__\Test\inicialBundle\Entity\Usuarios;
 
 /**
  * Alumnos
@@ -15,14 +14,12 @@ use Proxies\__CG__\Test\inicialBundle\Entity\Usuarios;
 class Alumnos
 {
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno")
-     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
-     */
 
-    // ...
     /**
-     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno")
+     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
+     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
+     * inverseJoinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")}
+     * )
      **/
 
     public $usuario;
@@ -31,12 +28,33 @@ class Alumnos
         $this->usuario = new ArrayCollection();
     }
 
-    public function addUsuarios(Usuarios $usuario)
+    /*public function addUsuarios(Usuarios $usuario)
     {
         if (!$this->usuario->contains($usuario)) {
             $this->usuario->add($usuario);
         }
+    }*/
+
+    public function addUsuario(Usuarios $usuario)
+    {
+        $usuario->addAlumno($this);
+
+        $this->usuario[] = $usuario;
+
+        //$this->alumno->add($alumno);
     }
+
+
+    public function removeUsuario($usuario)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->usuario->removeElement($usuario);
+    }
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno")
+     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
+     */
 
 
     /**
@@ -102,7 +120,7 @@ class Alumnos
      *
      * @ORM\Column(name="activo", type="boolean")
      */
-    private $activo;
+    private $activo = true;
 
 
     /**
@@ -297,5 +315,9 @@ class Alumnos
     public function getActivo()
     {
         return $this->activo;
+    }
+    public function __toString()
+    {
+        return $this->nombres;
     }
 }

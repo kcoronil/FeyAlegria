@@ -2,13 +2,12 @@
 
 namespace Test\inicialBundle\Form;
 
-use Proxies\__CG__\Test\inicialBundle\Entity\Usuarios;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
-class AlumnosType extends AbstractType
+class AlumnosTypeSimple extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -17,6 +16,8 @@ class AlumnosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('usuario','entity', array('required' => true,
+                'class' => 'inicialBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false))
             ->add('cedula')
             ->add('cedulaEstudiantil')
             ->add('apellidos')
@@ -25,6 +26,8 @@ class AlumnosType extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            ->add('guardar', 'submit')
+            ->add('guardar_crear', 'submit')
         ;
     }
     
@@ -43,6 +46,6 @@ class AlumnosType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_alumnos';
+        return 'test_inicialbundle_alumnos_simple';
     }
 }

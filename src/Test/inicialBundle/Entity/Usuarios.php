@@ -15,14 +15,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Usuarios
 {
 
+
     /**
-     * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="alumno", cascade={"persist"})
-     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")}
+     * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="usuario", cascade={"persist"})
+     * @ORM\JoinTable(name="alumnos_representantes",joinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")},
+     * inverseJoinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")}
      * )
      **/
 
     protected $alumno;
+
 
     public function __construct(){
         $this->alumno = new ArrayCollection();
@@ -35,9 +37,16 @@ class Usuarios
 
     public function addAlumno(Alumnos $alumno)
     {
-        $alumno->addUsuarios($this);
+        $this->alumno[] = $alumno;
 
-        $this->alumno->add($alumno);
+        //$this->alumno->add($alumno);
+    }
+
+
+    public function removeAlumno($alumno)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->alumno->removeElement($alumno);
     }
 
     /**

@@ -1,0 +1,119 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% endif %}
+{% block extra_head %}
+    <style>
+        .form-inline .form-control{
+            max-width: 100%;
+        }
+        .form-inline .filter_select  select{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var datatable_alumnos = $('#tbl_alumnos').dataTable({
+                "dom": 'rtip',
+                "bInfo": true,
+                "bLengthChange": false,
+                "bPaginate": true,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after"
+            });
+            /*$('#buscar_datatable').keyup(function(){
+                datatable_documentos.fnFilter($(this).val());
+            } );*/
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path('inicial_agregar_alumno') }}">Agregar Alumno</a></li>
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        <h2 class="clase">{{ accion }}</h2>
+        <div id="div_tbl_alumnos">
+            <table id="tbl_alumnos" class="table-bordered table-hover table-responsive"  width="100%">
+                <thead>
+                    <tr>
+                        {% for key, campo in datos.0 %}
+                            {% if key == 'id' %}
+                            {% else %}
+                                {% if campo is iterable %}
+                                    {% for k, c  in campo.0 %}
+                                        {% if k != 'id' %}
+                                            <th>{{ k }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <th>{{ key }}</th>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for key, campo in datos.0 %}
+                            {% if key == 'id' %}
+                            {% else %}
+                                {% if campo is iterable %}
+                                    {% for k, c  in campo.0 %}
+                                        {% if k != 'id' %}
+                                            <th>{{ k }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <th>{{ key }}</th>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dato in datos %}
+                        <tr>
+                        {% for  key, elemento in dato %}
+                            {% if  key != 'id' %}
+
+                                {% if elemento.timestamp is defined %}
+                                <td>{{ elemento|date('d/m/Y') }}</td>
+                                {% elseif key == 'cedula' %}
+                                    <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id }) }}">{{ elemento }}</a></td>
+                                {% else %}
+                                    {% if elemento is iterable %}
+                                        {% for k, item in elemento.0 %}
+                                            {% if  k != 'id' %}
+                                                {% if item.timestamp is defined %}
+                                                    <td>{{ item|date('d/m/Y') }}</td>
+                                                {% else %}
+                                                    <td>{{ item }}</td>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <td>{{ elemento }}</td>
+                                    {% endif %}
+                                {% endif %}
+
+                            {% endif %}
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

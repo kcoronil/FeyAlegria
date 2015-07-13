@@ -12,7 +12,7 @@ use Test\inicialBundle\Form\RolesType;
 use Test\inicialBundle\Entity\PerfilUsuario;
 use Test\inicialBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Alumnos;
-use Test\inicialBundle\Form\AlumnosType;
+use Test\inicialBundle\Form\AlumnosTypeSimple;
 use Test\inicialBundle\Entity\Passwords;
 use Test\inicialBundle\Form\PasswordType;
 use Test\inicialBundle\Form\PasswordsType;
@@ -140,11 +140,15 @@ class DefaultController extends Controller
         $formulario = $this->createForm(new UsuariosType(), $p);
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
+
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
+                /*foreach($p->getAlumno() as $alumno){
+                    $alumno->addAlumno($a);
+                    $em->getEntityManager()->persist($alumno);}*/
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
@@ -302,10 +306,53 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
     }
 
+    public function lista_alumnoAction()
+    {
+
+        //hacer consulta simple a la bbdd
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('usuario.cedula as cedula_representante', 'CONCAT(usuario.nombres, usuario.apellidos) as Nombre_Representante','usuario.id', 'alumno.id','alumno.cedula', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.direccion')
+            ->innerJoin('alumno.usuario', 'usuario')
+            ->where('usuario.activo = true')
+            ->andwhere('alumno.activo = true')
+            ->orderBy('alumno.id')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+
+        return $this->render('inicialBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
+    }
+
+    public function detalle_alumnoAction($id, Request $request)
+    {
+
+        //hacer consulta simple a la bbdd
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->where('alumno.id = :id')
+            ->andWhere('alumno.activo = true')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+        if (!$datos)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+
+        return $this->render('inicialBundle:Default:detalle_alumno.html.twig', array('accion'=>'Detalle Alumno', 'datos'=>$datos));
+    }
+
     public function crear_alumnoAction(Request $request)
     {
         $p = new Alumnos();
-        $formulario = $this->createForm(new AlumnosType(),$p);
+        $formulario = $this->createForm(new AlumnosTypeSimple(),$p);
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
 
@@ -321,7 +368,7 @@ class DefaultController extends Controller
                 }
 
                 if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_perfil'));
+                    return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
                 }
             }
         }

@@ -38,6 +38,14 @@ inicial_agregar_perfil:
     path:     /crear_perfil
     defaults: { _controller: inicialBundle:Default:crear_perfil }
 
+inicial_lista_alumno:
+    path:     /lista_alumno
+    defaults: { _controller: inicialBundle:Default:lista_alumno }
+
+inicial_detalle_alumno:
+    path:     /detalle_alumno/{id}
+    defaults: { _controller: inicialBundle:Default:detalle_alumno }
+
 inicial_agregar_alumno:
     path:     /crear_alumno
     defaults: { _controller: inicialBundle:Default:crear_alumno }
