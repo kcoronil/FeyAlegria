@@ -1,0 +1,52 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% endif %}
+{% block extra_head %}
+
+{% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path('inicial_lista_alumno') }}">Consultar Estudiantes</a></li>
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        <h2 class="clase">{{ accion }}</h2>
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-4 col-sm-offset-4 ">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
+            {% if datos is defined %}
+                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            {% for campo in datos.0|keys %}
+                                <th>{{ campo }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dato in datos %}
+                            <tr>
+                            {% for  key, elemento in dato %}
+                                <td>
+                                {% if elemento.timestamp is defined %}
+                                    {{ elemento|date('d/m/Y') }}
+                                {% elseif key == 'cedula' %}
+                                    <a href="{{ path('inicial_editar_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                                {% else %}
+                                    {{ elemento }}
+                                {% endif %}
+                                </td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+    </div>
+{% endblock %}

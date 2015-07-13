@@ -51,7 +51,7 @@
                 <thead>
                     <tr>
                         {% for key, campo in datos.0 %}
-                            {% if key == 'id' %}
+                            {% if (key == 'id') or ('_id' in key) %}
                             {% else %}
                                 {% if campo is iterable %}
                                     {% for k, c  in campo.0 %}
@@ -67,7 +67,7 @@
                     </tr>
                     <tr>
                         {% for key, campo in datos.0 %}
-                            {% if key == 'id' %}
+                            {% if (key == 'id') or ('_id' in key) %}
                             {% else %}
                                 {% if campo is iterable %}
                                     {% for k, c  in campo.0 %}
@@ -86,16 +86,17 @@
                     {% for dato in datos %}
                         <tr>
                         {% for  key, elemento in dato %}
-                            {% if  key != 'id' %}
+                            {% if  (key == 'id') or ( '_id' in key ) %}
 
+                            {% else %}
                                 {% if elemento.timestamp is defined %}
                                 <td>{{ elemento|date('d/m/Y') }}</td>
-                                {% elseif key == 'cedula' %}
+                                {% elseif (key == 'cedula') or ('cedula' in key) %}
                                     <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id }) }}">{{ elemento }}</a></td>
                                 {% else %}
                                     {% if elemento is iterable %}
                                         {% for k, item in elemento.0 %}
-                                            {% if  k != 'id' %}
+                                            {% if  (k != 'id' ) or ('_id' not in key) %}
                                                 {% if item.timestamp is defined %}
                                                     <td>{{ item|date('d/m/Y') }}</td>
                                                 {% else %}

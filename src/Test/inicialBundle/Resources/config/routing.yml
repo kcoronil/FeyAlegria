@@ -50,6 +50,14 @@ inicial_agregar_alumno:
     path:     /crear_alumno
     defaults: { _controller: inicialBundle:Default:crear_alumno }
 
+inicial_editar_alumno:
+    path:     /editar_alumno/{id}
+    defaults: { _controller: inicialBundle:Default:editar_alumno }
+
+inicial_borrar_alumno:
+    path:     /borrar_alumno/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_alumno }
+
 inicial_solicitar_pass:
     path:     /solicitar_pass/
     defaults: { _controller: inicialBundle:Default:solicitar_pass }

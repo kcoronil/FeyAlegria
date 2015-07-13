@@ -69,14 +69,14 @@ class Alumnos
     /**
      * @var integer
      *
-     * @ORM\Column(name="cedula", type="integer")
+     * @ORM\Column(name="cedula", type="integer", nullable=true)
      */
     private $cedula;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cedula_estudiantil", type="string", length=20)
+     * @ORM\Column(name="cedula_estudiantil", type="string", nullable=true, length=20)
      */
     private $cedulaEstudiantil;
 

@@ -18,11 +18,11 @@
     <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Acciones <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-            <li><a href="{{ path('inicial_editar_usuario', { 'id': datos.0.id }) }}" > Editar </a></li>
-            <li><a href="{{ path('inicial_borrar_usuario', { 'id': datos.0.id }) }}">Borrar</a></li>
+            <li><a href="{{ path('inicial_editar_alumno', { 'id': datos.0.id }) }}" > Editar </a></li>
+            <li><a href="{{ path('inicial_borrar_alumno', { 'id': datos.0.id }) }}">Borrar</a></li>
         </ul>
     </li>
-    <li><a href="{{ path('inicial_agregar_usuario') }}">Nuevo Usuario</a></li>
+    <li><a href="{{ path('inicial_agregar_alumno') }}">Nuevo Estudiante</a></li>
 {% endblock %}
 {% block content %}
     <div class="row text-center">
@@ -38,19 +38,25 @@
                             <th>Cedula: </th><td>{{ datos.0.cedula }}</td>
                         </tr>
                         <tr>
+                            <th>Cedula Estudiantil: </th><td>{{ datos.0.cedulaEstudiantil }}</td>
+                        </tr>
+                        <tr>
                             <th>Apellidos: </th><td>{{ datos.0.apellidos }}</td>
                         </tr>
                         <tr>
                             <th>Nombres: </th><td>{{ datos.0.nombres }}</td>
                         </tr>
                         <tr>
-                            <th>Direccion: </th><td>{{ datos.0.direccion }}</td>
+                            <th>Fecha Nacimiento: </th><td>{{ datos.0.fechaNacimiento|date('d/m/Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Lugar de Nacimiento: </th><td>{{ datos.0.lugarNacimiento }}</td>
                         </tr>
                     </tbody>
                 </table>
             {% else %}
                 <div class="alert alert-{{ label }} alert-dismissible" role="alert">
-                    <p>No existe usuario con ese ID</p>
+                    <p>No existe Estudiante con ese ID</p>
                 </div>
             {% endif %}
             {% if form is defined %}

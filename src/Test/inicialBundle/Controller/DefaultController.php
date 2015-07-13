@@ -313,7 +313,7 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('usuario.cedula as cedula_representante', 'CONCAT(usuario.nombres, usuario.apellidos) as Nombre_Representante','usuario.id', 'alumno.id','alumno.cedula', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.direccion')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id','usuario.direccion')
             ->innerJoin('alumno.usuario', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
@@ -321,6 +321,7 @@ class DefaultController extends Controller
             ->getQuery();
 
         $datos = $query->getArrayResult();
+
 
 
         return $this->render('inicialBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
@@ -372,8 +373,45 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Alumno'));
+        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
     }
+
+    public function editar_alumnoAction($id, Request $request)
+    {
+
+        $alumno = $this->getDoctrine()
+            ->getRepository('inicialBundle:Alumnos')
+            ->find($id);
+        if (!$alumno)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+        $formulario = $this->createForm(new AlumnosTypeSimple(), $alumno);
+        $formulario -> remove('guardar_crear');
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Alumno Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Estudiante'));
+    }
+
+
     public function solicitar_passAction(Request $request)
     {
         if ($request->getMethod() == 'POST') {
