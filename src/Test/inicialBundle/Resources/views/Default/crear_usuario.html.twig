@@ -3,9 +3,22 @@
 {% if form is defined %}
     {% form_theme form "::bootstrap_3_layout.html.twig" %}
 {% endif %}
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set sub_form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set sub_form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+
+    <div data-content="{{ name }}">
+        <a class="btn-remove" data-related="_self.widget_prototype(form.alumno, 'Remove alumno')|escape ">{{ remove_text }}</a>
+        {{ form_widget(sub_form) }}
+    </div>
+{% endmacro %}
 {% block extra_head %}
     <script type="text/javascript">
-            {% if accion == 'Crear Usuario' or 'Modificar Usuario' %}
             $(document).ready(function() {
                 var select_tipo_usuario =$("#test_inicialbundle_usuarios_tipoUsuario");
                 var div_form_principal= $("#test_inicialbundle_usuarios_principal");
@@ -27,30 +40,30 @@
                         div_form_principal.closest('.form-group').attr('style', 'display:none');
                     }
                 });
+
+
+                $('.btn-add').click(function(event) {
+                    var collectionHolder = $('#' + $(this).attr('data-target'));
+                    var prototype = collectionHolder.attr('data-prototype');
+                    var form = prototype.replace(/__name__/g, collectionHolder.children().length);
+
+                    collectionHolder.append(form);
+                    $('.datepick').not('.hasDatePicker').datepicker({
+                        format: "dd/mm/yyyy",
+                        language:"es"
+                    });
+
+                    return false;
+                });
+                $('.btn-remove').on('click', function(event) {
+                    var name = $(this).attr('data-related');
+                    $('*[data-content="'+name+'"]').remove();
+
+                    return false;
+                });
             });
-            {% endif %}
-    {% if accion == 'Listado de Usuarios' %}
-        $(document).ready(function() {
-            var datatable_usuarios = $('#tbl_usuarios').dataTable({
-                "dom": 'rtip',
-                "bInfo": true,
-                "bLengthChange": false,
-                "bPaginate": true,
-                "aaSorting": [],
-                language:{
-                    "sZeroRecords": "No hay registros que coincidan",
-                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
-                    search: "Búsqueda",
-                    paginate: {
-                        first: "Primero",
-                        previous: "Anterior",
-                        next: "Siguiente",
-                        last: "Ultimo"
-                    }
-                }
-            });
-        });
-        {% endif %}
+
+
     </script>
 {% endblock %}
 {% block enlace_atajo %}
@@ -61,39 +74,30 @@
         <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
-                <div class="col-sm-4 col-sm-offset-4 ">
-                    {{ form(form) }}
+                <div class="col-sm-4 col-sm-offset-4">
+                    <div>
+                        {{ form_start(form) }}
+                        {{ form_row(form.tipoUsuario) }}
+                        {{ form_row(form.principal) }}
+                        {{ form_row(form.cedula) }}
+                        {{ form_row(form.apellidos) }}
+                        {{ form_row(form.nombres) }}
+                        {{ form_row(form.fechaNacimiento) }}
+                        {{ form_row(form.direccion) }}
+                        {{ form_row(form.sexo) }}
+                    </div>
+                    <div id="post_alumno" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
+
+                        {{ form_widget(form._token) }}
+                    </div>
+                    <div>
+                        <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
+                        {{ form_row(form.guardar) }}
+                        {{ form_row(form.guardar_crear) }}
+                        {{ form_end(form) }}
+                    </div>
                 </div>
             </div>
         {% endif %}
-            {% if datos is defined %}
-                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            {% for campo in datos.0|keys %}
-                                <th>{{ campo }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for dato in datos %}
-                            <tr>
-                            {% for  key, elemento in dato %}
-                                <td>
-                                {% if elemento.timestamp is defined %}
-                                    {{ elemento|date('d/m/Y') }}
-                                {% elseif key == 'cedula' %}
-                                    <a href="{{ path('inicial_editar_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
-                                {% else %}
-                                    {{ elemento }}
-                                {% endif %}
-                                </td>
-                            {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-
-    </div>
+     </div>
 {% endblock %}

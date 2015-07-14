@@ -25,13 +25,12 @@ class UsuariosType extends AbstractType
             ->add('cedula')
             ->add('apellidos')
             ->add('nombres')
-            ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ) )
+            ->add('fechaNacimiento','date', array('widget'=>'single_text',
+                'format'=>'y-M-d', 'attr'=>array('class'=>'datepick')))
             ->add('direccion')
-            ->add('sexo', 'entity', array('required' => true,
-                'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true
-            ))
+            ->add('sexo', 'entity', array('required' => true,'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('activo', 'checkbox', array('required'=>false))
-            ->add('alumno', 'collection', array('type'=>new AlumnosType(), 'allow_add' => true))
+            ->add('alumno', 'collection', array('type'=>new AlumnosType(), 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false,'prototype' => true))
 
             ->add('guardar', 'submit')
             ->add('guardar_crear', 'submit', array('label'=>'Guardar y Crear Otro'))

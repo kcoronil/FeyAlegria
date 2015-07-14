@@ -135,8 +135,6 @@ class DefaultController extends Controller
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
-        $a = new Alumnos();
-        $p->getAlumno()->add($a);
         $formulario = $this->createForm(new UsuariosType(), $p);
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
