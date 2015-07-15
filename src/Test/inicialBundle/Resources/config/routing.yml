@@ -50,6 +50,10 @@ inicial_agregar_alumno:
     path:     /crear_alumno
     defaults: { _controller: inicialBundle:Default:crear_alumno }
 
+inicial_agregar_alumno_usuario:
+    path:     /crear_alumno_usuario
+    defaults: { _controller: inicialBundle:Default:crear_alumno_usuario }
+
 inicial_editar_alumno:
     path:     /editar_alumno/{id}
     defaults: { _controller: inicialBundle:Default:editar_alumno }

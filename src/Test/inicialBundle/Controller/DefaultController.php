@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Test\inicialBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Entity\Usuarios;
+use Test\inicialBundle\Form\AlumnosTypeUsuario;
 use Test\inicialBundle\Form\UsuariosType;
 use Test\inicialBundle\Entity\Roles;
 use Test\inicialBundle\Form\RolesType;
@@ -311,11 +312,11 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id','usuario.direccion')
-            ->innerJoin('alumno.usuario', 'usuario')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->leftJoin('alumno.usuario', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
-            ->orderBy('alumno.id')
+            ->orderBy('alumno.id', 'DESC')
             ->getQuery();
 
         $datos = $query->getArrayResult();
@@ -373,6 +374,40 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
     }
+
+    public function crear_alumno_usuarioAction(Request $request)
+    {
+        $p = new Alumnos();
+        $formulario = $this->createForm(new AlumnosTypeUsuario(), $p);
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                /*foreach($p->getAlumno() as $alumno){
+                    $alumno->addAlumno($a);
+                    $em->getEntityManager()->persist($alumno);}*/
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Alumno Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_alumno_usuario'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Alumno'));
+    }
+
+
 
     public function editar_alumnoAction($id, Request $request)
     {

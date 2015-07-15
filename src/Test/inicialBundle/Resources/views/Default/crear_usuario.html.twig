@@ -5,43 +5,38 @@
 {% endif %}
 {% macro widget_prototype(widget, remove_text) %}
     {% if widget.vars.prototype is defined %}
-        {% set sub_form = widget.vars.prototype %}
+        {% set form = widget.vars.prototype %}
         {% set name = widget.vars.prototype.vars.name %}
     {% else %}
-        {% set sub_form = widget %}
+        {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
 
     <div data-content="{{ name }}">
         <a class="btn-remove" data-related="_self.widget_prototype(form.alumno, 'Remove alumno')|escape ">{{ remove_text }}</a>
-        {{ form_widget(sub_form) }}
+        <div class="col-sm-12 ">
+            <h4 class="text-center">Nuevo Alumno</h4>
+            <div class="col-sm-3 ">
+                {{ form_row(form.cedula) }}
+                {{ form_row(form.cedulaEstudiantil) }}
+            </div>
+            <div class="col-sm-4 ">
+                {{ form_row(form.apellidos) }}
+                {{ form_row(form.nombres) }}
+            </div>
+            <div class="col-sm-4 ">
+                {{ form_row(form.fechaNacimiento) }}
+                {{ form_row(form.lugarNacimiento) }}
+            </div>
+            <div class="col-sm-1 ">
+                {{ form_row(form.sexo) }}
+            </div>
+        </div>
     </div>
 {% endmacro %}
 {% block extra_head %}
     <script type="text/javascript">
             $(document).ready(function() {
-                var select_tipo_usuario =$("#test_inicialbundle_usuarios_tipoUsuario");
-                var div_form_principal= $("#test_inicialbundle_usuarios_principal");
-                div_form_principal.removeAttr('required');
-
-                if(select_tipo_usuario.val()==''||select_tipo_usuario.val()!=5){
-                    div_form_principal.closest('.form-group').attr('style', 'display:none');
-                }
-                else{
-                    div_form_principal.closest('.form-group').attr('style', 'display:inline');
-                }
-
-                select_tipo_usuario.change(function(){
-
-                    if(select_tipo_usuario.val()==5){
-                        div_form_principal.closest('.form-group').attr('style', 'display:inline');
-                    }
-                    else{
-                        div_form_principal.closest('.form-group').attr('style', 'display:none');
-                    }
-                });
-
-
                 $('.btn-add').click(function(event) {
                     var collectionHolder = $('#' + $(this).attr('data-target'));
                     var prototype = collectionHolder.attr('data-prototype');
@@ -49,10 +44,12 @@
 
                     collectionHolder.append(form);
                     $('.datepick').not('.hasDatePicker').datepicker({
-                        format: "dd/mm/yyyy",
+                        format: "yyyy/mm/dd",
                         language:"es"
                     });
-
+                    $('.datepick').on('change', function(){
+                        $('.datepicker').hide();
+                    });
                     return false;
                 });
                 $('.btn-remove').on('click', function(event) {
@@ -74,28 +71,39 @@
         <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
-                <div class="col-sm-4 col-sm-offset-4">
-                    <div>
-                        {{ form_start(form) }}
+                <div class="col-sm-12">
+                    {{ form_start(form) }}
+                    <div class="col-sm-4 ">
                         {{ form_row(form.tipoUsuario) }}
                         {{ form_row(form.principal) }}
                         {{ form_row(form.cedula) }}
+                    </div>
+                    <div class="col-sm-4 ">
                         {{ form_row(form.apellidos) }}
                         {{ form_row(form.nombres) }}
                         {{ form_row(form.fechaNacimiento) }}
+                    </div>
+                    <div class="col-sm-4 ">
                         {{ form_row(form.direccion) }}
-                        {{ form_row(form.sexo) }}
+                    </div>
+                    <div class="col-sm-4 ">
+                    {{ form_row(form.sexo) }}
                     </div>
                     <div id="post_alumno" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
-
-                        {{ form_widget(form._token) }}
+                        {% for widget in form.alumno.children %}
+                            {{ _self.widget_prototype(widget, 'remover alumno') }}
+                        {% endfor %}
                     </div>
-                    <div>
+                    <div class="col-sm-12 text-center ">
                         <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
+
+                    </div>
+                    <div class="col-sm-12 text-center ">
                         {{ form_row(form.guardar) }}
                         {{ form_row(form.guardar_crear) }}
                         {{ form_end(form) }}
                     </div>
+
                 </div>
             </div>
         {% endif %}

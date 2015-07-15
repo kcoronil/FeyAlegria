@@ -3,7 +3,70 @@
 {% if form is defined %}
     {% form_theme form "::bootstrap_3_layout.html.twig" %}
 {% endif %}
+
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+
+    <div data-content="{{ name }}">
+        <a class="btn-remove" data-related="_self.widget_prototype(form.usuario, 'eliminar usuario')|escape ">{{ remove_text }}</a>
+        <div class="col-sm-12 ">
+            <h4 class="text-center">Nuevo Representante</h4>
+            <div class="col-sm-4 ">
+                {{ form_row(form.tipoUsuario) }}
+                {{ form_row(form.principal) }}
+                {{ form_row(form.cedula) }}
+            </div>
+            <div class="col-sm-4 ">
+                {{ form_row(form.apellidos) }}
+                {{ form_row(form.nombres) }}
+                {{ form_row(form.fechaNacimiento) }}
+            </div>
+            <div class="col-sm-4 ">
+                {{ form_row(form.direccion) }}
+            </div>
+            <div class="col-sm-4 ">
+                {{ form_row(form.sexo) }}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
 {% block extra_head %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.btn-add').click(function(event) {
+                var collectionHolder = $('#' + $(this).attr('data-target'));
+                var prototype = collectionHolder.attr('data-prototype');
+                var form = prototype.replace(/__name__/g, collectionHolder.children().length);
+
+                collectionHolder.append(form);
+                $('.datepick').not('.hasDatePicker').datepicker({
+                    format: "yyyy/mm/dd",
+                    language:"es"
+                });
+                $('.datepick').on('change', function(){
+                    $('.datepicker').hide();
+                });
+                return false;
+            });
+            $('.btn-remove').on('click', function(event) {
+                var name = $(this).attr('data-related');
+                $('*[data-content="'+name+'"]').remove();
+
+                return false;
+            });
+        });
+
+
+    </script>
+
 
 {% endblock %}
 {% block enlace_atajo %}
@@ -14,39 +77,43 @@
         <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
-                <div class="col-sm-4 col-sm-offset-4 ">
-                    {{ form(form) }}
+                <div class="col-sm-12">
+                    {{ form_start(form) }}
+
+
+                    <div class="col-sm-3 ">
+                        {{ form_row(form.cedula) }}
+                        {{ form_row(form.cedulaEstudiantil) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.apellidos) }}
+                        {{ form_row(form.nombres) }}
+
+                    </div>
+                    <div class="col-sm-3 ">
+                        {{ form_row(form.fechaNacimiento) }}
+                        {{ form_row(form.lugarNacimiento) }}
+                    </div>
+                    <div class="col-sm-2 ">
+                        {{ form_row(form.sexo) }}
+                    </div>
+                    <div id="post_usuario" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar usuario')|escape }}">
+                        {% for widget in form.usuario.children %}
+                            {{ _self.widget_prototype(widget, 'eliminar usuario') }}
+                        {% endfor %}
+                    </div>
+                    <div class="col-sm-12 text-center ">
+
+                        <a class="btn-add btn btn-default" data-target="post_usuario">Agregar representante</a>
+                    </div>
+                    <div class="col-sm-12 text-center ">
+                        {{ form_row(form.guardar) }}
+                        {{ form_row(form.guardar_crear) }}
+                        {{ form_end(form) }}
+                    </div>
+
                 </div>
             </div>
         {% endif %}
-            {% if datos is defined %}
-                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            {% for campo in datos.0|keys %}
-                                <th>{{ campo }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for dato in datos %}
-                            <tr>
-                            {% for  key, elemento in dato %}
-                                <td>
-                                {% if elemento.timestamp is defined %}
-                                    {{ elemento|date('d/m/Y') }}
-                                {% elseif key == 'cedula' %}
-                                    <a href="{{ path('inicial_editar_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
-                                {% else %}
-                                    {{ elemento }}
-                                {% endif %}
-                                </td>
-                            {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-
     </div>
 {% endblock %}
