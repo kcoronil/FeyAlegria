@@ -41,52 +41,53 @@
     </script>
 {% endblock %}
 {% block enlace_atajo %}
-    <li><a href="{{ path('inicial_pdf_alumno') }}">Agregar Periodo</a></li>
-    <li><a href="{{ path('periodo_escolar_inicio') }}">Agregar Periodo</a></li>
+    <li><a href="{{ path('inicial_agregar_periodo') }}">Agregar Periodo</a></li>
 {% endblock %}
 {% block content %}
     <div class="row text-center">
         <h2 class="clase">{{ accion }}</h2>
-        <div id="div_tbl_usuarios">
-            <table id="tbl_usuarios" class="table-bordered table-hover table-responsive"  width="100%">
-                <thead>
-                    <tr>
-                        {% for campo in datos|keys %}
-                            {% if campo == 'id' %}
-                            {% else %}
-                                <th>{{ campo }}</th>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        {% for campo in datos|keys %}
-                            {% if campo == 'id' %}
-                            {% else %}
-                                <th>{{ campo }}</th>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for dato in datos %}
+        <div class="col-sm-offset-3 col-sm-5">
+            <div id="div_tbl_usuarios">
+                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive"  width="100%">
+                    <thead>
                         <tr>
-                        {% for  key, elemento in dato %}
-                            {% if  key != 'id' %}
-                                <td>
-                                {% if elemento.timestamp is defined %}
-                                    {{ elemento|date('d/m/Y') }}
-                                {% elseif key == 'cedula' %}
-                                    <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                            {% for campo in datos|keys %}
+                                {% if campo == 'id' %}
                                 {% else %}
-                                    {{ elemento }}
+                                    <th>{{ campo }}</th>
                                 {% endif %}
-                                </td>
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        <tr>
+                            {% for campo in datos|keys %}
+                                {% if campo == 'id' %}
+                                {% else %}
+                                    <th>{{ campo }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dato in datos %}
+                            <tr>
+                            {% for  key, elemento in dato %}
+                                {% if  key != 'id' %}
+                                    <td>
+                                    {% if elemento.timestamp is defined %}
+                                        {{ elemento|date('d/m/Y') }}
+                                    {% elseif key == 'cedula' %}
+                                        <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                                    {% else %}
+                                        {{ elemento }}
+                                    {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}

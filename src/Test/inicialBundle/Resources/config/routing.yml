@@ -84,7 +84,7 @@ inicial_agregar_periodo:
 
 inicial_lista_periodo:
     path:     /lista_periodo
-    defaults: { _controller: inicialBundle:PeriodoEscolar:consulta }
+    defaults: { _controller: inicialBundle:Default:consulta }
 
 inicial_pdf_representante:
     path:     /pdf_lista_representante

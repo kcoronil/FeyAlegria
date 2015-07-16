@@ -165,6 +165,7 @@ class DefaultController extends Controller
 
         }
         else{
+            $formulario -> remove('alumno');
             $formulario -> remove('principal');
             $elemento = 'Usuario';
         }

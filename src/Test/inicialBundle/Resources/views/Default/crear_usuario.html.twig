@@ -95,15 +95,17 @@
                     <div class="col-sm-4 ">
                     {{ form_row(form.sexo) }}
                     </div>
-                    <div id="post_alumno" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
-                        {% for widget in form.alumno.children %}
-                            {{ _self.widget_prototype(widget, 'remover alumno') }}
-                        {% endfor %}
-                    </div>
-                    <div class="col-sm-12 text-center ">
-                        <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
+                    {% if form.alumno is defined %}
+                        <div id="post_alumno" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
+                            {% for widget in form.alumno.children %}
+                                {{ _self.widget_prototype(widget, 'remover alumno') }}
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-12 text-center ">
+                            <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
 
-                    </div>
+                        </div>
+                    {% endif %}
                     <div class="col-sm-12 text-center ">
                         {{ form_row(form.guardar) }}
                         {{ form_row(form.guardar_crear) }}
