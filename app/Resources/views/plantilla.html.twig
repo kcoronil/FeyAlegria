@@ -58,10 +58,11 @@
                                                 </ul>
                                             </li>-->
                                             <li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Alumnos</a>
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Estudiante</a>
                                                 <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{{ path('inicial_agregar_alumno') }}" >Agregar Estudiante</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_alumno_usuario') }}" >Agregar Estudiante - Representante</a></li>
                                                     <li><a href="{{ path('inicial_lista_alumno') }}" >Consulta</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_alumno') }}" >Agregar</a></li>
                                                 </ul>
                                             </li>
                                             <!--<li class="dropdown-submenu">
@@ -71,20 +72,20 @@
                                                     {% if  (app.session.get('id_tipo_usuario')== 1)%}
                                                         <li><a href="#" >Gestionar</a></li>
                                                     {% endif %}
-                                                </ul>-->
-                                            </li>
+                                                </ul>
+                                            </li>-->
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Representantes</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#" >Consulta</a></li>
-                                                    <li><a href="#" >Agregar</a></li>
+                                                    <li><a href="{{ path('inicial_lista_representante') }}" >Consulta</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_representante') }}" >Agregar</a></li>
                                                 </ul>
                                             </li>
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Año escolar</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#">agregar</a></li>
-                                                    <!--<li><a href="#">Asignar Alumnos</a></li>-->
+                                                    <!--<li><a href="#">agregar</a></li>
+                                                    <li><a href="#">Asignar Alumnos</a></li>-->
                                                     <li class="dropdown-submenu">
                                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">gestionar periodo escolar</a>
                                                         <ul class="dropdown-menu" role="menu">

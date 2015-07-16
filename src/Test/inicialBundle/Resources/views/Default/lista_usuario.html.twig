@@ -41,7 +41,11 @@
     </script>
 {% endblock %}
 {% block enlace_atajo %}
-    <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
+    {% if accion == 'Listado de Usuarios' %}
+        <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
+    {% elseif accion == 'Listado de Representantes' %}
+        <li><a href="{{ path('inicial_agregar_representante') }}">Agregar Representante</a></li>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div class="row text-center">

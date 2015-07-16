@@ -74,7 +74,11 @@
                 <div class="col-sm-12">
                     {{ form_start(form) }}
                     <div class="col-sm-4 ">
-                        {{ form_row(form.tipoUsuario) }}
+                        {% if form.tipoUsuario is defined %}
+                            {{ form_row(form.tipoUsuario) }}
+                        {% else %}
+                            <label class="control-label required">Representante Principal</label>
+                        {% endif %}
                         {{ form_row(form.principal) }}
                         {{ form_row(form.cedula) }}
                     </div>

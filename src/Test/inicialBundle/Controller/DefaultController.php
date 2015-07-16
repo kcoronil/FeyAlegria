@@ -95,21 +95,48 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('inicial_homepage'));
     }
 
-    public function lista_usuarioAction()
+    public function lista_usuarioAction(Request $request)
     {
-
         //hacer consulta simple a la bbdd
+
+
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
             ->createQueryBuilder('usuario')
                 ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('usuario.activo = true');
+
+
+        if($request->get('_route')=='inicial_lista_representante'){
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('usuario.activo = true')
+                ->andWhere('tipo_usuario.id=5')
                 ->orderBy('usuario.id')
                 ->getQuery();
+            $elemento = 'Representantes';
+
+        }
+        else{
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('usuario.activo = true')
+                ->andWhere('tipo_usuario.id!=5')
+                ->orderBy('usuario.id')
+                ->getQuery();
+            $elemento = 'Usuarios';
+        }
+
+
 
         $datos = $query->getArrayResult();
 
-        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>'Listado de Usuarios', 'datos'=>$datos));
+        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>'Listado de '.$elemento, 'datos'=>$datos));
     }
     public function detalle_usuarioAction($id, Request $request)
     {
@@ -137,6 +164,18 @@ class DefaultController extends Controller
     {
         $p = new Usuarios();
         $formulario = $this->createForm(new UsuariosType(), $p);
+        if($request->get('_route')=='inicial_agregar_representante'){
+            $formulario -> remove('tipoUsuario');
+            $tipo_usuario = $this->getDoctrine()
+                ->getRepository('inicialBundle:TipoUsuario')
+                ->find(5);
+            $p->setTipoUsuario($tipo_usuario);
+            $elemento = 'Representante';
+
+        }
+        else{
+            $elemento = 'Usuario';
+        }
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
 
@@ -151,7 +190,7 @@ class DefaultController extends Controller
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Usuario Creado con éxito'
+                    'success', $elemento.' Creado con éxito'
                 );
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
@@ -162,7 +201,7 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Usuario'));
+        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
     public function editar_usuarioAction($id, Request $request)
@@ -406,8 +445,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Alumno'));
     }
-
-
 
     public function editar_alumnoAction($id, Request $request)
     {
