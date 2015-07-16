@@ -17,10 +17,10 @@ class UsuariosTypeCollection extends AbstractType
     {
         $builder
             ->add('tipoUsuario', 'entity', array('required' => true,
-                'class' => 'inicialBundle:TipoUsuario','empty_value' => 'Seleccione Tipo', 'multiple'=>false,
+                'class' => 'inicialBundle:TipoUsuario', 'multiple'=>false,
             'query_builder' => function (EntityRepository $er) {
         return $er->createQueryBuilder('u')
-            ->where('u.id!=1')->andWhere('u.id!=5');},))
+            ->where('u.id=5');},))
             ->add('principal', 'checkbox', array('required'=>false))
             ->add('cedula')
             ->add('apellidos')

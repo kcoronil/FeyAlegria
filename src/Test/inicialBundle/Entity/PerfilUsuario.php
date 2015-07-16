@@ -21,7 +21,7 @@ class PerfilUsuario
     public $usuario;
 
     /**
-     * @ORM\OneToMany(targetEntity="Passwords", inversedBy="perfil")
+     * @ORM\OneToMany(targetEntity="Passwords", mappedBy="perfil")
      * @ORM\JoinColumn(name="perfil_id", referencedColumnName="id", unique=true)
      */
 
@@ -40,7 +40,7 @@ class PerfilUsuario
 
     public $rol;
 
-    /*   public function __construct() {
+       public function __construct() {
            $this->rol = new ArrayCollection();
        }
 
@@ -51,7 +51,7 @@ class PerfilUsuario
        public function setRoles($rol){
            $this->rol = $rol;
            return $this;
-       }*/
+       }
 
 
     /**
@@ -118,7 +118,7 @@ class PerfilUsuario
      *
      * @ORM\Column(name="activo", type="boolean")
      */
-    private $activo;
+    private $activo = true;
 
 
     /**

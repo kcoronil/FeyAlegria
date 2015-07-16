@@ -41,13 +41,8 @@
     </script>
 {% endblock %}
 {% block enlace_atajo %}
-    {% if accion == 'Listado de Usuarios' %}
-        <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">Exportar PDF</a></li>
-        <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
-    {% elseif accion == 'Listado de Representantes' %}
-        <li><a href="{{ path('inicial_pdf_representante') }}" target="_blank">Exportar PDF</a></li>
-        <li><a href="{{ path('inicial_agregar_representante') }}">Agregar Representante</a></li>
-    {% endif %}
+    <li><a href="{{ path('inicial_pdf_alumno') }}">Agregar Periodo</a></li>
+    <li><a href="{{ path('periodo_escolar_inicio') }}">Agregar Periodo</a></li>
 {% endblock %}
 {% block content %}
     <div class="row text-center">
@@ -56,7 +51,7 @@
             <table id="tbl_usuarios" class="table-bordered table-hover table-responsive"  width="100%">
                 <thead>
                     <tr>
-                        {% for campo in datos.0|keys %}
+                        {% for campo in datos|keys %}
                             {% if campo == 'id' %}
                             {% else %}
                                 <th>{{ campo }}</th>
@@ -64,7 +59,7 @@
                         {% endfor %}
                     </tr>
                     <tr>
-                        {% for campo in datos.0|keys %}
+                        {% for campo in datos|keys %}
                             {% if campo == 'id' %}
                             {% else %}
                                 <th>{{ campo }}</th>

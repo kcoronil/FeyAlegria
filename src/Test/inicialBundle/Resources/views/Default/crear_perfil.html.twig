@@ -6,7 +6,7 @@
 {% block extra_head %}
 {% endblock %}
 {% block enlace_atajo %}
-    <li><a href="{{ path('inicial_lista_alumno') }}">Consultar Estudiantes</a></li>
+    <li><a href="{{ path('inicial_lista_usuario') }}">Consultar Usuarios</a></li>
 {% endblock %}
 {% block content %}
     <div class="row text-center">
@@ -17,27 +17,22 @@
                     {{ form_start(form) }}
                     <div class="col-sm-3 ">
                         {{ form_row(form.usuario) }}
+                        {{ form_row(form.email) }}
                     </div>
                     <div class="col-sm-3">
-                        {{ form_row(form.cedula) }}
-                        {{ form_row(form.cedulaEstudiantil) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.apellidos) }}
-                        {{ form_row(form.nombres) }}
-                    </div>
-                    <div class="col-sm-2 ">
-                        {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.lugarNacimiento) }}
+                        {{ form_row(form.nombreUsuario) }}
                     </div>
-                    <div class="col-sm-1 ">
-                        {{ form_row(form.sexo) }}
+                    <div class="col-sm-3">
+                        {{ form_row(form.preguntaSecreta) }}
+                        {{ form_row(form.respuesta) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.rol) }}
                     </div>
                     <div class="col-sm-12 text-center ">
                         {{ form_row(form.guardar) }}
-                        {% if form.guardar_crear is defined  %}
-                            {{ form_row(form.guardar_crear) }}
-                        {% endif %}
+                        {{ form_row(form.guardar_crear) }}
                         {{ form_end(form) }}
                     </div>
 

@@ -4,9 +4,11 @@ namespace Test\inicialBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Test\inicialBundle\Entity\PeriodoEscolar;
 use Test\inicialBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Entity\Usuarios;
 use Test\inicialBundle\Form\AlumnosTypeUsuario;
+use Test\inicialBundle\Form\PeriodoEscolarType;
 use Test\inicialBundle\Form\UsuariosType;
 use Test\inicialBundle\Entity\Roles;
 use Test\inicialBundle\Form\RolesType;
@@ -99,15 +101,6 @@ class DefaultController extends Controller
     {
         //hacer consulta simple a la bbdd
 
-
-
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-            ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true');
-
-
         if($request->get('_route')=='inicial_lista_representante'){
             $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
                 ->createQueryBuilder('usuario')
@@ -131,8 +124,6 @@ class DefaultController extends Controller
                 ->getQuery();
             $elemento = 'Usuarios';
         }
-
-
 
         $datos = $query->getArrayResult();
 
@@ -174,6 +165,7 @@ class DefaultController extends Controller
 
         }
         else{
+            $formulario -> remove('principal');
             $elemento = 'Usuario';
         }
         $formulario -> remove('activo');
@@ -289,59 +281,6 @@ class DefaultController extends Controller
         );
 
         return $this->render('inicialBundle:Default:detalle_usuario.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario'));
-    }
-
-
-    public function crear_rolAction(Request $request)
-    {
-        $p = new Roles();
-        $formulario = $this->createForm(new RolesType(), $p);
-        $formulario-> handleRequest($request);
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Rol Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_rol'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear rol'));
-    }
-    public function crear_perfilAction(Request $request)
-    {
-        $p = new PerfilUsuario();
-        $formulario = $this->createForm(new PerfilUsuarioType(),$p);
-        $formulario-> handleRequest($request);
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Rol Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_perfil'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
     }
 
     public function lista_alumnoAction()
@@ -478,9 +417,192 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Estudiante'));
+        return $this->render('inicialBundle:Default:crear_alumno_simple.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Estudiante'));
     }
 
+
+    public function crear_rolAction(Request $request)
+    {
+        $p = new Roles();
+        $formulario = $this->createForm(new RolesType(), $p);
+        $formulario-> handleRequest($request);
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Roles')
+            ->createQueryBuilder('roles')
+            ->where('roles.activo = true')
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Rol Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_rol'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Crear rol'));
+    }
+
+    public function crear_perfilAction(Request $request)
+    {
+        $p = new PerfilUsuario();
+        $formulario = $this->createForm(new PerfilUsuarioType(),$p);
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
+
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Rol Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_perfil'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
+    }
+
+    public function crear_periodoAction(Request $request)
+    {
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolar')
+            ->createQueryBuilder('periodoescolar')
+            ->select('periodoescolar')
+            ->orderBy('periodoescolar.id')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+
+        //instancia de la clase (Entity/PeriodoEscolar)
+        $p = new PeriodoEscolar();
+
+        //formulario en blanco de la instancia
+        $formulario = $this->createForm(new PeriodoEscolarType(), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+
+                //mensaje de registro
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Periodo Creado con éxito'
+                );
+                //solo realiza el guardar
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                //redirecciona de nuevo a al formulario
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_periodo'));
+                }
+            }
+        }
+        //aquii se busca en Resources/views/
+        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos,'accion'=>'Crear Periodo'));
+
+    }
+
+    public function consultaAction()
+    {
+        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolar')
+            ->createQueryBuilder('periodoescolar')
+            ->select('periodoescolar')
+            ->orderBy('periodoescolar.id')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+        return $this->render('inicialBundle:Default:lista_periodo.html.twig', array('accion'=>'Listado de Periodo', 'datos'=>$datos));
+
+    }
+
+
+    public function lista_alumno_pdfAction()
+    {
+
+        //hacer consulta simple a la bbdd
+
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->leftJoin('alumno.usuario', 'usuario')
+            ->where('usuario.activo = true')
+            ->andwhere('alumno.activo = true')
+            ->orderBy('alumno.id', 'DESC')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+
+        $mpdfService = $this->get('tfox.mpdfport');
+
+        $html = "<table>
+					<tr>
+						<td><img src='public/images/logo-FyA.jpg' width='150px' height='auto'></td>
+					</tr>
+				</table>
+				<br/>
+				<table border='1' style='border-collapse:collapse; width:750px;'>
+					<tr>
+						<th colspan='5'>ESTUDIANTES REGISTRADOS</th>
+					</tr>
+					<tr>
+						<th>ID</th>
+						<th>NOMBRE</th>
+						<th>APELIDO</th>
+						<th>CEDULA</th>
+						<th>REPRESENTANTE</th>
+					</tr>";
+
+        foreach($datos as $dato){
+            $html.="<tr>
+							<td>".$dato['id']."</td>
+							<td>".$dato['nombres']."</td>
+							<td>".$dato['apellidos']."</td>
+							<td>".$dato['cedula']."</td>
+							<td>".$dato['Nombre_Representante']." ".$dato['Apellido_Representante']."</td>
+						</tr>";
+        }
+
+
+        $html.=	"</table>";
+
+        $response = $mpdfService->generatePdfResponse($html);
+
+        return $response;
+
+    }
 
     public function solicitar_passAction(Request $request)
     {
@@ -507,7 +629,6 @@ class DefaultController extends Controller
                 $perfil = $this->getDoctrine()
                     ->getRepository('inicialBundle:PerfilUsuario')
                     ->find(($datos[0]['id']));
-
 
                 $recup_pass = new RecuperarPasswordTmp();
                 $recup_pass->setidPerfil($perfil);
@@ -568,8 +689,6 @@ class DefaultController extends Controller
                     $formulario-> handleRequest($request);
                     if($request->getMethod()=='POST') {
 
-
-
                         if ($formulario->isValid()) {
                             $desact_pass = $this->getDoctrine()->getEntityManager();
                             $test_desact = $desact_pass->getRepository('inicialBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
@@ -594,7 +713,6 @@ class DefaultController extends Controller
                         }
                     }
                     return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Recuperar Contraseña', 'form'=>$formulario->createView()));
-
                 }
                 else{
                     $this->get('session')->getFlashBag()->add(
@@ -606,5 +724,66 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
     }
+    public function lista_usuario_pdfAction(Request $request)
+    {
+        //hacer consulta simple a la bbdd
 
+
+        if($request->get('_route')=='inicial_pdf_representante'){
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('usuario.activo = true')
+                ->andWhere('tipo_usuario.id=5')
+                ->orderBy('usuario.id')
+                ->getQuery();
+            $elemento = 'REPRESENTANTES';
+
+        }
+        else{
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('usuario.activo = true')
+                ->andWhere('tipo_usuario.id!=5')
+                ->orderBy('usuario.id')
+                ->getQuery();
+            $elemento = 'USUARIOS';
+        }
+
+        $datos = $query->getArrayResult();
+        $mpdfService = $this->get('tfox.mpdfport');
+        $html = "<table>
+					<tr>
+						<td><img src='public/images/logo-FyA.jpg' width='150px' height='auto'></td>
+					</tr>
+				</table>
+				<br/>
+				<table border='1' style='border-collapse:collapse; width:750px;'>
+					<tr>
+						<th colspan='4'>$elemento REGISTRADOS</th>
+					</tr>
+					<tr>
+						<th>ID</th>
+						<th>NOMBRE</th>
+						<th>APELIDO</th>
+						<th>CEDULA</th>
+					</tr>";
+
+        foreach($datos as $dato){
+            $html.="<tr>
+							<td>".$dato['id']."</td>
+							<td>".$dato['nombres']."</td>
+							<td>".$dato['apellidos']."</td>
+							<td>".$dato['cedula']."</td>
+						</tr>";
+        }
+        $html.=	"</table>";
+        $response = $mpdfService->generatePdfResponse($html);
+
+        return $response;
+
+    }
 }

@@ -79,7 +79,9 @@
                         {% else %}
                             <label class="control-label required">Representante Principal</label>
                         {% endif %}
-                        {{ form_row(form.principal) }}
+                        {% if form.principal is defined %}
+                            {{ form_row(form.principal) }}
+                        {% endif %}
                         {{ form_row(form.cedula) }}
                     </div>
                     <div class="col-sm-4 ">

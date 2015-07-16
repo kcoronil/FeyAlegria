@@ -1,0 +1,104 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% endif %}
+{% block extra_head %}
+    <script type="text/javascript">
+    /*$(document).ready(function() {
+        var datatable_mantenimiento = $('#tbl_mantenimiento').dataTable({
+            "dom": 'rtip',
+            "bInfo": true,
+            "bLengthChange": false,
+            "bPaginate": true,
+            "aaSorting": [],
+            language:{
+                "sZeroRecords": "No hay registros que coincidan",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                search: "Búsqueda",
+                paginate: {
+                    first: "Primero",
+                    previous: "Anterior",
+                    next: "Siguiente",
+                    last: "Ultimo"
+                }
+            }
+        }).columnFilter({
+            sPlaceHolder: "head:after"
+        });
+    });*/
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path('inicial_lista_usuario') }}">Consultar Usuarios</a></li>
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        <h2 class="clase">{{ accion }}</h2>
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-4 col-sm-offset-4 ">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <br>
+    <div class="row">
+        {% if datos %}
+            <div class="col-sm-4 col-sm-offset-4 ">
+                <table id="tbl_mantenimiento" class="table-bordered table-hover table-responsive"  width="100%">
+                    <thead>
+                    <tr>
+                        {% for key, campo in datos.0 %}
+                            {% if (key == 'id') or ('_id' in key) or ( 'activo' in key ) %}
+                            {% else %}
+                                {% if campo is iterable %}
+                                    {% for k, c  in campo.0 %}
+                                        {% if k != 'id' %}
+                                            <th class="text-center">{{ k }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <th class="text-center">{{ key }}</th>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for dato in datos %}
+                        <tr>
+                            {% for  key, elemento in dato %}
+                                {% if  (key == 'id') or ( '_id' in key ) or ( 'activo' in key ) %}
+
+                                {% else %}
+                                    {% if elemento.timestamp is defined %}
+                                        <td>{{ elemento|date('d/m/Y') }}</td>
+                                   {% else %}
+                                        {% if elemento is iterable %}
+                                            {% for k, item in elemento.0 %}
+                                                {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                    {% if item.timestamp is defined %}
+                                                        <td>{{ item|date('d/m/Y') }}</td>
+                                                    {% else %}
+                                                        <td>{{ item }}</td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <td>{{ elemento }}</td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <h4 class="text-center">No Hay Registros para mostrar </h4>
+        {% endif %}
+    </div>
+{% endblock %}

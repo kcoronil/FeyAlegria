@@ -17,7 +17,7 @@ class PeriodoEscolar
     /**
      * @var boolean
      */
-    private $activo;
+    private $activo = true;
 
     /**
      * @var integer

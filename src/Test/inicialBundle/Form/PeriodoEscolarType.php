@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class PerfilUsuarioType extends AbstractType
+class PeriodoEscolarType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,25 +15,19 @@ class PerfilUsuarioType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario')
-            ->add('nombreUsuario')
-            ->add('email')
-            ->add('lugarNacimiento')
-            ->add('preguntaSecreta')
-            ->add('respuesta')
-            ->add('rol')
+            ->add('nombre')
             ->add('guardar', 'submit')
             ->add('guardar_crear', 'submit')
         ;
     }
-
+    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\PerfilUsuario'
+            'data_class' => 'Test\inicialBundle\Entity\PeriodoEscolar'
         ));
     }
 
@@ -42,6 +36,6 @@ class PerfilUsuarioType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_perfilusuario';
+        return 'test_inicialbundle_periodoescolar';
     }
 }

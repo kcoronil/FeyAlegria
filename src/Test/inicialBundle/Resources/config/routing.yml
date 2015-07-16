@@ -78,6 +78,29 @@ inicial_recuperar_pass:
     path:     /recuperar_pass/{token}
     defaults: { _controller: inicialBundle:Default:recuperar_pass, token: null  }
 
+inicial_agregar_periodo:
+    path:     /crear_periodo
+    defaults: { _controller: inicialBundle:Default:crear_periodo }
+
+inicial_lista_periodo:
+    path:     /lista_periodo
+    defaults: { _controller: inicialBundle:PeriodoEscolar:consulta }
+
+inicial_pdf_representante:
+    path:     /pdf_lista_representante
+    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
+
+inicial_pdf_usuario:
+    path:     /pdf_lista_usuario
+    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
+
+inicial_pdf_alumno:
+    path:     /pdf_lista_alumno
+    defaults: { _controller: inicialBundle:Default:lista_alumno_pdf }
+
+
+
+
 representantes_home:
     path:     /representantes
     defaults: { _controller: inicialBundle:Representantes:index }
