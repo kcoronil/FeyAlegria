@@ -372,7 +372,7 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
+        return $this->render('inicialBundle:Default:crear_alumno_simple.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
     }
 
     public function crear_alumno_usuarioAction(Request $request)

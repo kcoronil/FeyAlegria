@@ -1,0 +1,46 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+{% endif %}
+{% block extra_head %}
+{% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path('inicial_lista_alumno') }}">Consultar Estudiantes</a></li>
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        <h2 class="clase">{{ accion }}</h2>
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-12">
+                    {{ form_start(form) }}
+                    <div class="col-sm-3 ">
+                        {{ form_row(form.usuario) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.cedula) }}
+                        {{ form_row(form.cedulaEstudiantil) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.apellidos) }}
+                        {{ form_row(form.nombres) }}
+                    </div>
+                    <div class="col-sm-2 ">
+                        {{ form_row(form.fechaNacimiento) }}
+                        {{ form_row(form.lugarNacimiento) }}
+                    </div>
+                    <div class="col-sm-1 ">
+                        {{ form_row(form.sexo) }}
+                    </div>
+                    <div class="col-sm-12 text-center ">
+                        {{ form_row(form.guardar) }}
+                        {{ form_row(form.guardar_crear) }}
+                        {{ form_end(form) }}
+                    </div>
+
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
