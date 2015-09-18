@@ -14,33 +14,7 @@
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
-                    {{ form_start(form) }}
-                    <div class="col-sm-3 ">
-                        {{ form_row(form.usuario) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.cedula) }}
-                        {{ form_row(form.cedulaEstudiantil) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.apellidos) }}
-                        {{ form_row(form.nombres) }}
-                    </div>
-                    <div class="col-sm-2 ">
-                        {{ form_row(form.fechaNacimiento) }}
-                        {{ form_row(form.lugarNacimiento) }}
-                    </div>
-                    <div class="col-sm-1 ">
-                        {{ form_row(form.sexo) }}
-                    </div>
-                    <div class="col-sm-12 text-center ">
-                        {{ form_row(form.guardar) }}
-                        {% if form.guardar_crear is defined  %}
-                            {{ form_row(form.guardar_crear) }}
-                        {% endif %}
-                        {{ form_end(form) }}
-                    </div>
-
+                    {{ form(form) }}
                 </div>
             </div>
         {% endif %}
