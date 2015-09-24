@@ -1,9 +1,33 @@
-{% block form_row %}
-    {% spaceless %}
-        <div class="form-group">
-            {{ form_label(form) }}
-            {{ form_widget(form, { 'attr' : { 'class' : 'form-control' } }) }}
-            {{ form_errors(form) }}
+{% use "bootstrap_3_layout.html.twig" %}
+
+{% block form_row -%}
+    <div class="col-sm-6">
+        {{- parent() -}}
+    </div>
+{%- endblock form_row %}
+
+{% block button_row -%}
+    {% if 'data-first-button' in attr.class %}
+        <div class="form-group col-sm-12 text-center">
+        </br>
+    {% endif %}
+    {{- form_widget(form) -}}
+    {% if 'data-last-button' in attr.class %}
         </div>
-    {% endspaceless %}
-{% endblock form_row %}
+    {% endif %}
+{%- endblock button_row %}
+
+
+{%- block form_start -%}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h2 class="panel-title">{{ form.vars.titulo }}</h2>
+        </div>
+        <div class="panel-body">
+            {{- parent() -}}
+{%- endblock form_start -%}
+{%- block form_end -%}
+    {{- parent() -}}
+        </div>
+    </div>
+{%- endblock form_end -%}

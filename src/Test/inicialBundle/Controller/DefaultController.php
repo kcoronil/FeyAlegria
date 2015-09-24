@@ -20,7 +20,7 @@ use Test\inicialBundle\Entity\Passwords;
 use Test\inicialBundle\Form\PasswordType;
 use Test\inicialBundle\Form\PasswordsType;
 use Test\inicialBundle\Form\RecuperarPasswordTmpType;
-
+use Test\inicialBundle\Form\UsuariosTypeSimple;
 
 
 class DefaultController extends Controller
@@ -154,8 +154,9 @@ class DefaultController extends Controller
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
-        $formulario = $this->createForm(new UsuariosType(), $p);
+
         if($request->get('_route')=='inicial_agregar_representante'){
+            $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
             $formulario -> remove('tipoUsuario');
             $tipo_usuario = $this->getDoctrine()
                 ->getRepository('inicialBundle:TipoUsuario')
@@ -165,6 +166,7 @@ class DefaultController extends Controller
 
         }
         else{
+            $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
             $formulario -> remove('alumno');
             $formulario -> remove('principal');
             $elemento = 'Usuario';
@@ -194,6 +196,7 @@ class DefaultController extends Controller
                 }
             }
         }
+
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
@@ -206,7 +209,7 @@ class DefaultController extends Controller
         {
             throw $this -> createNotFoundException('no usuario con este id: '.$id);
         }
-        $formulario = $this->createForm(new UsuariosType(), $usuario);
+        $formulario = $this->createForm(new UsuariosTypeSimple('Modificar Usuario'), $usuario);
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
@@ -241,7 +244,7 @@ class DefaultController extends Controller
         {
             throw $this -> createNotFoundException('no usuario con este id: '.$id);
         }
-        $formulario = $this->createForm(new UsuariosType(), $usuario);
+        $formulario = $this->createForm(new UsuariosTypeSimple('Borrar Usuario'), $usuario);
         $formulario -> remove('tipoUsuario');
         $formulario -> remove('principal');
         $formulario -> remove('cedula');
@@ -331,7 +334,7 @@ class DefaultController extends Controller
     public function crear_alumnoAction(Request $request)
     {
         $p = new Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeSimple(),$p);
+        $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'),$p);
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
 
@@ -357,7 +360,7 @@ class DefaultController extends Controller
     public function crear_alumno_usuarioAction(Request $request)
     {
         $p = new Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeUsuario(), $p);
+        $formulario = $this->createForm(new AlumnosTypeUsuario('Crear Alumno'), $p);
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
 

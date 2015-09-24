@@ -1,7 +1,7 @@
 {% extends '::plantilla.html.twig' %}
 {# bootstrap_3_layout.html.twig #}
 {% if form is defined %}
-    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
 {% endif %}
 {% macro widget_prototype(widget, remove_text) %}
     {% if widget.vars.prototype is defined %}
@@ -12,26 +12,20 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    <div data-content="{{ name }}">
-        <a class="btn-remove" data-related="_self.widget_prototype(form.alumno, 'Remove alumno')|escape ">{{ remove_text }}</a>
-        <div class="col-sm-12 ">
+    <div data-content="{{ name }}" class="col-sm-12">
+        <div class="col-sm-8 col-sm-offset-2 text-center">
             <h4 class="text-center">Nuevo Alumno</h4>
-            <div class="col-sm-3 ">
-                {{ form_row(form.cedula) }}
-                {{ form_row(form.cedulaEstudiantil) }}
-            </div>
-            <div class="col-sm-4 ">
-                {{ form_row(form.apellidos) }}
-                {{ form_row(form.nombres) }}
-            </div>
-            <div class="col-sm-4 ">
-                {{ form_row(form.fechaNacimiento) }}
-                {{ form_row(form.lugarNacimiento) }}
-            </div>
-            <div class="col-sm-1 ">
-                {{ form_row(form.sexo) }}
-            </div>
         </div>
+        <div class="col-sm-1 text-left">
+            <a class="btn-remove btn btn-danger btn-xs" data-related="_self.widget_prototype(form.alumno, 'Remove alumno')|escape ">{{ remove_text }}</a>
+        </div>
+        {{ form_row(form.cedula) }}
+        {{ form_row(form.cedulaEstudiantil) }}
+        {{ form_row(form.apellidos) }}
+        {{ form_row(form.nombres) }}
+        {{ form_row(form.fechaNacimiento) }}
+        {{ form_row(form.lugarNacimiento) }}
+        {{ form_row(form.sexo) }}
     </div>
 {% endmacro %}
 {% block extra_head %}
@@ -68,12 +62,11 @@
 {% endblock %}
 {% block content %}
     <div class="row text-center">
-        <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
                     {{ form_start(form) }}
-                    <div class="col-sm-4 ">
+
                         {% if form.tipoUsuario is defined %}
                             {{ form_row(form.tipoUsuario) }}
                         {% else %}
@@ -83,20 +76,13 @@
                             {{ form_row(form.principal) }}
                         {% endif %}
                         {{ form_row(form.cedula) }}
-                    </div>
-                    <div class="col-sm-4 ">
                         {{ form_row(form.apellidos) }}
                         {{ form_row(form.nombres) }}
                         {{ form_row(form.fechaNacimiento) }}
-                    </div>
-                    <div class="col-sm-4 ">
                         {{ form_row(form.direccion) }}
-                    </div>
-                    <div class="col-sm-4 ">
-                    {{ form_row(form.sexo) }}
-                    </div>
+                        {{ form_row(form.sexo) }}
                     {% if form.alumno is defined %}
-                        <div id="post_alumno" class="col-sm-10" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
+                        <div id="post_alumno" class="row" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
                             {% for widget in form.alumno.children %}
                                 {{ _self.widget_prototype(widget, 'remover alumno') }}
                             {% endfor %}
@@ -104,14 +90,14 @@
                         <div class="col-sm-12 text-center ">
                             <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
                         </div>
+                        </br>
                     {% endif %}
-                    <div class="col-sm-12 text-center ">
                         </br>
                         {{ form_row(form.guardar) }}
-                        {{ form_row(form.guardar_crear) }}
+                        {% if form.guardar_crear is defined %}
+                            {{ form_row(form.guardar_crear) }}
+                        {% endif %}
                         {{ form_end(form) }}
-                    </div>
-
                 </div>
             </div>
         {% endif %}

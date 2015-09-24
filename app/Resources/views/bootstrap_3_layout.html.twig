@@ -101,6 +101,7 @@
                 }) -}}
             {% endfor -%}
         </div>
+
     {%- else -%}
         <div {{ block('widget_container_attributes') }}>
             {%- for child in form %}
@@ -177,7 +178,7 @@
 {# Rows #}
 
 {% block form_row -%}
-    <div class="col-sm-6 form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+    <div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
         {{- form_errors(form) -}}
@@ -185,15 +186,9 @@
 {%- endblock form_row %}
 
 {% block button_row -%}
-    {% if 'data-first-button' in attr %}
-            <div class="form-group">
-                <div class="col-12">
-    {% endif %}
-        {{ form_widget(form) }}
-    {% if 'data-last-button' in attr %}
-                </div>
-            </div>
-    {% endif %}
+    <div class="form-group">
+        {{- form_widget(form) -}}
+    </div>
 {%- endblock button_row %}
 
 {% block choice_row -%}

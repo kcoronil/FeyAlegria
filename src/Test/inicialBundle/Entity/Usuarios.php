@@ -34,14 +34,10 @@ class Usuarios
         return $this->alumno;
     }
 
-
     public function addAlumno(Alumnos $alumno)
     {
-        //$this->alumno[] = $alumno;
-
         $this->alumno->add($alumno);
     }
-
 
     public function removeAlumno($alumno)
     {

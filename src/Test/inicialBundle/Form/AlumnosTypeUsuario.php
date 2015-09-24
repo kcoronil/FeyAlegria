@@ -7,9 +7,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class AlumnosTypeUsuario extends AbstractType
 {
+    public function __construct ($titulo)
+    {
+        $this->titulo = $titulo;
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -28,11 +34,16 @@ class AlumnosTypeUsuario extends AbstractType
             ->add('usuario', 'collection', array('type'=>new UsuariosTypeCollection(), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
-            ->add('guardar', 'submit')
-            ->add('guardar_crear', 'submit', array('label'=>'Guardar y Crear Otro'))
+            ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
+            ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
     }
-    
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+
+        $view->vars['titulo'] = $this->titulo;
+    }
     /**
      * @param OptionsResolverInterface $resolver
      */

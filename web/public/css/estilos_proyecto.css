@@ -2,10 +2,12 @@
 
 .dropdown-submenu {
     position:relative;
+    background-color: #D9EDF7;
 }
 .dropdown-submenu>.dropdown-menu {
     top:0;
     left:100%;
+    background-color: #D9EDF7;
     margin-top:-6px;
     margin-left:-1px;
     -webkit-border-radius:0 6px 6px 6px;
@@ -15,15 +17,18 @@
 
 .dropdown-submenu>.dropdown-menu > a{
     margin-left: 10px;
+    color: #31708F;
 }
 
 .dropdown-submenu .dropdown-menu > li > a{
     margin-left: 10px;
+    color: #31708F;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
     display:block;
 }
+
 .dropdown-submenu>a:after {
     display:block;
     content:" ";
@@ -36,6 +41,7 @@
     border-left-color: #cccccc;
     margin-top:5px;
     margin-right:-10px;
+
 }
 .dropdown-submenu:hover>a:after {
     border-left-color:#ffffff;
@@ -60,7 +66,7 @@ colores base: background: #990000
 .navbar-default{
     /*background:transparent url(../images/menu-bg.gif);*/
     background: #D9EDF7;
-    border-color: #D9EDF7;
+    border-color: #36a9b5;
     min-height: 32px;
 }
 
@@ -103,7 +109,7 @@ colores base: background: #990000
 .navbar-nav > li > a {
     padding-top: 5px;
     padding-bottom: 5px;
-    color: #f5f5f5;
+    color: #31708F;
     text-decoration: none;
 }
 
@@ -162,6 +168,31 @@ colores base: background: #990000
     color: #31708F;
     text-decoration: none;
 }
+
+.navbar-nav > li > .dropdown-menu{
+    margin-top: 0px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    background-color: #D9EDF7;
+    color: #31708F;
+}
+
+.dropdown-menu > li > a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857;
+    color: #31708F;
+    white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus{
+    color: #31708F;
+    text-decoration: none;
+    background-color: #91DAF0;
+}
+
 /* ------------------------------- configuracion para el pie de pagina institucional ------------------------------- */
 /* http://stackoverflow.com/questions/19756997/how-to-create-a-sticky-footer-that-plays-well-with-bootstrap-3 */
 html,
@@ -211,3 +242,10 @@ input[type=number] {
     background-color: #B40000;
     border-color: #B40000;
 }*/
+
+/* ------------------------------- configuracion formularios ------------------------------- */
+.estilo_formulario {
+    border: solid 1px;
+    border-color: #36a9b5;
+    background-color: #D9EDF7;
+}

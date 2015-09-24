@@ -1,7 +1,7 @@
 {% extends '::plantilla.html.twig' %}
 {# bootstrap_3_layout.html.twig #}
 {% if form is defined %}
-    {% form_theme form "::bootstrap_3_layout.html.twig" %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
 {% endif %}
 
 {% macro widget_prototype(widget, remove_text) %}
@@ -16,27 +16,20 @@
     <div data-content="{{ name }}">
         <div class="col-sm-12 ">
             <div class="row">
-                <div class="col-sm-10 col-sm-offset-1">
-                    <h3 class="text-center">Nuevo Representante</h3>
+                <div class="col-sm-8 col-sm-offset-2 text-center">
+                    <h3>Nuevo Representante</h3>
                 </div>
-                <div class="col-sm-1">
-                    <a class="btn-remove btn btn-default" data-related="{{ name }}">{{ remove_text }}</a>
+                <div class="col-sm-1 text-left">
+                    <a class="btn-remove btn btn-danger btn-xs" data-related="{{ name }}">{{ remove_text }}</a>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4 ">
                     {{ form_row(form.tipoUsuario) }}
                     {{ form_row(form.principal) }}
-                </div>
-                <div class="col-sm-4 ">
                     {{ form_row(form.cedula) }}
                     {{ form_row(form.apellidos) }}
-                </div>
-                <div class="col-sm-4 ">
                     {{ form_row(form.nombres) }}
                     {{ form_row(form.fechaNacimiento) }}
-                </div>
-                <div class="col-sm-4 ">
                     {{ form_row(form.direccion) }}
                     {{ form_row(form.sexo) }}
                 </div>
@@ -112,22 +105,17 @@
 {% endblock %}
 {% block content %}
     <div class="row text-center">
-        <h3 class="clase">{{ accion }}</h3>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
                     {{ form_start(form) }}
-                    <div class="col-sm-4 col-sm-offset-2">
                         {{ form_row(form.cedula) }}
                         {{ form_row(form.cedulaEstudiantil) }}
                         {{ form_row(form.apellidos) }}
                         {{ form_row(form.nombres) }}
-                    </div>
-                    <div class="col-sm-4 ">
                         {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.lugarNacimiento) }}
                         {{ form_row(form.sexo) }}
-                    </div>
                     <div id="post_usuario" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar representante')|escape }}">
                         {% for widget in form.usuario.children %}
                             {{ _self.widget_prototype(widget, 'eliminar representante') }}
