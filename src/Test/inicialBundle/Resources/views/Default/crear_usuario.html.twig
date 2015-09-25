@@ -19,13 +19,7 @@
         <div class="col-sm-1 text-left">
             <a class="btn-remove btn btn-danger btn-xs" data-related="_self.widget_prototype(form.alumno, 'Remove alumno')|escape ">{{ remove_text }}</a>
         </div>
-        {{ form_row(form.cedula) }}
-        {{ form_row(form.cedulaEstudiantil) }}
-        {{ form_row(form.apellidos) }}
-        {{ form_row(form.nombres) }}
-        {{ form_row(form.fechaNacimiento) }}
-        {{ form_row(form.lugarNacimiento) }}
-        {{ form_row(form.sexo) }}
+        {{ form_widget(form) }}
     </div>
 {% endmacro %}
 {% block extra_head %}

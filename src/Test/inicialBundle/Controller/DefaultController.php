@@ -154,7 +154,6 @@ class DefaultController extends Controller
     public function crear_usuarioAction(Request $request)
     {
         $p = new Usuarios();
-
         if($request->get('_route')=='inicial_agregar_representante'){
             $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
             $formulario -> remove('tipoUsuario');

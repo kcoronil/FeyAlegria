@@ -38,7 +38,7 @@ class UsuariosType extends AbstractType
             ->add('direccion')
             ->add('sexo', 'entity', array('required' => true,'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('activo', 'checkbox', array('required'=>false))
-            ->add('alumno', 'collection', array('type'=>new AlumnosType(), 'allow_add' => true, 'allow_delete' => true,
+            ->add('alumno', 'collection', array('type'=>new AlumnosType("Crear Alumno"), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
 

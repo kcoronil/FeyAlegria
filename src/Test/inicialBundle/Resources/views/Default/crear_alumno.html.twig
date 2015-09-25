@@ -16,23 +16,15 @@
     <div data-content="{{ name }}">
         <div class="col-sm-12 ">
             <div class="row">
-                <div class="col-sm-8 col-sm-offset-2 text-center">
-                    <h3>Nuevo Representante</h3>
+                <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                    <h4>Nuevo Representante</h4>
                 </div>
                 <div class="col-sm-1 text-left">
                     <a class="btn-remove btn btn-danger btn-xs" data-related="{{ name }}">{{ remove_text }}</a>
                 </div>
             </div>
             <div class="row">
-                    {{ form_row(form.tipoUsuario) }}
-                    {{ form_row(form.principal) }}
-                    {{ form_row(form.cedula) }}
-                    {{ form_row(form.apellidos) }}
-                    {{ form_row(form.nombres) }}
-                    {{ form_row(form.fechaNacimiento) }}
-                    {{ form_row(form.direccion) }}
-                    {{ form_row(form.sexo) }}
-                </div>
+                {{ form_widget(form) }}
             </div>
         </div>
     </div>
@@ -42,7 +34,7 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.btn-add').click(function(event) {
+            $('.btn-add').click(function() {
                 var collectionHolder = $('#' + $(this).attr('data-target'));
                 var prototype = collectionHolder.attr('data-prototype');
                 var form = prototype.replace(/__name__/g, collectionHolder.children().length);
@@ -55,47 +47,51 @@
                 $('.datepick').on('change', function(){
                     $('.datepicker').hide();
                 });
-                $(document).on('click','.btn-remove', function(event) {
-                    var name = $(this).attr('data-related');
-                    $('*[data-content="'+name+'"]').remove();
-                    var renombrar = renombrarForms();
-                    var length = collectionHolder.children().length;
-
-                    // alert(collectionHolder.children().eq(0).find(':input').length);
-                    alert('formularios ' + length);
-                    if (length) {
-                        var indexes = [];
-
-                        for (var i = 1; i <= length; i++) {
-                            var divs_forms = collectionHolder.children().eq(i - 1).find(':input').length;
-                            alert('form ' + i + ' Inputs ' + divs_forms);
-                            /*if (divs_forms) {
-                             for (var x = 1; x <= divs_forms; x++) {
-                             var inputName = collectionHolder.children().eq(i - 1).find(':input').eq(x - 1).attr('name');
-                             var inputNameArr = inputName.split("][");
-                             //console.log(inputNameArr);
-                             // inputNameArr = ["appbundle_form_name[parent_field", "index", "collection_field]"]
-                             //it's the second (1) value in array
-                             //var inputIndex = inputNameArr[1];
-                             //indexes.push(inputIndex);
-                             alert('inputName ' + inputName);
-                             }
-                             }*/
-                        }
-                        //find the highest value and add 1 for next field
-                        //var highestIndex = Math.max.apply(null, indexes) + 1;
-                        //return Math.max(highestIndex);
-                    }
-                });
+            });
+            $(document).on('click','.btn-remove', function() {
+                var name = $(this).attr('data-related');
+                $('*[data-content="'+name+'"]').remove();
+                test = renombrar_forms();
             });
 
+        function renombrar_forms(){
+            var collectionHolder = $('#post_usuario');
+            var length = collectionHolder.children().length;
+            // alert(collectionHolder.children().eq(0).find(':input').length);
+            if (length) {
+                alert(length);
+                var indexes = [];
+                for (var i = 1; i <= length; i++) {
+                    var divs_inputs = collectionHolder.eq(i-1).find(':input').length;
+                    alert(divs_inputs);
+                    for (var x = 1; x <= 10; x++){
+                        var nombre_input = collectionHolder.eq(i-1).find(':input').eq(x-1).attr('name');
+                        var id_input = collectionHolder.eq(i-1).find(':input').eq(x-1).attr('id');
+                        alert(collectionHolder.eq(i-1));
+                        //var nuevo_id = id_input.replace()
 
+                    }
+                    /*if (divs_forms) {
+                     for (var x = 1; x <= divs_forms; x++) {
+                     var inputName = collectionHolder.children().eq(i - 1).find(':input').eq(x - 1).attr('name');
+                     var inputNameArr = inputName.split("][");
+                     //console.log(inputNameArr);
+                     // inputNameArr = ["appbundle_form_name[parent_field", "index", "collection_field]"]
+                     //it's the second (1) value in array
+                     //var inputIndex = inputNameArr[1];
+                     //indexes.push(inputIndex);
+                     alert('inputName ' + inputName);
+                     }
+                     }*/
+                }
+
+                //find the highest value and add 1 for next field
+                //var highestIndex = Math.max.apply(null, indexes) + 1;
+                //return Math.max(highestIndex);
+            }
+        }
 
         });
-
-        function renombrarForms() {
-
-        }
     </script>
 
 
@@ -122,7 +118,6 @@
                         {% endfor %}
                     </div>
                     <div class="col-sm-12 text-center ">
-                        <br>
                         <a class="btn-add btn btn-default" data-target="post_usuario">Agregar representante</a>
                     </div>
                     <div class="col-sm-12 text-center ">

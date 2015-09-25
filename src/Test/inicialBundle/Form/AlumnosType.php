@@ -7,9 +7,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class AlumnosType extends AbstractType
 {
+    public function __construct ($titulo)
+    {
+        $this->titulo = $titulo;
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -27,7 +33,12 @@ class AlumnosType extends AbstractType
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
         ;
     }
-    
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+
+        $view->vars['titulo'] = $this->titulo;
+    }
     /**
      * @param OptionsResolverInterface $resolver
      */
