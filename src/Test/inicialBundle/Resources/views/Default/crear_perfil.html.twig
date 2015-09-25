@@ -1,5 +1,4 @@
 {% extends '::plantilla.html.twig' %}
-{# bootstrap_3_layout.html.twig #}
 {% if form is defined %}
     {% form_theme form "::bootstrap_3_layout.html.twig" %}
 {% endif %}
@@ -13,30 +12,7 @@
         <h2 class="clase">{{ accion }}</h2>
         {% if form is defined %}
             <div class="col-sm-12 text-left">
-                <div class="col-sm-12">
-                    {{ form_start(form) }}
-                    <div class="col-sm-3 ">
-                        {{ form_row(form.usuario) }}
-                        {{ form_row(form.email) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.lugarNacimiento) }}
-                        {{ form_row(form.nombreUsuario) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.preguntaSecreta) }}
-                        {{ form_row(form.respuesta) }}
-                    </div>
-                    <div class="col-sm-3">
-                        {{ form_row(form.rol) }}
-                    </div>
-                    <div class="col-sm-12 text-center ">
-                        {{ form_row(form.guardar) }}
-                        {{ form_row(form.guardar_crear) }}
-                        {{ form_end(form) }}
-                    </div>
-
-                </div>
+                {{ form(form) }}
             </div>
         {% endif %}
     </div>

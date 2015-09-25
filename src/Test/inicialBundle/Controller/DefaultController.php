@@ -428,7 +428,7 @@ class DefaultController extends Controller
     public function crear_rolAction(Request $request)
     {
         $p = new Roles();
-        $formulario = $this->createForm(new RolesType(), $p);
+        $formulario = $this->createForm(new RolesType('Crear rol'), $p);
         $formulario-> handleRequest($request);
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Roles')

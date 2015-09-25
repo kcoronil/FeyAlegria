@@ -8,6 +8,7 @@
     top:0;
     left:100%;
     background-color: #D9EDF7;
+    border-color: #36A9B5;
     margin-top:-6px;
     margin-left:-1px;
     -webkit-border-radius:0 6px 6px 6px;
@@ -174,6 +175,7 @@ colores base: background: #990000
     border-top-right-radius: 0px;
     border-top-left-radius: 0px;
     background-color: #D9EDF7;
+    border-color: #36A9B5;
     color: #31708F;
 }
 

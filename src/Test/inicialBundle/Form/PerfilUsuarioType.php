@@ -22,8 +22,8 @@ class PerfilUsuarioType extends AbstractType
             ->add('preguntaSecreta')
             ->add('respuesta')
             ->add('rol')
-            ->add('guardar', 'submit')
-            ->add('guardar_crear', 'submit')
+            ->add('guardar', 'submit', array('attr' => array('posicion_boton' =>'data-first-button')))
+            ->add('guardar_crear', 'submit', array('attr' => array('posicion_boton' =>'data-last-button')))
         ;
     }
 

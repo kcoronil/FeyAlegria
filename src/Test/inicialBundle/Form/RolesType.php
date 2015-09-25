@@ -5,9 +5,15 @@ namespace Test\inicialBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class RolesType extends AbstractType
 {
+    public function __construct ($titulo)
+    {
+        $this->titulo = $titulo;
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -16,11 +22,15 @@ class RolesType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('guardar', 'submit', array('label' => 'Guardar'))
-            ->add('guardar_crear', 'submit', array('label' => 'Guardar y crear otro'))
+            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default')))
         ;
     }
-    
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+
+        $view->vars['titulo'] = $this->titulo;
+    }
     /**
      * @param OptionsResolverInterface $resolver
      */
