@@ -1,0 +1,89 @@
+{% extends '::plantilla.html.twig' %}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% block extra_head %}
+{% endblock %}
+{% block enlace_atajo %}
+    <li><a href="{{ path(atajo) }}">Volver</a></li>
+{% endblock %}
+{% block mensajes %}
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12">
+                <div class="col-sm-6 col-sm-offset-3 text-center ">
+                    {{ form_start(form) }}
+                    {%  for label, flashes in app.session.flashbag.all %}
+                        {% for flash in flashes %}
+                            <div class="alert alert-{{ label }} alert-dismissible" role="alert">
+                                <h4>{{ flash }}</h4>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% if datos is defined %}
+                        {% if datos %}
+                            <table id="tbl_mantenimiento" class="table table-hover table-responsive table-bordered"  width="100%">
+                                <thead>
+                                <tr>
+                                    {% for key, campo in datos.0 %}
+                                        {% if (key == 'id') or ('_id' in key) or ( 'activo' in key ) %}
+                                        {% else %}
+                                            {% if campo is iterable %}
+                                                {% for k, c  in campo.0 %}
+                                                    {% if k != 'id' %}
+                                                        <th class="text-center">{{ k }}</th>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <th class="text-center">{{ key }}</th>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for dato in datos %}
+                                    <tr>
+                                        {% for  key, elemento in dato %}
+                                            {% if  (key == 'id') or ( '_id' in key ) or ( 'activo' in key ) %}
+
+                                            {% else %}
+                                                {% if elemento.timestamp is defined %}
+                                                    <td>{{ elemento|date('d/m/Y') }}</td>
+                                                {% else %}
+                                                    {% if elemento is iterable %}
+                                                        {% for k, item in elemento.0 %}
+                                                            {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                                {% if item.timestamp is defined %}
+                                                                    <td>{{ item|date('d/m/Y') }}</td>
+                                                                {% else %}
+                                                                    <td>{{ item }}</td>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <td>{{ elemento }}</td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <h4 class="text-center">No Hay Registros para mostrar </h4>
+                        {% endif %}
+                    {% endif %}
+                    </br>
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        {% else %}
+            <h4 class="text-center">No Hay Registros para mostrar </h4>
+        {% endif %}
+    </div>
+{% endblock %}

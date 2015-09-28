@@ -143,6 +143,7 @@
                                                         <ul class="dropdown-menu" role="menu">
                                                             <li><a href="#">Tipos de Usuarios</a></li>
                                                             <li><a href="{{ path('inicial_agregar_rol') }}" >Roles</a></li>
+                                                            <li><a href="{{ path('inicial_agregar_banco') }}" >Bancos</a></li>
                                                         </ul>
                                                     </li>
                                                 </ul>
@@ -181,10 +182,12 @@
             {%  endif %}
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="col-sm-6 col-sm-offset-3 text-center">
-                        {% embed 'mensajes.html.twig'%}
-                        {% endembed %}
-                    </div>
+                    {% block mensajes %}
+                        <div class="col-sm-6 col-sm-offset-3 text-center">
+                            {% embed 'mensajes.html.twig'%}
+                            {% endembed %}
+                        </div>
+                    {% endblock %}
                     <div id="contenido" class="col-sm-12">
                         {% block content %}
 

@@ -42,6 +42,18 @@ inicial_agregar_rol:
     path:     /crear_rol
     defaults: { _controller: inicialBundle:Default:crear_rol }
 
+inicial_agregar_banco:
+    path:     /crear_banco
+    defaults: { _controller: inicialBundle:Default:crear_banco }
+
+inicial_editar_banco:
+    path:     /editar_banco/{id}
+    defaults: { _controller: inicialBundle:Default:editar_banco }
+
+inicial_borrar_banco:
+    path:     /borrar_banco/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_banco }
+
 inicial_agregar_perfil:
     path:     /crear_perfil
     defaults: { _controller: inicialBundle:Default:crear_perfil }

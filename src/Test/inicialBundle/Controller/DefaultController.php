@@ -4,6 +4,8 @@ namespace Test\inicialBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Test\inicialBundle\Entity\Bancos;
+use Test\inicialBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
 use Test\inicialBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Entity\Usuarios;
@@ -17,10 +19,9 @@ use Test\inicialBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Alumnos;
 use Test\inicialBundle\Form\AlumnosTypeSimple;
 use Test\inicialBundle\Entity\Passwords;
-use Test\inicialBundle\Form\PasswordType;
 use Test\inicialBundle\Form\PasswordsType;
-use Test\inicialBundle\Form\RecuperarPasswordTmpType;
 use Test\inicialBundle\Form\UsuariosTypeSimple;
+
 
 
 class DefaultController extends Controller
@@ -178,9 +179,6 @@ class DefaultController extends Controller
             if ($formulario->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
-                /*foreach($p->getAlumno() as $alumno){
-                    $alumno->addAlumno($a);
-                    $em->getEntityManager()->persist($alumno);}*/
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
@@ -252,6 +250,7 @@ class DefaultController extends Controller
         $formulario -> remove('fechaNacimiento');
         $formulario -> remove('direccion');
         $formulario -> remove('sexo');
+        $formulario -> remove('activo');
         $formulario -> remove('guardar_crear');
         $formulario-> handleRequest($request);
 
@@ -268,6 +267,7 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
+                $usuario->setActivo(false);
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
 
@@ -282,13 +282,12 @@ class DefaultController extends Controller
         $this->get('session')->getFlashBag()->add(
             'danger', 'Seguro que desea borrar este registro?'
         );
-
-        return $this->render('inicialBundle:Default:detalle_usuario.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario'));
+        $atajo = 'inicial_agregar_banco';
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario', 'atajo'=>$atajo));
     }
 
     public function lista_alumnoAction()
     {
-
         //hacer consulta simple a la bbdd
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
@@ -398,7 +397,7 @@ class DefaultController extends Controller
         {
             throw $this -> createNotFoundException('no usuario con este id: '.$id);
         }
-        $formulario = $this->createForm(new AlumnosTypeSimple(), $alumno);
+        $formulario = $this->createForm(new AlumnosTypeSimple('Editar Estudiante'), $alumno);
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
@@ -788,5 +787,117 @@ class DefaultController extends Controller
 
         return $response;
 
+    }
+    public function crear_bancoAction(Request $request)
+    {
+        $p = new Bancos();
+        $formulario = $this->createForm(new BancosType('Crear Banco'), $p);
+        $formulario-> handleRequest($request);
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Bancos')
+            ->createQueryBuilder('bancos')
+            ->where('bancos.activo = true')
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Banco Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_banco'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Crear rol'));
+    }
+    public function editar_bancoAction($id, Request $request)
+    {
+
+        $banco = $this->getDoctrine()
+            ->getRepository('inicialBundle:Bancos')
+            ->find($id);
+        if (!$banco)
+        {
+            throw $this -> createNotFoundException('no Banco con este id: '.$id);
+        }
+        $formulario = $this->createForm(new BancosType('Editar Banco'), $banco);
+        $formulario -> remove('guardar_crear');
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Banco editado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+            }
+        }
+        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Banco'));
+    }
+    public function borrar_bancoAction($id, Request $request)
+    {
+        $banco = $this->getDoctrine()
+            ->getRepository('inicialBundle:Bancos')
+            ->find($id);
+        if (!$banco)
+        {
+            throw $this -> createNotFoundException('No existe banco con este id: '.$id);
+        }
+        $formulario = $this->createForm(new BancosType('Borrar Banco', 'danger'), $banco);
+        $formulario -> remove('nombre');
+        $formulario-> handleRequest($request);
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Bancos')
+            ->createQueryBuilder('banco')
+            ->where('banco.id = :id')
+            ->andWhere('banco.activo = true')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $banco->setActivo('false');
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'warning', 'Banco borrado con éxito'
+                );
+
+                return $this->redirect($this->generateUrl('inicial_lista_usuario'));
+
+            }
+        }
+        $this->get('session')->getFlashBag()->add(
+            'danger', 'Seguro que desea borrar este registro?'
+        );
+
+        $atajo = 'inicial_agregar_banco';
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),'datos'=>$datos, 'accion'=>'Borrar Banco', 'atajo'=>$atajo));
     }
 }
