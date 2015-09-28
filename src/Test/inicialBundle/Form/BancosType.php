@@ -27,14 +27,13 @@ class BancosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre')
+            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
             ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
         $view->vars['titulo'] = $this->titulo;
         if($this->tipo_panel){
             $view->vars['tipo_panel'] = $this->tipo_panel;

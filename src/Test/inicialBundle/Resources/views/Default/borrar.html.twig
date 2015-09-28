@@ -13,7 +13,7 @@
     <div class="row text-center">
         {% if form is defined %}
             <div class="col-sm-12">
-                <div class="col-sm-6 col-sm-offset-3 text-center ">
+                <div class="col-sm-8 col-sm-offset-2 text-center">
                     {{ form_start(form) }}
                     {%  for label, flashes in app.session.flashbag.all %}
                         {% for flash in flashes %}

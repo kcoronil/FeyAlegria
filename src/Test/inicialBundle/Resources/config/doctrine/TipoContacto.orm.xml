@@ -8,5 +8,6 @@
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="nombre" type="string" column="nombre" length="10" nullable="false"/>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
   </entity>
 </doctrine-mapping>

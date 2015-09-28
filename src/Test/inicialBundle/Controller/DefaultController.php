@@ -5,12 +5,28 @@ namespace Test\inicialBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Test\inicialBundle\Entity\Bancos;
+use Test\inicialBundle\Entity\ConceptosFactura;
+use Test\inicialBundle\Entity\Elementos;
+use Test\inicialBundle\Entity\Eventos;
+use Test\inicialBundle\Entity\Permisos;
+use Test\inicialBundle\Entity\Seccion;
+use Test\inicialBundle\Entity\TipoContacto;
+use Test\inicialBundle\Entity\TipoFactura;
+use Test\inicialBundle\Entity\TipoUsuario;
 use Test\inicialBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
 use Test\inicialBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Entity\Usuarios;
 use Test\inicialBundle\Form\AlumnosTypeUsuario;
+use Test\inicialBundle\Form\ConceptosFacturaType;
+use Test\inicialBundle\Form\ElementosType;
+use Test\inicialBundle\Form\EventosType;
 use Test\inicialBundle\Form\PeriodoEscolarType;
+use Test\inicialBundle\Form\PermisosType;
+use Test\inicialBundle\Form\SeccionType;
+use Test\inicialBundle\Form\TipoContactoType;
+use Test\inicialBundle\Form\TipoFacturaType;
+use Test\inicialBundle\Form\TipoUsuarioType;
 use Test\inicialBundle\Form\UsuariosType;
 use Test\inicialBundle\Entity\Roles;
 use Test\inicialBundle\Form\RolesType;
@@ -18,10 +34,11 @@ use Test\inicialBundle\Entity\PerfilUsuario;
 use Test\inicialBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Alumnos;
 use Test\inicialBundle\Form\AlumnosTypeSimple;
+use Test\inicialBundle\Entity\Curso;
+use Test\inicialBundle\Form\CursoType;
 use Test\inicialBundle\Entity\Passwords;
 use Test\inicialBundle\Form\PasswordsType;
 use Test\inicialBundle\Form\UsuariosTypeSimple;
-
 
 
 class DefaultController extends Controller
@@ -163,7 +180,6 @@ class DefaultController extends Controller
                 ->find(5);
             $p->setTipoUsuario($tipo_usuario);
             $elemento = 'Representante';
-
         }
         else{
             $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
@@ -261,7 +277,6 @@ class DefaultController extends Controller
             ->setParameter('id', $id)
             ->getQuery();
 
-
         $datos = $query->getArrayResult();
 
         if($request->getMethod()=='POST') {
@@ -274,7 +289,6 @@ class DefaultController extends Controller
                 $this->get('session')->getFlashBag()->add(
                     'warning', 'Usuario borrado con éxito'
                 );
-
                 return $this->redirect($this->generateUrl('inicial_lista_usuario'));
 
             }
@@ -301,23 +315,17 @@ class DefaultController extends Controller
 
         $datos = $query->getArrayResult();
 
-
-
         return $this->render('inicialBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
 
     public function detalle_alumnoAction($id, Request $request)
     {
-
-        //hacer consulta simple a la bbdd
-
         $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->where('alumno.id = :id')
             ->andWhere('alumno.activo = true')
             ->setParameter('id', $id)
             ->getQuery();
-
 
         $datos = $query->getArrayResult();
 
@@ -367,9 +375,6 @@ class DefaultController extends Controller
             if ($formulario->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
-                /*foreach($p->getAlumno() as $alumno){
-                    $alumno->addAlumno($a);
-                    $em->getEntityManager()->persist($alumno);}*/
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
@@ -423,115 +428,59 @@ class DefaultController extends Controller
     }
 
 
-    public function crear_rolAction(Request $request)
+    public function borrar_alumnoAction($id, Request $request)
     {
-        $p = new Roles();
-        $formulario = $this->createForm(new RolesType('Crear rol'), $p);
+        $alumno = $this->getDoctrine()
+            ->getRepository('inicialBundle:Alumnos')
+            ->find($id);
+        if (!$alumno)
+        {
+            throw $this -> createNotFoundException('no alumno con este id: '.$id);
+        }
+        $formulario = $this->createForm(new AlumnosTypeSimple('Borrar Estudiante'), $alumno);
+        $formulario -> remove('usuario');
+        $formulario -> remove('cedulaEstudiantil');
+        $formulario -> remove('cedula');
+        $formulario -> remove('nombres');
+        $formulario -> remove('apellidos');
+        $formulario -> remove('fechaNacimiento');
+        $formulario -> remove('lugarNacimiento');
+        $formulario -> remove('sexo');
+        $formulario -> remove('activo');
+        $formulario -> remove('guardar_crear');
         $formulario-> handleRequest($request);
 
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Roles')
-            ->createQueryBuilder('roles')
-            ->where('roles.activo = true')
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->where('alumno.id = :id')
+            ->andWhere('alumno.activo = true')
+            ->setParameter('id', $id)
             ->getQuery();
 
 
         $datos = $query->getArrayResult();
 
-
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
+                $alumno->setActivo(false);
                 $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Rol Creado con éxito'
+                    'warning', 'Alumno borrado con éxito'
                 );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
 
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_rol'));
-                }
+                return $this->redirect($this->generateUrl('inicial_lista_alumno'));
+
             }
         }
-        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Crear rol'));
-    }
-
-    public function crear_perfilAction(Request $request)
-    {
-        $p = new PerfilUsuario();
-        $formulario = $this->createForm(new PerfilUsuarioType(),$p);
-        $formulario-> handleRequest($request);
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
-
-                $em->persist($p);
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Rol Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_perfil'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
-    }
-
-    public function crear_periodoAction(Request $request)
-    {
-
-        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolar')
-            ->createQueryBuilder('periodoescolar')
-            ->select('periodoescolar')
-            ->orderBy('periodoescolar.id')
-            ->getQuery();
-
-        $datos = $query->getArrayResult();
-
-
-        //instancia de la clase (Entity/PeriodoEscolar)
-        $p = new PeriodoEscolar();
-
-        //formulario en blanco de la instancia
-        $formulario = $this->createForm(new PeriodoEscolarType(), $p);
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                //mensaje de registro
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Periodo Creado con éxito'
-                );
-                //solo realiza el guardar
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                //redirecciona de nuevo a al formulario
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_periodo'));
-                }
-            }
-        }
-        //aquii se busca en Resources/views/
-        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos,'accion'=>'Crear Periodo'));
-
+        $this->get('session')->getFlashBag()->add(
+            'danger', 'Seguro que desea borrar este registro?'
+        );
+        $atajo = 'inicial_lista_alumno';
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>'Borrar Estudiante', 'atajo'=>$atajo));
     }
 
     public function consultaAction()
@@ -788,15 +737,44 @@ class DefaultController extends Controller
         return $response;
 
     }
-    public function crear_bancoAction(Request $request)
+
+    public function crear_perfilAction(Request $request)
     {
-        $p = new Bancos();
-        $formulario = $this->createForm(new BancosType('Crear Banco'), $p);
+        $p = new PerfilUsuario();
+        $formulario = $this->createForm(new PerfilUsuarioType(),$p);
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
+
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Rol Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_perfil'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
+    }
+
+    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla)
+    {
+        $p = new $modelo;
+        $formulario = $this->createForm($formulario_base, $p);
         $formulario-> handleRequest($request);
 
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Bancos')
-            ->createQueryBuilder('bancos')
-            ->where('bancos.activo = true')
+        $query = $this->getDoctrine()->getRepository('inicialBundle:'.$objeto)
+            ->createQueryBuilder(strtolower($objeto))
+            ->where(strtolower($objeto).'.activo = true')
             ->getQuery();
 
 
@@ -812,30 +790,28 @@ class DefaultController extends Controller
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Banco Creado con éxito'
+                    'success', $objeto.' creado con éxito'
                 );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
+                return $this->redirect($this->generateUrl($url_redireccion));
 
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_banco'));
-                }
             }
         }
-        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Crear rol'));
+        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>$accion, 'url_editar'=>$url_editar,
+            'url_borrar'=>$url_borrar, 'operaciones_datos'=>true));
     }
-    public function editar_bancoAction($id, Request $request)
+
+    public function editar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)
     {
 
-        $banco = $this->getDoctrine()
-            ->getRepository('inicialBundle:Bancos')
+        $p = $this->getDoctrine()
+            ->getRepository('inicialBundle:'.$objeto)
             ->find($id);
-        if (!$banco)
+        if (!$p)
         {
-            throw $this -> createNotFoundException('no Banco con este id: '.$id);
+            throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
         }
-        $formulario = $this->createForm(new BancosType('Editar Banco'), $banco);
+        $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
@@ -846,33 +822,31 @@ class DefaultController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Banco editado con éxito'
+                    'success', $objeto.' editado con éxito'
                 );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
+                return $this->redirect($this->generateUrl($url_redireccion));
             }
         }
-        return $this->render('inicialBundle:Default:mantenimiento.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Banco'));
+        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(), 'accion'=>$accion));
     }
-    public function borrar_bancoAction($id, Request $request)
+
+    public function borrar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)
     {
-        $banco = $this->getDoctrine()
-            ->getRepository('inicialBundle:Bancos')
+        $p = $this->getDoctrine()
+            ->getRepository('inicialBundle:'.$objeto)
             ->find($id);
-        if (!$banco)
+        if (!$p)
         {
-            throw $this -> createNotFoundException('No existe banco con este id: '.$id);
+            throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
         }
-        $formulario = $this->createForm(new BancosType('Borrar Banco', 'danger'), $banco);
+        $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('nombre');
         $formulario-> handleRequest($request);
 
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Bancos')
-            ->createQueryBuilder('banco')
-            ->where('banco.id = :id')
-            ->andWhere('banco.activo = true')
+        $query = $this->getDoctrine()->getRepository('inicialBundle:'.$objeto)
+            ->createQueryBuilder(strtolower($objeto))
+            ->where(strtolower($objeto).'.id = :id')
+            ->andWhere(strtolower($objeto).'.activo = true')
             ->setParameter('id', $id)
             ->getQuery();
 
@@ -881,23 +855,208 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
-                $banco->setActivo('false');
+                $p->setActivo('false');
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add(
-                    'warning', 'Banco borrado con éxito'
+                    'warning', $objeto.' borrado con éxito'
                 );
 
-                return $this->redirect($this->generateUrl('inicial_lista_usuario'));
-
+                return $this->redirect($this->generateUrl($url_redireccion));
             }
         }
         $this->get('session')->getFlashBag()->add(
             'danger', 'Seguro que desea borrar este registro?'
         );
+        $atajo = $url_redireccion;
+        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
+    }
 
-        $atajo = 'inicial_agregar_banco';
-        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),'datos'=>$datos, 'accion'=>'Borrar Banco', 'atajo'=>$atajo));
+    public function crear_cursoAction(Request $request){
+        $curso = New Curso();
+        $form = New CursoType('Crear Curso');
+        return $this->crear_generico($request, $curso, $form,'Curso', 'Crear Curso', 'inicial_agregar_curso', 'inicial_editar_curso', 'inicial_borrar_curso', 'mantenimiento');
+    }
+
+    public function editar_cursoAction($id, Request $request){
+        $form = New CursoType('Editar Curso');
+        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento');
+    }
+
+    public function borrar_cursoAction($id, Request $request){
+        $form = New CursoType('Borrar Curso');
+        return $this->borrar_generico($id, $request, $form,'Curso', 'Borrar Curso', 'inicial_agregar_curso', 'borrar');
+    }
+
+    public function crear_conceptos_facturaAction(Request $request){
+        $curso = New ConceptosFactura();
+        $form = new ConceptosFacturaType('Crear Concepto Factura');
+        return $this->crear_generico($request, $curso, $form, 'ConceptosFactura', 'Crear Concepto Factura', 'inicial_agregar_conceptos_factura', 'inicial_editar_conceptos_factura', 'inicial_borrar_conceptos_factura', 'mantenimiento');
+    }
+
+    public function editar_conceptos_facturaAction($id, Request $request){
+        $form = New ConceptosFacturaType('Editar Concepto Factura');
+        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento');
+    }
+
+    public function borrar_conceptos_facturaAction($id, Request $request){
+        $form = New ConceptosFacturaType('Borrar Concepto Factura');
+        return $this->borrar_generico($id, $request, $form, 'ConceptosFactura', 'Borrar Concepto Factura', 'inicial_agregar_conceptos_factura', 'borrar');
+    }
+    public function crear_bancoAction(Request $request){
+        $curso = New Bancos();
+        $form = new BancosType('Crear Banco');
+        return $this->crear_generico($request, $curso, $form, 'Bancos', 'Crear Banco', 'inicial_agregar_banco', 'inicial_editar_banco', 'inicial_borrar_banco', 'mantenimiento');
+    }
+
+    public function editar_bancoAction($id, Request $request){
+        $form = New BancosType('Editar Banco');
+        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento');
+    }
+
+    public function borrar_bancoAction($id, Request $request){
+        $form = New BancosType('Borrar Banco');
+        return $this->borrar_generico($id, $request, $form, 'Bancos', 'Borrar Banco', 'inicial_agregar_banco', 'borrar');
+    }
+
+    public function crear_rolAction(Request $request){
+        $curso = New Roles();
+        $form = new RolesType('Crear Rol');
+        return $this->crear_generico($request, $curso, $form, 'Roles', 'Crear Rol', 'inicial_agregar_rol', 'inicial_editar_rol', 'inicial_borrar_rol', 'mantenimiento');
+    }
+
+    public function editar_rolAction($id, Request $request){
+        $form = New RolesType('Editar Rol');
+        return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento');
+    }
+
+    public function borrar_rolAction($id, Request $request){
+        $form = New RolesType('Borrar Rol');
+        return $this->borrar_generico($id, $request, $form, 'Roles', 'Borrar Rol', 'inicial_agregar_rol', 'borrar');
+    }
+
+    public function crear_periodoAction(Request $request){
+        $curso = New PeriodoEscolar();
+        $form = new PeriodoEscolarType('Crear Periodo Escolar');
+        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolar', 'Crear Periodo Escolar', 'inicial_agregar_periodo', 'inicial_editar_periodo', 'inicial_borrar_periodo', 'mantenimiento');
+    }
+
+    public function editar_periodoAction($id, Request $request){
+        $form = New PeriodoEscolarType('Editar Periodo Escolar');
+        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento');
+    }
+
+    public function borrar_periodoAction($id, Request $request){
+        $form = New PeriodoEscolarType('Borrar Periodo Escolar');
+        return $this->borrar_generico($id, $request, $form, 'PeriodoEscolar', 'Borrar Periodo Escolar', 'inicial_agregar_periodo', 'borrar');
+    }
+    public function crear_elementoAction(Request $request){
+        $curso = New Elementos();
+        $form = new ElementosType('Crear elemento del sistema');
+        return $this->crear_generico($request, $curso, $form, 'Elementos', 'Crear Elemento del Sistema', 'inicial_agregar_elemento', 'inicial_editar_elemento', 'inicial_borrar_elemento', 'mantenimiento');
+    }
+
+    public function editar_elementoAction($id, Request $request){
+        $form = New ElementosType('Editar elemento del sistema');
+        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento');
+    }
+
+    public function borrar_elementoAction($id, Request $request){
+        $form = New ElementosType('Borrar elemento del sistema');
+        return $this->borrar_generico($id, $request, $form, 'Elementos', 'Borrar Elemento del Sistema', 'inicial_agregar_elemento', 'borrar');
+    }
+
+    public function crear_eventoAction(Request $request){
+        $curso = New Eventos();
+        $form = new EventosType('Crear evento del sistema');
+        return $this->crear_generico($request, $curso, $form, 'Eventos', 'Crear Evento del Sistema', 'inicial_agregar_evento', 'inicial_editar_evento', 'inicial_borrar_evento', 'mantenimiento');
+    }
+
+    public function editar_eventoAction($id, Request $request){
+        $form = New EventosType('Editar evento del sistema');
+        return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento');
+    }
+
+    public function borrar_eventoAction($id, Request $request){
+        $form = New EventosType('Borrar evento del sistema');
+        return $this->borrar_generico($id, $request, $form, 'Eventos', 'Borrar Evento del Sistema', 'inicial_agregar_evento', 'borrar');
+    }
+    public function crear_permisoAction(Request $request){
+        $curso = New Permisos();
+        $form = new PermisosType('Crear permiso del sistema');
+        return $this->crear_generico($request, $curso, $form, 'Permisos', 'Crear Permisos del Sistema', 'inicial_agregar_permiso', 'inicial_editar_permiso', 'inicial_borrar_permiso', 'mantenimiento');
+    }
+
+    public function editar_permisoAction($id, Request $request){
+        $form = New PermisosType('Editar permiso del sistema');
+        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento');
+    }
+
+    public function borrar_permisoAction($id, Request $request){
+        $form = New PermisosType('Borrar permiso del sistema');
+        return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar');
+    }
+    public function crear_seccionAction(Request $request){
+        $curso = New Seccion();
+        $form = new SeccionType('Crear Seccion');
+        return $this->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento');
+    }
+
+    public function editar_seccionAction($id, Request $request){
+        $form = new SeccionType('Editar Seccion');
+        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento');
+    }
+
+    public function borrar_seccionAction($id, Request $request){
+        $form = new SeccionType('Borrar Seccion');
+        return $this->borrar_generico($id, $request, $form, 'Seccion', 'Borrar Seccion', 'inicial_agregar_seccion', 'borrar');
+    }
+    public function crear_tipo_usuarioAction(Request $request){
+        $curso = New TipoUsuario();
+        $form = new TipoUsuarioType('Crear Tipo Usuario');
+        return $this->crear_generico($request, $curso, $form, 'TipoUsuario', 'Crear Tipo Usuario', 'inicial_agregar_tipo_usuario', 'inicial_editar_tipo_usuario', 'inicial_borrar_tipo_usuario', 'mantenimiento');
+    }
+
+    public function editar_tipo_usuarioAction($id, Request $request){
+        $form = new TipoUsuarioType('Editar Tipo Usuario');
+        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento');
+    }
+
+    public function borrar_tipo_usuarioAction($id, Request $request){
+        $form = new TipoUsuarioType('Borrar Tipo Usuario');
+        return $this->borrar_generico($id, $request, $form, 'TipoUsuario', 'Borrar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'borrar');
+    }
+
+    public function crear_tipo_contactoAction(Request $request){
+        $curso = New TipoContacto();
+        $form = new TipoContactoType('Crear Tipo Contacto');
+        return $this->crear_generico($request, $curso, $form, 'TipoContacto', 'Crear Tipo Contacto', 'inicial_agregar_tipo_contacto', 'inicial_editar_tipo_contacto', 'inicial_borrar_tipo_contacto', 'mantenimiento');
+    }
+
+    public function editar_tipo_contactoAction($id, Request $request){
+        $form = new TipoContactoType('Editar Tipo Contacto');
+        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento');
+    }
+
+    public function borrar_tipo_contactoAction($id, Request $request){
+        $form = new TipoContactoType('Borrar Tipo Contacto');
+        return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar');
+    }
+    public function crear_tipo_facturaAction(Request $request){
+        $curso = New TipoFactura();
+        $form = new TipoFacturaType('Crear Tipo Factura');
+        return $this->crear_generico($request, $curso, $form, 'TipoFactura', 'Crear Tipo Factura', 'inicial_agregar_tipo_factura', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'mantenimiento');
+    }
+
+    public function editar_tipo_facturaAction($id, Request $request){
+        $form = new TipoFacturaType('Editar Tipo Factura');
+        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento');
+    }
+
+    public function borrar_tipo_facturaAction($id, Request $request){
+        $form = new TipoFacturaType('Borrar Tipo Factura');
+        return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar');
     }
 }

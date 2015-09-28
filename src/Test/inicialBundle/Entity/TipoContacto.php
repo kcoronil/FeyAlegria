@@ -28,6 +28,13 @@ class TipoContacto
      */
     private $nombre;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="activo", type="boolean")
+     */
+    private $activo;
+
 
     /**
      * Get id
@@ -60,5 +67,28 @@ class TipoContacto
     public function getNombre()
     {
         return $this->nombre;
+    }
+
+    /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return TipoContacto
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
     }
 }

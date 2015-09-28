@@ -2,9 +2,6 @@
 {% if form is defined %}
     {% form_theme form "::formulario_bootstrap_div.html.twig" %}
 {% endif %}
-{% block enlace_atajo %}
-    <li><a href="{{ path('inicial_lista_usuario') }}">Consultar Usuarios</a></li>
-{% endblock %}
 {% block content %}
     <div class="row text-center">
         {% if form is defined %}
@@ -39,6 +36,9 @@
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
+                            {% if operaciones_datos is defined %}
+                                <th>operaciones</th>
+                            {% endif %}
                         </tr>
                         </thead>
                         <tbody>
@@ -46,7 +46,6 @@
                             <tr>
                                 {% for  key, elemento in dato %}
                                     {% if  (key == 'id') or ( '_id' in key ) or ( 'activo' in key ) %}
-
                                     {% else %}
                                         {% if elemento.timestamp is defined %}
                                             <td>{{ elemento|date('d/m/Y') }}</td>
@@ -67,6 +66,12 @@
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
+                                {% if operaciones_datos is defined %}
+                                    <td>
+                                        <a href="{{ path(url_editar, { 'id': dato.id }) }}" class="btn btn-default btn-xs">Editar</a>
+                                        <a href="{{ path(url_borrar, { 'id': dato.id }) }}" class="btn btn-default btn-xs">Borrar</a>
+                                    </td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>

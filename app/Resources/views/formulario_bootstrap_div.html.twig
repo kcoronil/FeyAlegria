@@ -1,9 +1,15 @@
 {% use "bootstrap_3_layout.html.twig" %}
 
 {% block form_row -%}
-    <div class="col-sm-6">
+    {% if attr.class is defined and 'campo_unico' in attr.class %}
+    {% else %}
+        <div class="col-sm-6">
+    {% endif %}
         {{- parent() -}}
-    </div>
+    {% if attr.class is defined and 'campo_unico' in attr.class %}
+    {% else %}
+        </div>
+    {% endif %}
 {%- endblock form_row %}
 
 {% block button_row -%}

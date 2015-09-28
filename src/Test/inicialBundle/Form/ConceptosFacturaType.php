@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class PeriodoEscolarType extends AbstractType
+class ConceptosFacturaType extends AbstractType
 {
     public function __construct ($titulo, $tipo_panel = null)
     {
@@ -17,7 +17,7 @@ class PeriodoEscolarType extends AbstractType
             $this->tipo_panel = $tipo_panel;
         }
         else{
-            $this->tipo_panel = null;
+        $this->tipo_panel = null;
         }
     }
     /**
@@ -28,9 +28,11 @@ class PeriodoEscolarType extends AbstractType
     {
         $builder
             ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
+            ->add('guardar', 'submit', array('label'=>'Guardar',
+                'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
 
@@ -45,7 +47,7 @@ class PeriodoEscolarType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\PeriodoEscolar'
+            'data_class' => 'Test\inicialBundle\Entity\ConceptosFactura'
         ));
     }
 
@@ -54,6 +56,6 @@ class PeriodoEscolarType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_periodoescolar';
+        return 'test_inicialbundle_conceptosfactura';
     }
 }

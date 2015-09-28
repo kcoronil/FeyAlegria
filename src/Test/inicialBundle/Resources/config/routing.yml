@@ -6,41 +6,18 @@ inicial_homepage:
     path:     /inicio
     defaults: { _controller: inicialBundle:Default:index }
 
-inicial_logout:
-    path:     /logout
-    defaults: { _controller: inicialBundle:Default:logout }
-
-inicial_agregar_usuario:
-    path:     /crear_usuario
-    defaults: { _controller: inicialBundle:Default:crear_usuario }
-
-inicial_agregar_representante:
-    path:     /crear_representante
-    defaults: { _controller: inicialBundle:Default:crear_usuario }
-
-inicial_detalle_usuario:
-    path:     /detalle_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:detalle_usuario }
-
-inicial_editar_usuario:
-    path:     /editar_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:editar_usuario }
-
-inicial_borrar_usuario:
-    path:     /borrar_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:borrar_usuario }
-
-inicial_lista_usuario:
-    path:     /lista_usuario
-    defaults: { _controller: inicialBundle:Default:lista_usuario }
-
-inicial_lista_representante:
-    path:     /lista_representante
-    defaults: { _controller: inicialBundle:Default:lista_usuario }
-
+#--------------------- mantenimiento -------------------------
 inicial_agregar_rol:
     path:     /crear_rol
     defaults: { _controller: inicialBundle:Default:crear_rol }
+
+inicial_editar_rol:
+    path:     /editar_rol/{id}
+    defaults: { _controller: inicialBundle:Default:editar_rol }
+
+inicial_borrar_rol:
+    path:     /borrar_rol/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_rol }
 
 inicial_agregar_banco:
     path:     /crear_banco
@@ -54,10 +31,135 @@ inicial_borrar_banco:
     path:     /borrar_banco/{id}
     defaults: { _controller: inicialBundle:Default:borrar_banco }
 
+inicial_lista_periodo:
+    path:     /lista_periodo_escolar
+    defaults: { _controller: inicialBundle:Default:consulta }
+
+inicial_agregar_periodo:
+    path:     /crear_periodo_escolar
+    defaults: { _controller: inicialBundle:Default:crear_periodo }
+
+inicial_editar_periodo:
+    path:     /editar_periodo_escolar/{id}
+    defaults: { _controller: inicialBundle:Default:editar_periodo }
+
+inicial_borrar_periodo:
+    path:     /borrar_periodo_escolar/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_periodo }
+
 inicial_agregar_perfil:
     path:     /crear_perfil
     defaults: { _controller: inicialBundle:Default:crear_perfil }
 
+inicial_agregar_conceptos_factura:
+    path:     /crear_conceptos_factura
+    defaults: { _controller: inicialBundle:Default:crear_conceptos_factura }
+
+inicial_editar_conceptos_factura:
+    path:     /editar_conceptos_factura/{id}
+    defaults: { _controller: inicialBundle:Default:editar_conceptos_factura }
+
+inicial_borrar_conceptos_factura:
+    path:     /borrar_conceptos_factura/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_conceptos_factura }
+
+inicial_agregar_curso:
+    path:     /crear_curso
+    defaults: { _controller: inicialBundle:Default:crear_curso }
+
+inicial_editar_curso:
+    path:     /editar_curso/{id}
+    defaults: { _controller: inicialBundle:Default:editar_curso }
+
+inicial_borrar_curso:
+    path:     /borrar_curso/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_curso }
+
+inicial_agregar_elemento:
+    path:     /crear_elemento
+    defaults: { _controller: inicialBundle:Default:crear_elemento }
+
+inicial_editar_elemento:
+    path:     /editar_elemento/{id}
+    defaults: { _controller: inicialBundle:Default:editar_elemento }
+
+inicial_borrar_elemento:
+    path:     /borrar_elemento/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_elemento }
+
+inicial_agregar_evento:
+    path:     /crear_evento
+    defaults: { _controller: inicialBundle:Default:crear_evento }
+
+inicial_editar_evento:
+    path:     /editar_evento/{id}
+    defaults: { _controller: inicialBundle:Default:editar_evento }
+
+inicial_borrar_evento:
+    path:     /borrar_evento/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_evento }
+
+inicial_agregar_permiso:
+    path:     /crear_permiso
+    defaults: { _controller: inicialBundle:Default:crear_permiso }
+
+inicial_editar_permiso:
+    path:     /editar_permiso/{id}
+    defaults: { _controller: inicialBundle:Default:editar_permiso }
+
+inicial_borrar_permiso:
+    path:     /borrar_permiso/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_permiso }
+
+inicial_agregar_seccion:
+    path:     /crear_seccion
+    defaults: { _controller: inicialBundle:Default:crear_seccion }
+
+inicial_editar_seccion:
+    path:     /editar_seccion/{id}
+    defaults: { _controller: inicialBundle:Default:editar_seccion }
+
+inicial_borrar_seccion:
+    path:     /borrar_seccion/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_seccion }
+
+inicial_agregar_tipo_usuario:
+    path:     /crear_tipo_usuario
+    defaults: { _controller: inicialBundle:Default:crear_tipo_usuario }
+
+inicial_editar_tipo_usuario:
+    path:     /editar_tipo_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:editar_tipo_usuario }
+
+inicial_borrar_tipo_usuario:
+    path:     /borrar_tipo_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_tipo_usuario }
+
+inicial_agregar_tipo_contacto:
+    path:     /crear_tipo_contacto
+    defaults: { _controller: inicialBundle:Default:crear_tipo_contacto }
+
+inicial_editar_tipo_contacto:
+    path:     /editar_tipo_contacto/{id}
+    defaults: { _controller: inicialBundle:Default:editar_tipo_contacto }
+
+inicial_borrar_tipo_contacto:
+    path:     /borrar_tipo_contacto/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_tipo_contacto }
+
+inicial_agregar_tipo_factura:
+    path:     /crear_tipo_factura
+    defaults: { _controller: inicialBundle:Default:crear_tipo_factura }
+
+inicial_editar_tipo_factura:
+    path:     /editar_tipo_factura/{id}
+    defaults: { _controller: inicialBundle:Default:editar_tipo_factura }
+
+inicial_borrar_tipo_factura:
+    path:     /borrar_tipo_factura/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_tipo_factura }
+
+# ------------------ alumnos ------------------------------
 inicial_lista_alumno:
     path:     /lista_alumno
     defaults: { _controller: inicialBundle:Default:lista_alumno }
@@ -82,6 +184,16 @@ inicial_borrar_alumno:
     path:     /borrar_alumno/{id}
     defaults: { _controller: inicialBundle:Default:borrar_alumno }
 
+inicial_pdf_alumno:
+    path:     /pdf_lista_alumno
+    defaults: { _controller: inicialBundle:Default:lista_alumno_pdf }
+
+#------------------------- usuarios ----------------------------
+
+inicial_logout:
+    path:     /logout
+    defaults: { _controller: inicialBundle:Default:logout }
+
 inicial_solicitar_pass:
     path:     /solicitar_pass/
     defaults: { _controller: inicialBundle:Default:solicitar_pass }
@@ -90,29 +202,46 @@ inicial_recuperar_pass:
     path:     /recuperar_pass/{token}
     defaults: { _controller: inicialBundle:Default:recuperar_pass, token: null  }
 
-inicial_agregar_periodo:
-    path:     /crear_periodo
-    defaults: { _controller: inicialBundle:Default:crear_periodo }
+inicial_agregar_usuario:
+    path:     /crear_usuario
+    defaults: { _controller: inicialBundle:Default:crear_usuario }
 
-inicial_lista_periodo:
-    path:     /lista_periodo
-    defaults: { _controller: inicialBundle:Default:consulta }
+inicial_detalle_usuario:
+    path:     /detalle_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:detalle_usuario }
 
-inicial_pdf_representante:
-    path:     /pdf_lista_representante
-    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
+inicial_editar_usuario:
+    path:     /editar_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:editar_usuario }
+
+inicial_borrar_usuario:
+    path:     /borrar_usuario/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_usuario }
+
+inicial_lista_usuario:
+    path:     /lista_usuario
+    defaults: { _controller: inicialBundle:Default:lista_usuario }
 
 inicial_pdf_usuario:
     path:     /pdf_lista_usuario
     defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
 
-inicial_pdf_alumno:
-    path:     /pdf_lista_alumno
-    defaults: { _controller: inicialBundle:Default:lista_alumno_pdf }
+#------------------------- usuarios (representantes ----------------------------
+
+inicial_agregar_representante:
+    path:     /crear_representante
+    defaults: { _controller: inicialBundle:Default:crear_usuario }
+
+inicial_lista_representante:
+    path:     /lista_representante
+    defaults: { _controller: inicialBundle:Default:lista_usuario }
+
+inicial_pdf_representante:
+    path:     /pdf_lista_representante
+    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
 
 
-
-
+#--------------------- controlador representantes sin uso -----------------
 representantes_home:
     path:     /representantes
     defaults: { _controller: inicialBundle:Representantes:index }

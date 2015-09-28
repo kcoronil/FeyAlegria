@@ -28,6 +28,13 @@ class TipoUsuario
      */
     private $nombre;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="activo", type="boolean")
+     */
+    private $activo;
+
 
     /**
      * Get id
@@ -64,5 +71,28 @@ class TipoUsuario
     public function __toString()
     {
         return $this->nombre;
+    }
+    
+    /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return TipoUsuario
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
     }
 }

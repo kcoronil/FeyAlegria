@@ -21,8 +21,8 @@ class RolesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre')
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default')))
+            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
+            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
 
