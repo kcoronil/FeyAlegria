@@ -213,41 +213,6 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
-    public function editar_usuarioAction($id, Request $request)
-    {
-        $usuario = $this->getDoctrine()
-            ->getRepository('inicialBundle:Usuarios')
-            ->find($id);
-        if (!$usuario)
-        {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
-        }
-        $formulario = $this->createForm(new UsuariosTypeSimple('Modificar Usuario'), $usuario);
-        $formulario -> remove('guardar_crear');
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Usuario modificado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Modificar Usuario'));
-    }
-
     public function borrar_usuarioAction($id, Request $request)
     {
         $usuario = $this->getDoctrine()
@@ -336,97 +301,6 @@ class DefaultController extends Controller
 
         return $this->render('inicialBundle:Default:detalle_alumno.html.twig', array('accion'=>'Detalle Alumno', 'datos'=>$datos));
     }
-
-    public function crear_alumnoAction(Request $request)
-    {
-        $p = new Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'),$p);
-        $formulario-> handleRequest($request);
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Alumno Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_alumno_simple.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
-    }
-
-    public function crear_alumno_usuarioAction(Request $request)
-    {
-        $p = new Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeUsuario('Crear Alumno'), $p);
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Alumno Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_alumno_usuario'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_alumno.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Alumno'));
-    }
-
-    public function editar_alumnoAction($id, Request $request)
-    {
-
-        $alumno = $this->getDoctrine()
-            ->getRepository('inicialBundle:Alumnos')
-            ->find($id);
-        if (!$alumno)
-        {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
-        }
-        $formulario = $this->createForm(new AlumnosTypeSimple('Editar Estudiante'), $alumno);
-        $formulario -> remove('guardar_crear');
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'Alumno Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:crear_alumno_simple.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Estudiante'));
-    }
-
 
     public function borrar_alumnoAction($id, Request $request)
     {
@@ -741,7 +615,7 @@ class DefaultController extends Controller
     public function crear_perfilAction(Request $request)
     {
         $p = new PerfilUsuario();
-        $formulario = $this->createForm(new PerfilUsuarioType(),$p);
+        $formulario = $this->createForm(new PerfilUsuarioType('Crear Perfil'),$p);
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
 
@@ -766,34 +640,41 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
     }
 
-    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla)
+    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null)
     {
         $p = new $modelo;
         $formulario = $this->createForm($formulario_base, $p);
         $formulario-> handleRequest($request);
 
-        $query = $this->getDoctrine()->getRepository('inicialBundle:'.$objeto)
-            ->createQueryBuilder(strtolower($objeto))
-            ->where(strtolower($objeto).'.activo = true')
-            ->getQuery();
+        if($datos) {
+            $query = $this->getDoctrine()->getRepository('inicialBundle:' . $objeto)
+                ->createQueryBuilder(strtolower($objeto))
+                ->where(strtolower($objeto) . '.activo = true')
+                ->getQuery();
 
 
-        $datos = $query->getArrayResult();
-
-
+            $datos = $query->getArrayResult();
+        }
         if($request->getMethod()=='POST') {
-
             if ($formulario->isValid()) {
                 $p->setActivo(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
-
                 $this->get('session')->getFlashBag()->add(
                     'success', $objeto.' creado con éxito'
                 );
-                return $this->redirect($this->generateUrl($url_redireccion));
-
+                if($formulario->get('guardar_crear')){
+                    if ($formulario->get('guardar')->isClicked()) {
+                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                    }
+                    if ($formulario->get('guardar_crear')->isClicked()) {
+                        return $this->redirect($this->generateUrl($url_redireccion));
+                    }
+                }
+                else {
+                    return $this->redirect($this->generateUrl($url_redireccion));
+                }
             }
         }
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
@@ -809,7 +690,7 @@ class DefaultController extends Controller
             ->find($id);
         if (!$p)
         {
-            throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
+            throw $this -> createNotFoundException('No existe '.$objeto.' con este id: '.$id);
         }
         $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('guardar_crear');
@@ -873,190 +754,178 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
     }
-
     public function crear_cursoAction(Request $request){
         $curso = New Curso();
         $form = New CursoType('Crear Curso');
-        return $this->crear_generico($request, $curso, $form,'Curso', 'Crear Curso', 'inicial_agregar_curso', 'inicial_editar_curso', 'inicial_borrar_curso', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form,'Curso', 'Crear Curso', 'inicial_agregar_curso', 'inicial_editar_curso', 'inicial_borrar_curso', 'mantenimiento', 'true');
     }
-
     public function editar_cursoAction($id, Request $request){
         $form = New CursoType('Editar Curso');
-        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento', 'true');
     }
-
     public function borrar_cursoAction($id, Request $request){
         $form = New CursoType('Borrar Curso');
-        return $this->borrar_generico($id, $request, $form,'Curso', 'Borrar Curso', 'inicial_agregar_curso', 'borrar');
+        return $this->borrar_generico($id, $request, $form,'Curso', 'Borrar Curso', 'inicial_agregar_curso', 'borrar', 'true');
     }
-
     public function crear_conceptos_facturaAction(Request $request){
         $curso = New ConceptosFactura();
         $form = new ConceptosFacturaType('Crear Concepto Factura');
-        return $this->crear_generico($request, $curso, $form, 'ConceptosFactura', 'Crear Concepto Factura', 'inicial_agregar_conceptos_factura', 'inicial_editar_conceptos_factura', 'inicial_borrar_conceptos_factura', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'ConceptosFactura', 'Crear Concepto Factura', 'inicial_agregar_conceptos_factura', 'inicial_editar_conceptos_factura', 'inicial_borrar_conceptos_factura', 'mantenimiento', 'true');
     }
-
     public function editar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Editar Concepto Factura');
-        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento', 'true');
     }
-
     public function borrar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Borrar Concepto Factura');
-        return $this->borrar_generico($id, $request, $form, 'ConceptosFactura', 'Borrar Concepto Factura', 'inicial_agregar_conceptos_factura', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'ConceptosFactura', 'Borrar Concepto Factura', 'inicial_agregar_conceptos_factura', 'borrar', 'true');
     }
     public function crear_bancoAction(Request $request){
         $curso = New Bancos();
         $form = new BancosType('Crear Banco');
-        return $this->crear_generico($request, $curso, $form, 'Bancos', 'Crear Banco', 'inicial_agregar_banco', 'inicial_editar_banco', 'inicial_borrar_banco', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Bancos', 'Crear Banco', 'inicial_agregar_banco', 'inicial_editar_banco', 'inicial_borrar_banco', 'mantenimiento', 'true');
     }
-
     public function editar_bancoAction($id, Request $request){
         $form = New BancosType('Editar Banco');
-        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento', 'true');
     }
-
     public function borrar_bancoAction($id, Request $request){
         $form = New BancosType('Borrar Banco');
-        return $this->borrar_generico($id, $request, $form, 'Bancos', 'Borrar Banco', 'inicial_agregar_banco', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Bancos', 'Borrar Banco', 'inicial_agregar_banco', 'borrar', 'true');
     }
-
     public function crear_rolAction(Request $request){
         $curso = New Roles();
         $form = new RolesType('Crear Rol');
-        return $this->crear_generico($request, $curso, $form, 'Roles', 'Crear Rol', 'inicial_agregar_rol', 'inicial_editar_rol', 'inicial_borrar_rol', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Roles', 'Crear Rol', 'inicial_agregar_rol', 'inicial_editar_rol', 'inicial_borrar_rol', 'mantenimiento', 'true');
     }
-
     public function editar_rolAction($id, Request $request){
         $form = New RolesType('Editar Rol');
-        return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento', 'true');
     }
-
     public function borrar_rolAction($id, Request $request){
         $form = New RolesType('Borrar Rol');
-        return $this->borrar_generico($id, $request, $form, 'Roles', 'Borrar Rol', 'inicial_agregar_rol', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Roles', 'Borrar Rol', 'inicial_agregar_rol', 'borrar', 'true');
     }
-
     public function crear_periodoAction(Request $request){
         $curso = New PeriodoEscolar();
         $form = new PeriodoEscolarType('Crear Periodo Escolar');
-        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolar', 'Crear Periodo Escolar', 'inicial_agregar_periodo', 'inicial_editar_periodo', 'inicial_borrar_periodo', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolar', 'Crear Periodo Escolar', 'inicial_agregar_periodo', 'inicial_editar_periodo', 'inicial_borrar_periodo', 'mantenimiento', 'true');
     }
-
     public function editar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Editar Periodo Escolar');
-        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento', 'true');
     }
-
     public function borrar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Borrar Periodo Escolar');
-        return $this->borrar_generico($id, $request, $form, 'PeriodoEscolar', 'Borrar Periodo Escolar', 'inicial_agregar_periodo', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'PeriodoEscolar', 'Borrar Periodo Escolar', 'inicial_agregar_periodo', 'borrar', 'true');
     }
     public function crear_elementoAction(Request $request){
         $curso = New Elementos();
         $form = new ElementosType('Crear elemento del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Elementos', 'Crear Elemento del Sistema', 'inicial_agregar_elemento', 'inicial_editar_elemento', 'inicial_borrar_elemento', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Elementos', 'Crear Elemento del Sistema', 'inicial_agregar_elemento', 'inicial_editar_elemento', 'inicial_borrar_elemento', 'mantenimiento', 'true');
     }
-
     public function editar_elementoAction($id, Request $request){
         $form = New ElementosType('Editar elemento del sistema');
-        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento', 'true');
     }
-
     public function borrar_elementoAction($id, Request $request){
         $form = New ElementosType('Borrar elemento del sistema');
-        return $this->borrar_generico($id, $request, $form, 'Elementos', 'Borrar Elemento del Sistema', 'inicial_agregar_elemento', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Elementos', 'Borrar Elemento del Sistema', 'inicial_agregar_elemento', 'borrar', 'true');
     }
-
     public function crear_eventoAction(Request $request){
         $curso = New Eventos();
         $form = new EventosType('Crear evento del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Eventos', 'Crear Evento del Sistema', 'inicial_agregar_evento', 'inicial_editar_evento', 'inicial_borrar_evento', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Eventos', 'Crear Evento del Sistema', 'inicial_agregar_evento', 'inicial_editar_evento', 'inicial_borrar_evento', 'mantenimiento', 'true');
     }
-
     public function editar_eventoAction($id, Request $request){
         $form = New EventosType('Editar evento del sistema');
-        return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento', 'true');
     }
-
     public function borrar_eventoAction($id, Request $request){
         $form = New EventosType('Borrar evento del sistema');
-        return $this->borrar_generico($id, $request, $form, 'Eventos', 'Borrar Evento del Sistema', 'inicial_agregar_evento', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Eventos', 'Borrar Evento del Sistema', 'inicial_agregar_evento', 'borrar', 'true');
     }
     public function crear_permisoAction(Request $request){
         $curso = New Permisos();
         $form = new PermisosType('Crear permiso del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Permisos', 'Crear Permisos del Sistema', 'inicial_agregar_permiso', 'inicial_editar_permiso', 'inicial_borrar_permiso', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Permisos', 'Crear Permisos del Sistema', 'inicial_agregar_permiso', 'inicial_editar_permiso', 'inicial_borrar_permiso', 'mantenimiento', 'true');
     }
-
     public function editar_permisoAction($id, Request $request){
         $form = New PermisosType('Editar permiso del sistema');
-        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento', 'true');
     }
-
     public function borrar_permisoAction($id, Request $request){
         $form = New PermisosType('Borrar permiso del sistema');
-        return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar', 'true');
     }
     public function crear_seccionAction(Request $request){
         $curso = New Seccion();
         $form = new SeccionType('Crear Seccion');
-        return $this->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento', 'true');
     }
-
     public function editar_seccionAction($id, Request $request){
         $form = new SeccionType('Editar Seccion');
-        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento', 'true');
     }
-
     public function borrar_seccionAction($id, Request $request){
         $form = new SeccionType('Borrar Seccion');
-        return $this->borrar_generico($id, $request, $form, 'Seccion', 'Borrar Seccion', 'inicial_agregar_seccion', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'Seccion', 'Borrar Seccion', 'inicial_agregar_seccion', 'borrar', 'true');
     }
     public function crear_tipo_usuarioAction(Request $request){
         $curso = New TipoUsuario();
         $form = new TipoUsuarioType('Crear Tipo Usuario');
-        return $this->crear_generico($request, $curso, $form, 'TipoUsuario', 'Crear Tipo Usuario', 'inicial_agregar_tipo_usuario', 'inicial_editar_tipo_usuario', 'inicial_borrar_tipo_usuario', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'TipoUsuario', 'Crear Tipo Usuario', 'inicial_agregar_tipo_usuario', 'inicial_editar_tipo_usuario', 'inicial_borrar_tipo_usuario', 'mantenimiento', 'true');
     }
-
     public function editar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Editar Tipo Usuario');
-        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento', 'true');
     }
-
     public function borrar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Borrar Tipo Usuario');
-        return $this->borrar_generico($id, $request, $form, 'TipoUsuario', 'Borrar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'TipoUsuario', 'Borrar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'borrar', 'true');
     }
-
     public function crear_tipo_contactoAction(Request $request){
         $curso = New TipoContacto();
         $form = new TipoContactoType('Crear Tipo Contacto');
-        return $this->crear_generico($request, $curso, $form, 'TipoContacto', 'Crear Tipo Contacto', 'inicial_agregar_tipo_contacto', 'inicial_editar_tipo_contacto', 'inicial_borrar_tipo_contacto', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'TipoContacto', 'Crear Tipo Contacto', 'inicial_agregar_tipo_contacto', 'inicial_editar_tipo_contacto', 'inicial_borrar_tipo_contacto', 'mantenimiento', 'true');
     }
-
     public function editar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Editar Tipo Contacto');
-        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento', 'true');
     }
-
     public function borrar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Borrar Tipo Contacto');
-        return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar', 'true');
     }
     public function crear_tipo_facturaAction(Request $request){
         $curso = New TipoFactura();
         $form = new TipoFacturaType('Crear Tipo Factura');
-        return $this->crear_generico($request, $curso, $form, 'TipoFactura', 'Crear Tipo Factura', 'inicial_agregar_tipo_factura', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'mantenimiento');
+        return $this->crear_generico($request, $curso, $form, 'TipoFactura', 'Crear Tipo Factura', 'inicial_agregar_tipo_factura', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'mantenimiento', 'true');
     }
-
     public function editar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Editar Tipo Factura');
-        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento');
+        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento', 'true');
     }
-
     public function borrar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Borrar Tipo Factura');
-        return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar');
+        return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar', 'true');
+    }
+    public function crear_alumnoAction(Request $request){
+        $modelo = New Alumnos();
+        $form = new AlumnosTypeSimple('Crear Estudiante');
+        return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno_simple');
+    }
+    public function editar_alumnoAction($id, Request $request){
+        $form = new AlumnosTypeSimple('Editar Estudiante');
+        return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_agregar_alumno', 'crear_alumno_simple');
+    }
+    public function crear_alumno_usuarioAction(Request $request){
+        $modelo = New Alumnos();
+        $form = new AlumnosTypeUsuario('Crear Estudiante');
+        return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
+    }
+    public function editar_usuarioAction($id, Request $request){
+        $form = new UsuariosTypeSimple('Editar Usuario');
+        return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
     }
 }
