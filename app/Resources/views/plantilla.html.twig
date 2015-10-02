@@ -45,10 +45,9 @@
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
                                 <li><a href="{{ path('inicial_homepage') }}">Inicio <span class="sr-only">(current)</span></a></li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menú <span class="caret"></span></a>
-                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menú <span class="caret"></span></a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                         {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
                                             <!--<li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preinscripciones</a>
@@ -130,34 +129,6 @@
                                             </li>-->
 
                                         {% endif %}
-                                        {% if  (app.session.get('id_tipo_usuario')== 1) %}
-                                            <li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuarios</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_lista_usuario') }}" >Consultas</a></li>
-                                                    <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">Consultas PDF</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_perfil') }}">Agregar Perfil</a></li>
-                                                    <li class="dropdown-submenu">
-                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mantenimiento</a>
-                                                        <ul class="dropdown-menu" role="menu">
-                                                            <li><a href="{{ path('inicial_agregar_tipo_usuario') }}">Tipos de Usuarios</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_tipo_contacto') }}">Tipos de Contacto</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_tipo_factura') }}">Tipos de Factura</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_rol') }}" >Roles</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_banco') }}" >Bancos</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >Conceptos Factura</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_curso') }}" >Cursos</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_seccion') }}" >Secciones</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_periodo') }}" >Periodo Escolar</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_elemento') }}" >Elementos del Sistema</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_evento') }}" >Eventos del Sistema</a></li>
-                                                            <li><a href="{{ path('inicial_agregar_permiso') }}" >Permisos del Sistema</a></li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        {% endif %}
                                         {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==5)%}
                                             <!--
                                             <li class="dropdown-submenu">
@@ -170,6 +141,44 @@
                                         {% endif %}
                                         <!-- <li class="divider"></li>
                                         <li><a tabindex="-1" href="#">Separated link</a></li> -->
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mantenimiento<span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                        {% if  (app.session.get('id_tipo_usuario')== 1) %}
+                                            <li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Varios</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{{ path('inicial_agregar_tipo_contacto') }}">Tipos de Contacto</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_tipo_factura') }}">Tipos de Factura</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_banco') }}" >Bancos</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >Conceptos Factura</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuarios</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{{ path('inicial_agregar_tipo_usuario') }}">Tipos de Usuarios</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_rol') }}" >Roles</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_permiso') }}" >Permisos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_elemento') }}" >Elementos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_evento') }}" >Eventos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_perfil') }}">Agregar Perfil</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
+                                                    <li><a href="{{ path('inicial_lista_usuario') }}" >Consultas</a></li>
+                                                    <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">Consultas PDF</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Periodo Escolar</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{{ path('inicial_agregar_curso') }}" >Cursos</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_seccion') }}" >Secciones</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_periodo') }}" >Periodo Escolar</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
                                     </ul>
                                 </li>
                                 {% block enlace_atajo %}{% endblock %}
