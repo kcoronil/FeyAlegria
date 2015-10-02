@@ -9,6 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PeriodoEscolar
 {
+
+    /**
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarCurso", mappedBy="sexo")
+     */
+
     /**
      * @var string
      */
@@ -79,5 +84,9 @@ class PeriodoEscolar
     public function getId()
     {
         return $this->id;
+    }
+    public function __toString()
+    {
+        return $this->nombre;
     }
 }

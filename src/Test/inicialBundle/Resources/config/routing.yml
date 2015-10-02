@@ -159,6 +159,18 @@ inicial_borrar_tipo_factura:
     path:     /borrar_tipo_factura/{id}
     defaults: { _controller: inicialBundle:Default:borrar_tipo_factura }
 
+inicial_agregar_grado:
+    path:     /crear_grado
+    defaults: { _controller: inicialBundle:Default:crear_grado }
+
+inicial_editar_grado:
+    path:     /editar_grado/{id}
+    defaults: { _controller: inicialBundle:Default:editar_grado }
+
+inicial_borrar_grado:
+    path:     /borrar_grado/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_grado }
+
 # ------------------ alumnos ------------------------------
 inicial_lista_alumno:
     path:     /lista_alumno

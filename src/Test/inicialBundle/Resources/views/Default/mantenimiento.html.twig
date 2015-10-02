@@ -18,11 +18,13 @@
     <div class="row">
         {% if datos is defined %}
             {% if datos %}
+
                 <div class="col-sm-4 col-sm-offset-4 ">
                     <table id="tbl_mantenimiento" class="table-bordered table-hover table-responsive"  width="100%">
                         <thead>
                         <tr>
                             {% for key, campo in datos.0 %}
+                                {{ key }} {{ campo }}
                                 {% if (key == 'id') or ('_id' in key) or ( 'activo' in key ) %}
                                 {% else %}
                                     {% if campo is iterable %}

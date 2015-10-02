@@ -24,7 +24,7 @@ class Sexo
     protected $usuario;
 
     public function __construct(){
-        $this->$usuario = new ArrayCollection();
+        $this->usuario = new ArrayCollection();
     }
     /**
      * @var integer

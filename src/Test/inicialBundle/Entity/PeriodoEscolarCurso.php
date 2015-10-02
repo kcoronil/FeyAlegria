@@ -10,6 +10,23 @@ use Doctrine\ORM\Mapping as ORM;
 class PeriodoEscolarCurso
 {
     /**
+     * @ORM\ManyToOne(targetEntity="PeriodoEscolar", inversedBy="grado")
+     * @ORM\JoinColumn(name="periodo_escolar_id", referencedColumnName="id")
+     */
+
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Seccion", inversedBy="grado")
+     * @ORM\JoinColumn(name="seccion_id", referencedColumnName="id")
+     */
+
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Curso", inversedBy="grado")
+     * @ORM\JoinColumn(name="curso_id", referencedColumnName="id")
+     */
+
+    /**
      * @var boolean
      */
     private $activo;

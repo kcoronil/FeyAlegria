@@ -8,6 +8,7 @@ use Test\inicialBundle\Entity\Bancos;
 use Test\inicialBundle\Entity\ConceptosFactura;
 use Test\inicialBundle\Entity\Elementos;
 use Test\inicialBundle\Entity\Eventos;
+use Test\inicialBundle\Entity\PeriodoEscolarCurso;
 use Test\inicialBundle\Entity\Permisos;
 use Test\inicialBundle\Entity\Seccion;
 use Test\inicialBundle\Entity\TipoContacto;
@@ -21,6 +22,7 @@ use Test\inicialBundle\Form\AlumnosTypeUsuario;
 use Test\inicialBundle\Form\ConceptosFacturaType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EventosType;
+use Test\inicialBundle\Form\PeriodoEscolarCursoType;
 use Test\inicialBundle\Form\PeriodoEscolarType;
 use Test\inicialBundle\Form\PermisosType;
 use Test\inicialBundle\Form\SeccionType;
@@ -664,7 +666,7 @@ class DefaultController extends Controller
                 $this->get('session')->getFlashBag()->add(
                     'success', $objeto.' creado con éxito'
                 );
-                if($formulario->get('guardar_crear')){
+                if(array_key_exists('guardar_crear', $formulario)){
                     if ($formulario->get('guardar')->isClicked()) {
                         return $this->redirect($this->generateUrl('inicial_homepage'));
                     }
@@ -927,5 +929,10 @@ class DefaultController extends Controller
     public function editar_usuarioAction($id, Request $request){
         $form = new UsuariosTypeSimple('Editar Usuario');
         return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
+    }
+    public function crear_gradoAction(Request $request){
+        $curso = New PeriodoEscolarCurso();
+        $form = new PeriodoEscolarCursoType('Crear Grado');
+        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolarCurso', 'Crear Grado', 'inicial_agregar_grado', 'inicial_editar_grado', 'inicial_borrar_grado', 'mantenimiento', 'true');
     }
 }
