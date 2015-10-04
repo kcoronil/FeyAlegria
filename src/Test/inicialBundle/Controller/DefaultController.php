@@ -931,8 +931,110 @@ class DefaultController extends Controller
         return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
     }
     public function crear_gradoAction(Request $request){
-        $curso = New PeriodoEscolarCurso();
-        $form = new PeriodoEscolarCursoType('Crear Grado');
-        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolarCurso', 'Crear Grado', 'inicial_agregar_grado', 'inicial_editar_grado', 'inicial_borrar_grado', 'mantenimiento', 'true');
+        $p = New PeriodoEscolarCurso();
+        $formulario = $this->createForm(new PeriodoEscolarCursoType('Crear Grado'), $p);
+        $formulario-> handleRequest($request);
+        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolarCurso')
+            ->createQueryBuilder('grado')
+            ->select('grado', 'seccion_tbl.nombre as seccion', 'curso_tbl.nombre as curso', 'periodo_tbl.nombre as periodo_escolar')
+            ->where('grado.activo = true')
+            ->innerJoin('inicialBundle:Seccion', 'seccion_tbl', 'WITH', 'grado.seccion = seccion_tbl.id')
+            ->innerJoin('inicialBundle:Curso', 'curso_tbl', 'WITH', 'grado.curso = curso_tbl.id')
+            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodo_tbl', 'WITH', 'grado.periodoEscolar = periodo_tbl.id')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Grado creado con éxito'
+                );
+
+                return $this->redirect($this->generateUrl('inicial_agregar_grado'));
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_grado.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>'Crear Grado', 'url_editar'=>'inicial_editar_grado',
+            'url_borrar'=>'inicial_borrar_grado'));
+    }
+    public function editar_gradoAction($id, Request $request)
+    {
+
+        $p = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolarCurso')
+            ->find($id);
+        if (!$p)
+        {
+            throw $this -> createNotFoundException('No existe grado con este id: '.$id);
+        }
+        $formulario = $this->createForm(new PeriodoEscolarCursoType('Editar Grado'), $p);
+        $formulario -> remove('guardar_crear');
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Grado editado con éxito'
+                );
+                return $this->redirect($this->generateUrl('inicial_agregar_grado'));
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_grado.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar Grado'));
+    }
+    public function borrar_gradoAction($id, Request $request)
+    {
+        $p = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolarCurso')
+            ->find($id);
+        if (!$p)
+        {
+            throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
+        }
+        $formulario = $this->createForm(new PeriodoEscolarCursoType('Borrar Grado'), $p);
+        $formulario -> remove('seccion');
+        $formulario -> remove('curso');
+        $formulario -> remove('periodoEscolar');
+        $formulario-> handleRequest($request);
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolarCurso')
+            ->createQueryBuilder('grado')
+            ->select('grado', 'seccion_tbl.nombre as seccion', 'curso_tbl.nombre as curso', 'periodo_tbl.nombre as periodo_escolar')
+            ->where('grado.activo = true')
+            ->innerJoin('inicialBundle:Seccion', 'seccion_tbl', 'WITH', 'grado.seccion = seccion_tbl.id')
+            ->innerJoin('inicialBundle:Curso', 'curso_tbl', 'WITH', 'grado.curso = curso_tbl.id')
+            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodo_tbl', 'WITH', 'grado.periodoEscolar = periodo_tbl.id')
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $p->setActivo('false');
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'warning', 'Grado borrado con éxito'
+                );
+
+                return $this->redirect($this->generateUrl('inicial_agregar_grado'));
+            }
+        }
+        $this->get('session')->getFlashBag()->add(
+            'danger', 'Seguro que desea borrar este registro?'
+        );
+        $atajo = 'inicial_agregar_grado';
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>'Borrar Grado', 'atajo'=>$atajo));
     }
 }

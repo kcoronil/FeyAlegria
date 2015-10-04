@@ -11,7 +11,7 @@ class PeriodoEscolar
 {
 
     /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarCurso", mappedBy="sexo")
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarCurso", mappedBy="periodo")
      */
 
     /**

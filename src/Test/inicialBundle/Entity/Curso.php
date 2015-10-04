@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 class Curso
 {
     /**
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarCurso", mappedBy="curso")
+     */
+
+    /**
      * @var string
      */
     private $nombre;

@@ -1,0 +1,48 @@
+{% extends '::plantilla.html.twig' %}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-4 col-sm-offset-4 ">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% else %}
+            <h2 class="clase">{{ accion }}</h2>
+        {% endif %}
+    </div>
+    <br>
+    <div class="row">
+        {% if datos is defined %}
+            {% if datos %}
+                <div class="col-sm-4 col-sm-offset-4 ">
+                    <table id="tbl_mantenimiento" class="table-bordered table-hover table-responsive"  width="100%">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Grado</th>
+
+                            <th>operaciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for dato in datos %}
+                            <tr>
+                                <td>{{ dato.curso }} {{ dato.seccion }} {{ dato.periodo_escolar }}</td>
+                                <td>
+                                    <a href="{{ path(url_editar, { 'id': dato.0.id }) }}" class="btn btn-default btn-xs">Editar</a>
+                                    <a href="{{ path(url_borrar, { 'id': dato.0.id }) }}" class="btn btn-default btn-xs">Borrar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <h4 class="text-center">No Hay Registros para mostrar </h4>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
