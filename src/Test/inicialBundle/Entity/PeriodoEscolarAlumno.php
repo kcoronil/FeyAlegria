@@ -10,11 +10,16 @@ use Doctrine\ORM\Mapping as ORM;
 class PeriodoEscolarAlumno
 {
     /**
+     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="grado_alumno")
+     * @ORM\JoinColumn(name="periodo_escolar_curso_id", referencedColumnName="id")
+     */
+
+    /**
      * @var boolean
      */
     private $activo;
 
-    /**
+    /**9
      * @var integer
      */
     private $id;

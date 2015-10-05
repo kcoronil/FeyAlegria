@@ -27,6 +27,10 @@ class PeriodoEscolarCurso
      */
 
     /**
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="periodoEscolarCurso")
+     */
+
+    /**
      * @var boolean
      */
     private $activo;
