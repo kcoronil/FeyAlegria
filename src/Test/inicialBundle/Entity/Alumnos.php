@@ -13,8 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Alumnos
 {
-
-
     /**
      * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
@@ -26,24 +24,14 @@ class Alumnos
 
     public function __construct() {
         $this->usuario = new ArrayCollection();
+        $this->PeriodoEscolarAlumno = new ArrayCollection();
     }
-
-    /*public function addUsuarios(Usuarios $usuario)
-    {
-        if (!$this->usuario->contains($usuario)) {
-            $this->usuario->add($usuario);
-        }
-    }*/
 
     public function addUsuario(Usuarios $usuario)
     {
         $usuario->addAlumno($this);
-
         $this->usuario[] = $usuario;
-
-        //$this->alumno->add($alumno);
     }
-
 
     public function removeUsuario($usuario)
     {
@@ -57,6 +45,28 @@ class Alumnos
      */
 
 
+    /**
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"persist"})
+     */
+
+    protected $PeriodoEscolarAlumno;
+
+    public function getPeriodoEscolarAlumno()
+    {
+        return $this->PeriodoEscolarAlumno;
+    }
+
+
+    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $PeriodoEscolarAlumno)
+    {
+        $PeriodoEscolarAlumno->setAlumno($this);
+        $this->PeriodoEscolarAlumno[] = $PeriodoEscolarAlumno;
+    }
+
+    public function removePeriodoescolaralumno($PeriodoEscolarAlumno)
+    {
+        return $this->PeriodoEscolarAlumno->removeElement($PeriodoEscolarAlumno);
+    }
     /**
      * @var integer
      *

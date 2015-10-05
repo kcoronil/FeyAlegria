@@ -200,6 +200,10 @@ inicial_pdf_alumno:
     path:     /pdf_lista_alumno
     defaults: { _controller: inicialBundle:Default:lista_alumno_pdf }
 
+inicial_agregar_periodo_alumno:
+    path:     /crear_periodo_alumno
+    defaults: { _controller: inicialBundle:Default:crear_periodo_alumno }
+
 #------------------------- usuarios ----------------------------
 
 inicial_logout:

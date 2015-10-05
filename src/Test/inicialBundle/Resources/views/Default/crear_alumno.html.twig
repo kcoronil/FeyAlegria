@@ -58,6 +58,7 @@
                         {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.lugarNacimiento) }}
                         {{ form_row(form.sexo) }}
+                        {{ form_row(form.periodoescolaralumno) }}
                         {% if form.usuario is defined %}
                             <div id="post_usuario" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar representante')|escape }}">
                                 {% for widget in form.usuario.children %}
@@ -69,6 +70,7 @@
                                 <a class="btn-add btn btn-default" data-target="post_usuario">Agregar representante</a>
                             </div>
                         {% endif %}
+
                         <div class="col-sm-12 text-center ">
                             <br>
                             {{ form_row(form.guardar) }}

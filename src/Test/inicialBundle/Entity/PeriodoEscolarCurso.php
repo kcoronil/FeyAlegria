@@ -27,9 +27,24 @@ class PeriodoEscolarCurso
      */
 
     /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="periodoEscolarCurso")
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="periodoEscolarCurso", cascade={"persist"})
      */
 
+    private $periodoEscolarAlumno;
+
+
+    public function getperiodoEscolarAlumno()
+    {
+        return $this->periodoEscolarAlumno;
+    }
+
+
+    public function addperiodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
+    {
+        $periodoEscolarAlumno->setPeriodoEscolarCurso($this);
+
+        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
+    }
     /**
      * @var boolean
      */
@@ -156,5 +171,9 @@ class PeriodoEscolarCurso
     public function getCurso()
     {
         return $this->curso;
+    }
+    public function __toString()
+    {
+        return $this->curso->getNombre().$this->seccion->getNombre().$this->periodoEscolar->getNombre();
     }
 }

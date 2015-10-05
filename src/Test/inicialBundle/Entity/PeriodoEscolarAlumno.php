@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * PeriodoEscolarAlumno
@@ -10,14 +11,19 @@ use Doctrine\ORM\Mapping as ORM;
 class PeriodoEscolarAlumno
 {
     /**
-     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="grado_alumno")
+     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="PeriodoEscolarAlumno", cascade={"persist"})
      * @ORM\JoinColumn(name="periodo_escolar_curso_id", referencedColumnName="id")
+     */
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="periodoEscolarAlumno" , cascade={"persist"})
+     * @ORM\JoinColumn(name="alumno_id", referencedColumnName="id")
      */
 
     /**
      * @var boolean
      */
-    private $activo;
+    private $activo = true;
 
     /**9
      * @var integer

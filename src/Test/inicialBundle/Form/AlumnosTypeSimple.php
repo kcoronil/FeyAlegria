@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Test\inicialBundle\Entity\PeriodoEscolarAlumno;
 
 class AlumnosTypeSimple extends AbstractType
 {
@@ -32,6 +33,9 @@ class AlumnosTypeSimple extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            /*->add('PeriodoEscolarAlumno','entity', array('required' => true,
+                'class' => 'inicialBundle:PeriodoEscolarAlumno','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false))*/
+            ->add('PeriodoEscolarAlumno', 'collection', array('type'=>new PeriodoEscolarAlumnoType('periodo escolar')))
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
