@@ -28,6 +28,7 @@ class PeriodoEscolarAlumnoType extends AbstractType
     {
         $builder
             ->add('periodoEscolarCurso')
+            ->add('alumno')
         ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

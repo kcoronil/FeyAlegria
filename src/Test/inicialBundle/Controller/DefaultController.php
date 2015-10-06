@@ -917,7 +917,7 @@ class DefaultController extends Controller
     public function crear_alumnoAction(Request $request){
         $modelo = New Alumnos();
         $test = New PeriodoEscolarAlumno();
-        $modelo->getPeriodoEscolarAlumno()->add($test);
+        $modelo->addPeriodoEscolarAlumno($test);
         $form = new AlumnosTypeSimple('Crear Estudiante');
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno_simple');
     }
@@ -928,7 +928,7 @@ class DefaultController extends Controller
     public function crear_alumno_usuarioAction(Request $request){
         $modelo = New Alumnos();
         $test = New PeriodoEscolarAlumno();
-        $modelo->getPeriodoEscolarAlumno()->add($test);
+        $modelo->addPeriodoEscolarAlumno($test);;
         $form = new AlumnosTypeUsuario('Crear Estudiante');
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
     }

@@ -57,15 +57,15 @@ class Alumnos
     }
 
 
-    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $PeriodoEscolarAlumno)
+    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        $PeriodoEscolarAlumno->setAlumno($this);
-        $this->PeriodoEscolarAlumno[] = $PeriodoEscolarAlumno;
+        $periodoEscolarAlumno->setAlumno($this);
+        $this->PeriodoEscolarAlumno[] = $periodoEscolarAlumno;
     }
 
-    public function removePeriodoescolaralumno($PeriodoEscolarAlumno)
+    public function removePeriodoescolaralumno($periodoEscolarAlumno)
     {
-        return $this->PeriodoEscolarAlumno->removeElement($PeriodoEscolarAlumno);
+        return $this->PeriodoEscolarAlumno->removeElement($periodoEscolarAlumno);
     }
     /**
      * @var integer

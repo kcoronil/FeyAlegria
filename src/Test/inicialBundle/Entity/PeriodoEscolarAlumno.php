@@ -16,7 +16,7 @@ class PeriodoEscolarAlumno
      */
 
     /**
-     * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="periodoEscolarAlumno" , cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="PeriodoEscolarAlumno" , cascade={"persist"})
      * @ORM\JoinColumn(name="alumno_id", referencedColumnName="id")
      */
 
