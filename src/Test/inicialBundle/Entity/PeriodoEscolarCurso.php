@@ -43,7 +43,7 @@ class PeriodoEscolarCurso
     {
         $periodoEscolarAlumno->setPeriodoEscolarCurso($this);
 
-        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
+        $this->periodoEscolarAlumno = $periodoEscolarAlumno;
     }
     /**
      * @var boolean
@@ -174,6 +174,6 @@ class PeriodoEscolarCurso
     }
     public function __toString()
     {
-        return $this->curso->getNombre().$this->seccion->getNombre().$this->periodoEscolar->getNombre();
+        return $this->curso->getNombre().$this->seccion->getNombre();
     }
 }

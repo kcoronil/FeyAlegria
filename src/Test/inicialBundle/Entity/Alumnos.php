@@ -13,6 +13,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Alumnos
 {
+
+
     /**
      * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
@@ -24,12 +26,13 @@ class Alumnos
 
     public function __construct() {
         $this->usuario = new ArrayCollection();
-        $this->PeriodoEscolarAlumno = new ArrayCollection();
+        $this->periodoEscolarAlumno = new ArrayCollection();
     }
 
     public function addUsuario(Usuarios $usuario)
     {
         $usuario->addAlumno($this);
+
         $this->usuario[] = $usuario;
     }
 
@@ -49,23 +52,30 @@ class Alumnos
      * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"persist"})
      */
 
-    protected $PeriodoEscolarAlumno;
+    public $periodoEscolarAlumno;
 
     public function getPeriodoEscolarAlumno()
     {
-        return $this->PeriodoEscolarAlumno;
+        return $this->periodoEscolarAlumno;
     }
 
-
-    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $PeriodoEscolarAlumno)
+    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        $PeriodoEscolarAlumno->setAlumno($this);
-        $this->PeriodoEscolarAlumno[] = $PeriodoEscolarAlumno;
+        $this->periodoEscolarAlumno->add($periodoEscolarAlumno);
+
+        $periodoEscolarAlumno->setAlumno($this);
     }
 
-    public function removePeriodoescolaralumno($PeriodoEscolarAlumno)
+   /* public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        return $this->PeriodoEscolarAlumno->removeElement($PeriodoEscolarAlumno);
+        $periodoEscolarAlumno->setAlumno($this);
+
+        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
+    }}*/
+
+    public function removePeriodoEscolarAlumno($periodoEscolarAlumno)
+    {
+        return $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
     }
     /**
      * @var integer

@@ -11,14 +11,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 class PeriodoEscolarAlumno
 {
     /**
-     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="PeriodoEscolarAlumno", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="periodoEscolarAlumno", cascade={"persist"})
      * @ORM\JoinColumn(name="periodo_escolar_curso_id", referencedColumnName="id")
      */
+
+    private $periodoEscolarCurso;
 
     /**
      * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="periodoEscolarAlumno" , cascade={"persist"})
      * @ORM\JoinColumn(name="alumno_id", referencedColumnName="id")
      */
+
+    public $alumno;
 
     /**
      * @var boolean
@@ -30,16 +34,12 @@ class PeriodoEscolarAlumno
      */
     private $id;
 
+    /*
     /**
      * @var \Test\inicialBundle\Entity\Alumnos
      */
-    private $alumno;
-
-    /**
-     * @var \Test\inicialBundle\Entity\PeriodoEscolarCurso
-     */
-    private $periodoEscolarCurso;
-
+    //private $alumno;
+    /*
 
     /**
      * Set activo
@@ -118,5 +118,9 @@ class PeriodoEscolarAlumno
     public function getPeriodoEscolarCurso()
     {
         return $this->periodoEscolarCurso;
+    }
+    public function __toString()
+    {
+        return $this->getPeriodoEscolarCurso()->getCurso()->getNombre().$this->getPeriodoEscolarCurso()->getSeccion()->getNombre();
     }
 }

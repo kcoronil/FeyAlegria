@@ -27,7 +27,8 @@ class PeriodoEscolarAlumnoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('periodoEscolarCurso')
+            ->add('periodoEscolarCurso', 'entity', array('required' => true, 'class' => 'inicialBundle:PeriodoEscolarCurso',
+                'empty_value' => 'Seleccione grado', 'multiple'=>false, 'expanded'=>false))
         ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

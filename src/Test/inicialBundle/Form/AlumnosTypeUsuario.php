@@ -34,9 +34,10 @@ class AlumnosTypeUsuario extends AbstractType
             ->add('usuario', 'collection', array('type'=>new UsuariosTypeCollection('Registrar Representante'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
-            ->add('periodoescolaralumno', 'collection', array('type'=>new PeriodoEscolarAlumnoType('periodo escolar'), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false, 'cascade_validation'=>true,
-                'error_bubbling'=>false))
+            /*->add('PeriodoEscolarAlumno','entity', array('required' => true,
+                'class' => 'inicialBundle:PeriodoEscolarAlumno','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false))*/
+            ->add('PeriodoEscolarAlumno', 'collection', array('required' => true, 'type'=>new PeriodoEscolarAlumnoType('hola'), 'label' => false,
+                'by_reference'=>false))
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
