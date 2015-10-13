@@ -13,8 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Alumnos
 {
-
-
     /**
      * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
@@ -27,6 +25,7 @@ class Alumnos
     public function __construct() {
         $this->usuario = new ArrayCollection();
         $this->periodoEscolarAlumno = new ArrayCollection();
+        $this->periodoEscolarCurso = new ArrayCollection();
     }
 
     public function addUsuario(Usuarios $usuario)
@@ -49,34 +48,75 @@ class Alumnos
 
 
     /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"all"}, orphanRemoval=TRUE)
      */
 
-    public $periodoEscolarAlumno;
+    protected $periodoEscolarAlumno;
 
+    protected $periodoEscolarCurso;
+
+    /*------------------- gestion de grado------------------- */
+
+    /*
+    public function getPeriodoEscolarCurso()
+    {
+        $periodoEscolarCurso = New ArrayCollection();
+        foreach($this->periodoEscolarAlumno as $pe_alumno){
+            $periodoEscolarCurso[] =$pe_alumno->getPeriodoEscolarCurso();
+        }
+        return $periodoEscolarCurso;
+    }
+
+    public function setPeriodoEscolarCurso($periodoEscolarCurso)
+    {
+        foreach($periodoEscolarCurso as $pe_curso){
+
+            $pe_alumno = New PeriodoEscolarAlumno();
+
+            $pe_alumno->setAlumno($this);
+            $pe_alumno->setPeriodoEscolarCurso($pe_curso);
+
+            $this->addPeriodoEscolarAlumno($pe_alumno);
+        }
+    }
+
+    public function getAlumno(){
+        return $this;
+    }
+    */
     public function getPeriodoEscolarAlumno()
     {
-        return $this->periodoEscolarAlumno;
+        return $this->periodoEscolarAlumno->toArray();
     }
 
     public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        $this->periodoEscolarAlumno->add($periodoEscolarAlumno);
-
-        $periodoEscolarAlumno->setAlumno($this);
+        if(!$this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
+            $this->periodoEscolarAlumno->add($periodoEscolarAlumno);
+            $periodoEscolarAlumno->setAlumno($this);
+        }
+        return $this;
     }
 
-   /* public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
+    public function removePeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        $periodoEscolarAlumno->setAlumno($this);
-
-        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
-    }}*/
-
-    public function removePeriodoEscolarAlumno($periodoEscolarAlumno)
-    {
-        return $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
+        if($this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
+            $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
+            $periodoEscolarAlumno->setAlumno(null);
+        }
+        return $this;
     }
+
+    public function getPeriodoEscolarCurso()
+    {
+        return array_map(
+          function($periodoEscolarAlumno){
+              return $periodoEscolarAlumno->getPeriodoEscolarCurso();
+          },$this->periodoEscolarAlumno->toArray()
+        );
+    }
+
+
     /**
      * @var integer
      *

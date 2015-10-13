@@ -923,12 +923,11 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
-
-                foreach($p->getPeriodoEscolarAlumno()->getValues() as $periodo_alumno){
-                    $periodo_alumno->setAlumno($p);
-                }
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
+                $test = $p->getPeriodoEscolarCurso();
+                print_r($test[0]);
+                exit;
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
                     'success', 'Estudiante creado con éxito'

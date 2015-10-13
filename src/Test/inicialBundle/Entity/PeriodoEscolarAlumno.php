@@ -11,35 +11,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 class PeriodoEscolarAlumno
 {
     /**
-     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="periodoEscolarAlumno", cascade={"persist"})
-     * @ORM\JoinColumn(name="periodo_escolar_curso_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="PeriodoEscolarCurso", inversedBy="periodoEscolarAlumno", cascade={"all"})
+     * @ORM\JoinColumn(name="periodo_escolar_curso_id", referencedColumnName="id", nullable=False)
      */
 
-    private $periodoEscolarCurso;
+    protected $periodoEscolarCurso;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="periodoEscolarAlumno" , cascade={"persist"})
-     * @ORM\JoinColumn(name="alumno_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Alumnos", inversedBy="periodoEscolarAlumno" , cascade={"all"})
+     * @ORM\JoinColumn(name="alumno_id", referencedColumnName="id", nullable=False)
      */
 
-    public $alumno;
+    protected $alumno;
 
     /**
      * @var boolean
      */
     private $activo = true;
 
-    /**9
+    /**
      * @var integer
      */
     private $id;
 
-    /*
-    /**
-     * @var \Test\inicialBundle\Entity\Alumnos
-     */
-    //private $alumno;
-    /*
 
     /**
      * Set activo
@@ -119,6 +113,7 @@ class PeriodoEscolarAlumno
     {
         return $this->periodoEscolarCurso;
     }
+
     public function __toString()
     {
         return $this->getPeriodoEscolarCurso()->getCurso()->getNombre().$this->getPeriodoEscolarCurso()->getSeccion()->getNombre();

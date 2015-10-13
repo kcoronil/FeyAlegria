@@ -33,8 +33,10 @@ class AlumnosTypeSimple extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            /*->add('periodoEscolarAlumno','entity', array('required' => true,
+                'class' => 'inicialBundle:PeriodoEscolarAlumno','empty_value' => 'Seleccione grado', 'multiple'=>false, 'expanded'=>false))*/
             ->add('periodoEscolarAlumno', 'collection', array('type'=>new PeriodoEscolarAlumnoType('periodo escolar'), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
+                'by_reference' => true,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
