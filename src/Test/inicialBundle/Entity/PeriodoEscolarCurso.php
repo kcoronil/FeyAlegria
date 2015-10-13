@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * PeriodoEscolarCurso
@@ -14,12 +15,10 @@ class PeriodoEscolarCurso
      * @ORM\JoinColumn(name="periodo_escolar_id", referencedColumnName="id")
      */
 
-
     /**
      * @ORM\ManyToOne(targetEntity="Seccion", inversedBy="grado")
      * @ORM\JoinColumn(name="seccion_id", referencedColumnName="id")
      */
-
 
     /**
      * @ORM\ManyToOne(targetEntity="Curso", inversedBy="grado")
@@ -27,13 +26,49 @@ class PeriodoEscolarCurso
      */
 
     /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="periodoEscolarCurso", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="periodoEscolarCurso", cascade={"all"}, orphanRemove=TRUE)
      */
 
-    private $periodoEscolarAlumno;
+    protected $periodoEscolarAlumno;
 
+    public function __construct() {
+        $this->periodoEscolarAlumno = new ArrayCollection();
+    }
 
-    public function getperiodoEscolarAlumno()
+    public function getPeriodoEscolarAlumno()
+    {
+        return $this->periodoEscolarAlumno->toArray();
+    }
+
+    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
+    {
+        if(!$this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
+            $this->periodoEscolarAlumno->add($periodoEscolarAlumno);
+            $periodoEscolarAlumno->setPeriodoEscolarCurso($this);
+        }
+        return $this;
+    }
+
+    public function removePeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
+    {
+        if($this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
+            $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
+            $periodoEscolarAlumno->setPeriodoEscolarCurso(null);
+        }
+        return $this;
+    }
+
+    public function getAlumno()
+    {
+        return array_map(
+            function($periodoEscolarAlumno){
+                return $periodoEscolarAlumno->getAlumno();
+            },
+            $this->periodoEscolarAlumno->toArray()
+        );
+    }
+
+    /*public function getperiodoEscolarAlumno()
     {
         return $this->periodoEscolarAlumno;
     }
@@ -43,8 +78,8 @@ class PeriodoEscolarCurso
     {
         $periodoEscolarAlumno->setPeriodoEscolarCurso($this);
 
-        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
-    }
+        $this->periodoEscolarAlumno = $periodoEscolarAlumno;
+    }*/
     /**
      * @var boolean
      */
@@ -54,6 +89,10 @@ class PeriodoEscolarCurso
      * @var integer
      */
     private $id;
+
+    /**
+     * @var string
+     */
 
     /**
      * @var \Test\inicialBundle\Entity\PeriodoEscolar
@@ -172,8 +211,9 @@ class PeriodoEscolarCurso
     {
         return $this->curso;
     }
+
     public function __toString()
     {
-        return $this->curso->getNombre().$this->seccion->getNombre().$this->periodoEscolar->getNombre();
+        return $this->curso->getNombre().$this->seccion->getNombre();
     }
 }

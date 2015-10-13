@@ -646,7 +646,7 @@ class DefaultController extends Controller
 
     public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null)
     {
-        $p = New $modelo;
+        $p = $modelo;
         $formulario = $this->createForm($formulario_base, $p);
         $formulario-> handleRequest($request);
 
@@ -915,11 +915,33 @@ class DefaultController extends Controller
         return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar', 'true');
     }
     public function crear_alumnoAction(Request $request){
-        $modelo = New Alumnos();
-        $test = New PeriodoEscolarAlumno();
-        $modelo->addPeriodoEscolarAlumno($test);
-        $form = new AlumnosTypeSimple('Crear Estudiante');
-        return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno_simple');
+        $p = New Alumnos();
+        $p->addPeriodoEscolarAlumno(New PeriodoEscolarAlumno());
+        $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $test = $p->getPeriodoEscolarCurso();
+                print_r($test[0]);
+                exit;
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Estudiante creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
+                }
+            }
+        }
+        return $this->render('inicialBundle:Default:crear_alumno_simple.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Crear Estudiante',));
     }
     public function editar_alumnoAction($id, Request $request){
         $form = new AlumnosTypeSimple('Editar Estudiante');
@@ -928,7 +950,7 @@ class DefaultController extends Controller
     public function crear_alumno_usuarioAction(Request $request){
         $modelo = New Alumnos();
         $test = New PeriodoEscolarAlumno();
-        $modelo->addPeriodoEscolarAlumno($test);;
+        $modelo->getPeriodoEscolarAlumno()->add($test);
         $form = new AlumnosTypeUsuario('Crear Estudiante');
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
     }
@@ -958,7 +980,7 @@ class DefaultController extends Controller
         $datos = $query->getArrayResult();
 
         if($request->getMethod()=='POST') {
-            if ($formulario->isValid()) {
+            if ($formulario->isValid()){
                 $p->setActivo(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
