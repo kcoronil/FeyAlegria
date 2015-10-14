@@ -24,7 +24,6 @@
                         <thead>
                         <tr>
                             {% for key, campo in datos.0 %}
-                                {{ key }} {{ campo }}
                                 {% if (key == 'id') or ('_id' in key) or ( 'activo' in key ) %}
                                 {% else %}
                                     {% if campo is iterable %}

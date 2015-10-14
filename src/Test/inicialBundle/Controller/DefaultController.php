@@ -11,6 +11,7 @@ use Test\inicialBundle\Entity\Eventos;
 use Test\inicialBundle\Entity\PeriodoEscolarAlumno;
 use Test\inicialBundle\Entity\PeriodoEscolarCurso;
 use Test\inicialBundle\Entity\Permisos;
+use Test\inicialBundle\Entity\RepresentanteContacto;
 use Test\inicialBundle\Entity\Seccion;
 use Test\inicialBundle\Entity\TipoContacto;
 use Test\inicialBundle\Entity\TipoFactura;
@@ -27,6 +28,7 @@ use Test\inicialBundle\Form\PeriodoEscolarAlumnoType;
 use Test\inicialBundle\Form\PeriodoEscolarCursoType;
 use Test\inicialBundle\Form\PeriodoEscolarType;
 use Test\inicialBundle\Form\PermisosType;
+use Test\inicialBundle\Form\RepresentanteContactoType;
 use Test\inicialBundle\Form\SeccionType;
 use Test\inicialBundle\Form\TipoContactoType;
 use Test\inicialBundle\Form\TipoFacturaType;
@@ -179,16 +181,19 @@ class DefaultController extends Controller
         if($request->get('_route')=='inicial_agregar_representante'){
             $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
             $formulario -> remove('tipoUsuario');
+            $formulario -> remove('principal');
             $tipo_usuario = $this->getDoctrine()
                 ->getRepository('inicialBundle:TipoUsuario')
                 ->find(5);
             $p->setTipoUsuario($tipo_usuario);
+            $p->setPrincipal('true');
             $elemento = 'Representante';
         }
         else{
             $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
             $formulario -> remove('alumno');
             $formulario -> remove('principal');
+            $formulario -> remove('representanteContacto');
             $elemento = 'Usuario';
         }
         $formulario -> remove('activo');
@@ -214,7 +219,7 @@ class DefaultController extends Controller
             }
         }
 
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
+        return $this->render('inicialBundle:Default:crear_usuario_test.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
     public function borrar_usuarioAction($id, Request $request)
@@ -901,6 +906,19 @@ class DefaultController extends Controller
         $form = new TipoContactoType('Borrar Tipo Contacto');
         return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar', 'true');
     }
+    public function crear_representante_contactoAction(Request $request){
+        $curso = New RepresentanteContacto();
+        $form = new RepresentanteContactoType('Crear Contacto Representante');
+        return $this->crear_generico($request, $curso, $form, 'RepresentanteContacto', 'Crear Contacto Representante', 'inicial_agregar_representante_contacto', 'inicial_editar_representante_contacto', 'inicial_borrar_representante_contacto', 'mantenimiento', 'true');
+    }
+    public function editar_representante_contactoAction($id, Request $request){
+        $form = new TipoContactoType('Editar Contacto Representante');
+        return $this->editar_generico($id, $request, $form, 'RepresentanteContacto', 'Editar Tipo Contacto', 'inicial_agregar_representante_contacto', 'mantenimiento', 'true');
+    }
+    public function borrar_representante_contactoAction($id, Request $request){
+        $form = new RepresentanteContactoType('Borrar Contacto Representante');
+        return $this->borrar_generico($id, $request, $form, 'RepresentanteContacto', 'Borrar Tipo Contacto', 'inicial_agregar_representante_contacto', 'borrar', 'true');
+    }
     public function crear_tipo_facturaAction(Request $request){
         $curso = New TipoFactura();
         $form = new TipoFacturaType('Crear Tipo Factura');
@@ -941,12 +959,10 @@ class DefaultController extends Controller
     }
     public function editar_alumnoAction($id, Request $request){
         $form = new AlumnosTypeSimple('Editar Estudiante');
-        return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_agregar_alumno', 'crear_alumno_simple');
+        return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_homepage', 'crear_alumno_simple');
     }
     public function crear_alumno_usuarioAction(Request $request){
         $modelo = New Alumnos();
-        $test = New PeriodoEscolarAlumno();
-        $modelo->getPeriodoEscolarAlumno()->add($test);
         $form = new AlumnosTypeUsuario('Crear Estudiante');
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
     }

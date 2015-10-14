@@ -58,7 +58,7 @@
                         {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.lugarNacimiento) }}
                         {{ form_row(form.sexo) }}
-                        {{ form_row(form.PeriodoEscolarAlumno) }}
+                        {{ form_row(form.periodoEscolarCurso) }}
                         {% if form.usuario is defined %}
                             <div id="post_usuario" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar representante')|escape }}">
                                 {% for widget in form.usuario.children %}

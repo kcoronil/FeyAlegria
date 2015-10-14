@@ -14,7 +14,10 @@
     <field name="contacto" type="string" column="contacto" length="100" nullable="false"/>
     <field name="principal" type="boolean" column="principal" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-one field="representante" target-entity="Usuarios">
+    <many-to-one field="representante" target-entity="Usuarios" inversed-by="representanteContacto">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-columns>
         <join-column name="representante_id" referenced-column-name="id"/>
       </join-columns>

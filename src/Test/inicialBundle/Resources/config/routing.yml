@@ -171,6 +171,19 @@ inicial_borrar_grado:
     path:     /borrar_grado/{id}
     defaults: { _controller: inicialBundle:Default:borrar_grado }
 
+inicial_agregar_representante_contacto:
+    path:     /crear_representante_contacto
+    defaults: { _controller: inicialBundle:Default:crear_representante_contacto }
+
+inicial_editar_representante_contacto:
+    path:     /editar_representante_contacto/{id}
+    defaults: { _controller: inicialBundle:Default:editar_representante_contacto }
+
+inicial_borrar_representante_contacto:
+    path:     /borrar_representante_contacto/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_representante_contacto }
+
+
 # ------------------ alumnos ------------------------------
 inicial_lista_alumno:
     path:     /lista_alumno

@@ -14,8 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Usuarios
 {
-
-
     /**
      * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="usuario", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes",joinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")},
@@ -25,9 +23,9 @@ class Usuarios
 
     protected $alumno;
 
-
     public function __construct(){
         $this->alumno = new ArrayCollection();
+        $this->representanteContacto = new ArrayCollection();
     }
     public function getAlumno()
     {
@@ -44,6 +42,35 @@ class Usuarios
         //optionally add a check here to see that $group exists before removing it.
         return $this->alumno->removeElement($alumno);
     }
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="RepresentanteContacto", mappedBy="representante" , cascade={"persist"}, orphanRemoval=TRUE)
+     */
+
+    protected $representanteContacto;
+
+
+
+    public function getRepresentanteContacto()
+    {
+        return $this->representanteContacto;
+    }
+
+    public function addRepresentanteContacto(RepresentanteContacto $representanteContacto)
+    {
+        $this->representanteContacto->add($representanteContacto);
+    }
+
+    public function removeRepresentanteContacto($representanteContacto)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->representanteContacto->removeElement($representanteContacto);
+    }
+
+
+
+
 
     /**
      * @var integer
@@ -139,7 +166,6 @@ class Usuarios
      */
 
     private $tipoUsuario;
-
 
     /**
      * Get id

@@ -14,7 +14,7 @@
         <join-column name="periodo_escolar_curso_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="alumno" target-entity="Alumnos">
+    <many-to-one field="alumno" target-entity="Alumnos" inversed-by="periodoEscolarAlumno">
       <join-columns>
         <join-column name="alumno_id" referenced-column-name="id"/>
       </join-columns>

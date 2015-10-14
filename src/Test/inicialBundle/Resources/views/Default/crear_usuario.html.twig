@@ -12,20 +12,19 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-
-    <div data-content="{{ name }}" class="test_attr">
-        <div class="row">
-            <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
-                <h4>Nuevo Representante</h4>
+        <div data-content="{{ name }}" class="test_attr">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                    <h4>Nuevo Estudiante</h4>
+                </div>
+                <div class="col-sm-1 text-left">
+                    <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+                </div>
             </div>
-            <div class="col-sm-1 text-left">
-                <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+            <div class="row">
+                {{ form_widget(form) }}
             </div>
         </div>
-        <div class="row">
-            {{ form_widget(form) }}
-        </div>
-    </div>
 {% endmacro %}
 {% block extra_head %}
     <script type="text/javascript">
@@ -62,10 +61,20 @@
                         {{ form_row(form.apellidos) }}
                         {{ form_row(form.nombres) }}
                         {{ form_row(form.fechaNacimiento) }}
-                        {{ form_row(form.direccion) }}
                         {{ form_row(form.sexo) }}
+                        {{ form_row(form.direccion) }}
+                        {% if form.representanteContacto is defined %}
+                            <div id="cont_contacto" class="col-sm-12" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
+                                {% for form_contacto in form.representanteContacto %}
+                                    {{ form_widget(form_contacto) }}
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-12 text-center ">
+                                <a class="btn btn-default" id="contacto-add" data-target="cont_contacto">Agregar contacto</a>
+                            </div>
+                        {% endif %}
                         {% if form.alumno is defined %}
-                            <div id="post_alumno" class="row" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
+                            <div id="post_alumno" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
                                 {% for widget in form.alumno.children %}
                                     {{ _self.widget_prototype(widget, 'remover alumno') }}
                                 {% endfor %}

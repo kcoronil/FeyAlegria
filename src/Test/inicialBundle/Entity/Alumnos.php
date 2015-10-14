@@ -20,13 +20,19 @@ class Alumnos
      * )
      **/
 
-    public $usuario;
+    protected $usuario;
 
     public function __construct() {
         $this->usuario = new ArrayCollection();
         $this->periodoEscolarAlumno = new ArrayCollection();
         $this->periodoEscolarCurso = new ArrayCollection();
     }
+
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
 
     public function addUsuario(Usuarios $usuario)
     {
@@ -48,7 +54,7 @@ class Alumnos
 
 
     /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"all"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"persist"}, orphanRemoval=TRUE)
      */
 
     protected $periodoEscolarAlumno;
@@ -371,6 +377,7 @@ class Alumnos
      *
      * @return boolean 
      */
+
     public function getActivo()
     {
         return $this->activo;

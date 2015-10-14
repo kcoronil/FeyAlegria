@@ -18,7 +18,7 @@
         <field name="direccion" type="text" column="direccion" nullable="false"/>
         <field name="principal" type="boolean" column="principal" nullable="false"/>
         <field name="activo" type="boolean" column="activo" nullable="false"/>
-        <one-to-many field="representante_contacto" mapped-by="representante" target-entity="RepresentanteContacto">
+        <one-to-many field="representanteContacto" mapped-by="representante" target-entity="RepresentanteContacto">
             <cascade>
                 <cascade-persist/>
             </cascade>

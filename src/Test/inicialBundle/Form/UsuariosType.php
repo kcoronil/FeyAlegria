@@ -35,8 +35,11 @@ class UsuariosType extends AbstractType
             ->add('nombres')
             ->add('fechaNacimiento','date', array('widget'=>'single_text',
                 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick')))
-            ->add('direccion')
             ->add('sexo', 'entity', array('required' => true,'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            ->add('representanteContacto', 'collection', array('type'=>new RepresentanteContactoType("Crear Contacto"), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false,'prototype' => true, 'prototype_name'=>'contacto', 'label' => false, 'cascade_validation'=>true,
+                'error_bubbling'=>false))
+            ->add('direccion')
             ->add('activo', 'checkbox', array('required'=>false))
             ->add('alumno', 'collection', array('type'=>new AlumnosType("Crear Alumno"), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,

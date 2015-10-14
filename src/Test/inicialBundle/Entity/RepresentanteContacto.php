@@ -2,6 +2,7 @@
 
 namespace Test\inicialBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,6 +14,21 @@ use Doctrine\ORM\Mapping as ORM;
 class RepresentanteContacto
 {
     /**
+     * @ORM\ManyToOne(targetEntity="Usuarios", inversedBy="representante")
+     * @ORM\JoinColumn(name="representante_id", referencedColumnName="id")
+     */
+
+    private $representante;
+
+    public function addRepresentante(Usuarios $representante)
+    {
+        $representante->addRepresentanteContacto($this);
+
+        $this->representante = $representante;
+    }
+
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -20,13 +36,6 @@ class RepresentanteContacto
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="representante", type="integer")
-     */
-    private $representante;
 
     /**
      * @var integer

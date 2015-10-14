@@ -32,9 +32,12 @@ class UsuariosTypeSimple extends AbstractType
             ->add('apellidos')
             ->add('nombres')
             ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ) )
-            ->add('direccion')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            ->add('direccion')
+            ->add('representanteContacto', 'collection', array('type'=>new RepresentanteContactoType("Crear Contacto"), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => true,'prototype' => true, 'prototype_name'=>'contacto', 'label' => true, 'cascade_validation'=>true,
+                'error_bubbling'=>false))
             ->add('activo', 'checkbox', array('required'=>false))
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
