@@ -18,6 +18,11 @@
         <field name="direccion" type="text" column="direccion" nullable="false"/>
         <field name="principal" type="boolean" column="principal" nullable="false"/>
         <field name="activo" type="boolean" column="activo" nullable="false"/>
+        <one-to-many field="representante_contacto" mapped-by="representante" target-entity="RepresentanteContacto">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+        </one-to-many>
         <many-to-one field="sexo" target-entity="Sexo">
             <join-columns>
                 <join-column name="sexo_id" referenced-column-name="id"/>
@@ -41,7 +46,6 @@
             </inverse-join-columns>
         </join-table>
     </many-to-many>
-
     </entity>
 </doctrine-mapping>
 

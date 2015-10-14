@@ -18,11 +18,17 @@
       <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="false"/>
       <field name="lugarNacimiento" type="string" column="lugar_nacimiento" length="60" nullable="false"/>
       <field name="activo" type="boolean" column="activo" nullable="false"/>
+      <one-to-many field="periodoEscolarAlumno" mapped-by="alumno" target-entity="PeriodoEscolarAlumno">
+          <cascade>
+              <cascade-persist/>
+          </cascade>
+      </one-to-many>
       <many-to-one field="sexo" target-entity="Sexo">
           <join-columns>
               <join-column name="sexo_id" referenced-column-name="id"/>
           </join-columns>
       </many-to-one>
+
       <many-to-many field="usuario" target-entity="Usuarios" mapped-by="alumno">
           <cascade>
               <cascade-persist/>

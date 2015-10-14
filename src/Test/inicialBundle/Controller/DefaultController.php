@@ -130,7 +130,7 @@ class DefaultController extends Controller
                 ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('usuario.activo = true')
                 ->andWhere('tipo_usuario.id=5')
-                ->orderBy('usuario.id')
+                ->orderBy('usuario.id', 'DESC')
                 ->getQuery();
             $elemento = 'Representantes';
 
@@ -916,7 +916,6 @@ class DefaultController extends Controller
     }
     public function crear_alumnoAction(Request $request){
         $p = New Alumnos();
-        $p->addPeriodoEscolarAlumno(New PeriodoEscolarAlumno());
         $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
         $formulario-> handleRequest($request);
 
@@ -925,9 +924,6 @@ class DefaultController extends Controller
                 $p->setActivo(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
-                $test = $p->getPeriodoEscolarCurso();
-                print_r($test[0]);
-                exit;
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
                     'success', 'Estudiante creado con éxito'

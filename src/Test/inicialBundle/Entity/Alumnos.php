@@ -57,7 +57,7 @@ class Alumnos
 
     /*------------------- gestion de grado------------------- */
 
-    /*
+
     public function getPeriodoEscolarCurso()
     {
         $periodoEscolarCurso = New ArrayCollection();
@@ -83,7 +83,7 @@ class Alumnos
     public function getAlumno(){
         return $this;
     }
-    */
+
     public function getPeriodoEscolarAlumno()
     {
         return $this->periodoEscolarAlumno->toArray();
@@ -91,31 +91,30 @@ class Alumnos
 
     public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
     {
-        if(!$this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
-            $this->periodoEscolarAlumno->add($periodoEscolarAlumno);
-            $periodoEscolarAlumno->setAlumno($this);
+        $periodoEscolarAlumno->setAlumno($this);
+
+        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
+    }
+
+    /*
+        public function removePeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
+        {
+            if($this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
+                $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
+                $periodoEscolarAlumno->setAlumno(null);
+            }
+            return $this;
         }
-        return $this;
-    }
 
-    public function removePeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
-    {
-        if($this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
-            $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
-            $periodoEscolarAlumno->setAlumno(null);
+        public function getPeriodoEscolarCurso()
+        {
+            return array_map(
+              function($periodoEscolarAlumno){
+                  return $periodoEscolarAlumno->getPeriodoEscolarCurso();
+              },$this->periodoEscolarAlumno->toArray()
+            );
         }
-        return $this;
-    }
-
-    public function getPeriodoEscolarCurso()
-    {
-        return array_map(
-          function($periodoEscolarAlumno){
-              return $periodoEscolarAlumno->getPeriodoEscolarCurso();
-          },$this->periodoEscolarAlumno->toArray()
-        );
-    }
-
+    */
 
     /**
      * @var integer
