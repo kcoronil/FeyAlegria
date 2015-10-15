@@ -62,6 +62,8 @@ class Usuarios
         $this->representanteContacto->add($representanteContacto);
     }
 
+
+
     public function removeRepresentanteContacto($representanteContacto)
     {
         //optionally add a check here to see that $group exists before removing it.

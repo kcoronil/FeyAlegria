@@ -155,8 +155,16 @@ class DefaultController extends Controller
     }
     public function detalle_usuarioAction($id, Request $request)
     {
-
         //hacer consulta simple a la bbdd
+
+        if($request->headers->get('referer')==$this->generateUrl('inicial_lista_representante', array(), true)){
+            $plantilla = 'detalle_representante';
+            $accion = 'Detalle Representante';
+        }
+        else{
+            $plantilla = 'detalle_usuario';
+            $accion = 'Detalle Usuario';
+        }
 
         $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
             ->createQueryBuilder('usuario')
@@ -173,7 +181,7 @@ class DefaultController extends Controller
             throw $this -> createNotFoundException('no usuario con este id: '.$id);
         }
 
-        return $this->render('inicialBundle:Default:detalle_usuario.html.twig', array('accion'=>'Detalle Usuario', 'datos'=>$datos));
+        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('accion'=>$accion, 'datos'=>$datos));
     }
     public function crear_usuarioAction(Request $request)
     {
@@ -219,7 +227,7 @@ class DefaultController extends Controller
             }
         }
 
-        return $this->render('inicialBundle:Default:crear_usuario_test.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
+        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
     public function borrar_usuarioAction($id, Request $request)
@@ -292,24 +300,6 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
 
-    public function detalle_alumnoAction($id, Request $request)
-    {
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
-            ->createQueryBuilder('alumno')
-            ->where('alumno.id = :id')
-            ->andWhere('alumno.activo = true')
-            ->setParameter('id', $id)
-            ->getQuery();
-
-        $datos = $query->getArrayResult();
-
-        if (!$datos)
-        {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
-        }
-
-        return $this->render('inicialBundle:Default:detalle_alumno.html.twig', array('accion'=>'Detalle Alumno', 'datos'=>$datos));
-    }
 
     public function borrar_alumnoAction($id, Request $request)
     {
@@ -649,10 +639,17 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
     }
 
-    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null)
+    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
     {
         $p = $modelo;
         $formulario = $this->createForm($formulario_base, $p);
+
+        if($remover){
+            foreach($remover as $campo){
+                $formulario->remove($campo);
+            }
+        }
+
         $formulario-> handleRequest($request);
 
         if($datos) {
@@ -691,7 +688,7 @@ class DefaultController extends Controller
             'url_borrar'=>$url_borrar, 'operaciones_datos'=>true));
     }
 
-    public function editar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)
+    public function editar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla, $remover = null)
     {
 
         $p = $this->getDoctrine()
@@ -704,6 +701,11 @@ class DefaultController extends Controller
         $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
+        if($remover){
+            foreach($remover as $campo){
+                $formulario->remove($campo);
+            }
+        }
         $formulario-> handleRequest($request);
 
         if($request->getMethod()=='POST') {
@@ -961,6 +963,7 @@ class DefaultController extends Controller
         $form = new AlumnosTypeSimple('Editar Estudiante');
         return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_homepage', 'crear_alumno_simple');
     }
+
     public function crear_alumno_usuarioAction(Request $request){
         $modelo = New Alumnos();
         $form = new AlumnosTypeUsuario('Crear Estudiante');
@@ -972,10 +975,18 @@ class DefaultController extends Controller
         $form = new PeriodoEscolarAlumnoType('Crear Estudiante');
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura',  'mantenimiento', 'true');
     }
+
     public function editar_usuarioAction($id, Request $request){
         $form = new UsuariosTypeSimple('Editar Usuario');
         return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
     }
+
+    public function editar_representanteAction($id, Request $request){
+        $form = new UsuariosTypeSimple('Editar Representante');
+        $remover =['tipoUsuario', 'principal'];
+        return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario', $remover);
+    }
+
     public function crear_gradoAction(Request $request){
         $p = New PeriodoEscolarCurso();
         $formulario = $this->createForm(new PeriodoEscolarCursoType('Crear Grado'), $p);

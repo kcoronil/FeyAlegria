@@ -255,11 +255,19 @@ inicial_pdf_usuario:
     path:     /pdf_lista_usuario
     defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
 
-#------------------------- usuarios (representantes ----------------------------
+#------------------------- usuarios (representantes) ----------------------------
 
 inicial_agregar_representante:
     path:     /crear_representante
     defaults: { _controller: inicialBundle:Default:crear_usuario }
+
+inicial_editar_representante:
+    path:     /editar_representante/{id}
+    defaults: { _controller: inicialBundle:Default:editar_representante }
+
+inicial_detalle_representante:
+    path:     /detalle_representante/{id}
+    defaults: { _controller: inicialBundle:Default:detalle_representante }
 
 inicial_lista_representante:
     path:     /lista_representante

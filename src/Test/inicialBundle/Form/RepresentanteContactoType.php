@@ -33,7 +33,6 @@ class RepresentanteContactoType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');},))
-            ->add('principal')
             ->add('contacto')
 
         ;

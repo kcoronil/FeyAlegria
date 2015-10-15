@@ -29,6 +29,9 @@
 {% block extra_head %}
     <script type="text/javascript">
         $(document).ready(function() {
+            {% if accion == 'Crear Representante' %}
+                agregar_form($('#contacto-add'));
+            {% endif %}
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));
             });
@@ -51,10 +54,9 @@
 
                         {% if form.tipoUsuario is defined %}
                             {{ form_row(form.tipoUsuario) }}
-                        {% else %}
-                            <label class="control-label required">Representante Principal</label>
                         {% endif %}
                         {% if form.principal is defined %}
+                            <label class="control-label required">Representante Principal</label>
                             {{ form_row(form.principal) }}
                         {% endif %}
                         {{ form_row(form.cedula) }}
@@ -70,7 +72,7 @@
                                 {% endfor %}
                             </div>
                             <div class="col-sm-12 text-center ">
-                                <a class="btn btn-default" id="contacto-add" data-target="cont_contacto">Agregar contacto</a>
+                                <a class="btn btn-default btn-add" id="contacto-add" data-target="cont_contacto">Agregar contacto</a>
                             </div>
                         {% endif %}
                         {% if form.alumno is defined %}
