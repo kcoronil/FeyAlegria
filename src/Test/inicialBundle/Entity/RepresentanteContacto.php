@@ -20,21 +20,11 @@ class RepresentanteContacto
 
     private $representante;
 
-    public function __construct() {
-        $this->representante = new ArrayCollection();
-    }
-
     public function addRepresentante(Usuarios $representante)
     {
-        $representante->addRepresentanteContacto($this);
-
-        $this->representante[] = $representante;
-    }
-
-    public function removeRepresentante($representante)
-    {
-        //optionally add a check here to see that $group exists before removing it.
-        return $this->representante->removeElement($representante);
+        if (!$this->representante->contains($representante)) {
+            $this->representante->add($representante);
+        }
     }
 
     /**

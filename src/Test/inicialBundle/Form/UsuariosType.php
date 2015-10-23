@@ -11,12 +11,10 @@ use Symfony\Component\Form\FormView;
 
 class UsuariosType extends AbstractType
 {
-
     public function __construct ($titulo)
     {
         $this->titulo = $titulo;
     }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -37,7 +35,7 @@ class UsuariosType extends AbstractType
                 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick')))
             ->add('sexo', 'entity', array('required' => true,'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('representanteContacto', 'collection', array('type'=>new RepresentanteContactoType("Crear Contacto"), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false,'prototype' => true, 'prototype_name'=>'contacto', 'label' => false, 'cascade_validation'=>true,
+                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('direccion')
             ->add('activo', 'checkbox', array('required'=>false))

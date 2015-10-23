@@ -35,6 +35,9 @@
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));
             });
+            $(document).on('click','#contacto-add', function() {
+                agregar_form($(this));
+            });
             $(document).on('click','.btn-remove', function() {
                 borrar_form($(this));
                 renombrar_forms($(this).attr('data-target'));
@@ -72,7 +75,7 @@
                                 {% endfor %}
                             </div>
                             <div class="col-sm-12 text-center ">
-                                <a class="btn btn-default btn-add" id="contacto-add" data-target="cont_contacto">Agregar contacto</a>
+                                <a class="btn btn-default" id="contacto-add" data-target="cont_contacto">Agregar contacto</a>
                             </div>
                         {% endif %}
                         {% if form.alumno is defined %}
@@ -82,7 +85,7 @@
                                 {% endfor %}
                             </div>
                             <div class="col-sm-12 text-center ">
-                                <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Alumno</a>
+                                <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Estudiante</a>
                             </div>
                         {% endif %}
                         {{ form_row(form.guardar) }}

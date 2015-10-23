@@ -27,6 +27,7 @@ class Usuarios
         $this->alumno = new ArrayCollection();
         $this->representanteContacto = new ArrayCollection();
     }
+
     public function getAlumno()
     {
         return $this->alumno;
@@ -43,7 +44,6 @@ class Usuarios
         return $this->alumno->removeElement($alumno);
     }
 
-
     /**
      * @ORM\OneToMany(targetEntity="RepresentanteContacto", mappedBy="representante" , cascade={"persist"}, orphanRemoval=TRUE)
      */
@@ -51,27 +51,22 @@ class Usuarios
     protected $representanteContacto;
 
 
-
     public function getRepresentanteContacto()
     {
         return $this->representanteContacto;
     }
 
-    public function addRepresentanteContacto(RepresentanteContacto $representanteContacto)
-    {
+    public function addRepresentanteContacto(RepresentanteContacto $representanteContacto){
+        $representanteContacto->setRepresentante($this);
         $this->representanteContacto->add($representanteContacto);
+        return $this;
     }
-
-
 
     public function removeRepresentanteContacto($representanteContacto)
     {
         //optionally add a check here to see that $group exists before removing it.
         return $this->representanteContacto->removeElement($representanteContacto);
     }
-
-
-
 
 
     /**

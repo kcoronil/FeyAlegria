@@ -36,7 +36,7 @@ class UsuariosTypeSimple extends AbstractType
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('direccion')
             ->add('representanteContacto', 'collection', array('type'=>new RepresentanteContactoType("Crear Contacto"), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => true,'prototype' => true, 'prototype_name'=>'contacto', 'label' => true, 'cascade_validation'=>true,
+                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('activo', 'checkbox', array('required'=>false))
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
