@@ -4,6 +4,7 @@ namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * PerfilUsuario
@@ -11,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Test\inicialBundle\Entity\PerfilUsuarioRepository")
  */
-class PerfilUsuario
+class PerfilUsuario implements UserInterface
 {
     /**
      * @ORM\OneToOne(targetEntity="Usuarios", inversedBy="perfil")
@@ -26,6 +27,28 @@ class PerfilUsuario
      */
 
     public $password;
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+
+    /*public function getPublishedImages()
+    {
+        return $this->images->filter( function( $image ) {
+            return ( $image->isPublished() );
+        });
+    }*/
+
+    public function getSalt()
+    {
+        return $this->password->getSalt();
+    }
+
+    public function eraseCredentials()
+    {
+    }
 
     /**
      * @ORM\OneToMany(targetEntity="RecuperarPasswordTmp", inversedBy="perfil")
@@ -42,6 +65,8 @@ class PerfilUsuario
 
        public function __construct() {
            $this->rol = new ArrayCollection();
+           $this->isActive = true;
+           $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
        }
 
        public function getRoles(){
@@ -147,9 +172,19 @@ class PerfilUsuario
     /**
      * Get nombreUsuario
      *
-     * @return string 
+     * @return string
      */
     public function getNombreUsuario()
+    {
+        return $this->nombreUsuario;
+    }
+
+    /**
+     * Get nombreUsuario
+     *
+     * @return string
+     */
+    public function getUsername()
     {
         return $this->nombreUsuario;
     }

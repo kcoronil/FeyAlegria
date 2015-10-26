@@ -25,9 +25,16 @@ class Passwords
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=10, nullable=false)
+     * @ORM\Column(name="password", type="string", length=40, nullable=false)
      */
     public $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="salt", type="string", length=40, nullable=false)
+     */
+    public $salt;
 
     /**
      * @var \DateTime
@@ -52,6 +59,12 @@ class Passwords
      * })
      */
     public $perfil;
+
+    public function __construct() {
+        if(!$this->salt){
+            $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        }
+    }
 
     /**
      * Get id
@@ -84,6 +97,29 @@ class Passwords
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $salt
+     * @return string
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get dalt
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
     }
 
     /**

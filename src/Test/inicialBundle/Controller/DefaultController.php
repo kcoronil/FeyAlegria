@@ -59,22 +59,41 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
 
-            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
+            $query = $this->getDoctrine()->getManager()->getRepository('inicialBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
-                ->select('perfil.id as id_perfil', 'perfil.nombreUsuario', 'perfil.email', 'perfil.activo as perfil_activo', 'usuario.nombres', 'tipo_usuario.id as id_tipo_usuario', 'tipo_usuario.nombre as nombre_tipo_usuario', 'password.activo as pass_activo')
+                ->select('perfil', 'usuario', 'tipo_usuario')
                 ->innerJoin('inicialBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
-                ->innerJoin('inicialBundle:Passwords', 'password', 'WITH', 'perfil.id = password.perfil')
                 ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('perfil.nombreUsuario = :user')
-                ->andwhere('password.password = :pass')
-                ->andwhere('password.activo = true')
                 ->setParameter('user', $username)
-                ->setParameter('pass', $password)
+
                 ->getQuery();
 
-            $user = $query->getOneOrNullResult();
+
+            $user = $query->getArrayResult();
+
+            $passwords = $this->getDoctrine()
+                ->getRepository('inicialBundle:Passwords')
+                ->findBy(array('perfil'=>$user[0]['id'],'activo'=>true));
+            $test_pass = $this->getDoctrine()
+                ->getRepository('inicialBundle:Passwords')->find($passwords[0]->getId());
 
             if ($user){
+
+                print_r($password);
+                print_r('<br>');
+                print_r($passwords[0]->getPassword());
+                print_r('<br>');
+                print_r($passwords[0]->getSalt());
+                print_r('<br>');
+                $factory = $this->get('security.encoder_factory');
+                $codificador = $factory->getEncoder($test_pass);
+                $validador = $codificador->isPasswordValid($password, $passwords[0]->getSalt(), $passwords[0]->getPassword());
+                $pass = $codificador->encodePassword($password, $passwords[0]->getSalt());
+                print_r($validador);
+                print_r($pass);
+
+                exit;
                 $session = $request ->getSession();
                 $session -> set("email", $user['email']);
                 $session -> set("perfil_activo", $user['perfil_activo']);
@@ -509,7 +528,6 @@ class DefaultController extends Controller
 
                     $p = new Passwords();
                     $formulario = $this->createForm(new PasswordsType(), $p);
-                    //$formulario->setParent($perfil);
                     $formulario-> handleRequest($request);
                     if($request->getMethod()=='POST') {
 
@@ -522,6 +540,10 @@ class DefaultController extends Controller
                             $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
                             $p->setPerfil($perfil);
                             $p->setActivo(true);
+                            $factory = $this->get('security.encoder_factory');
+                            $codificador = $factory->getEncoder($p);
+                            $pass = $codificador->encodePassword($p->getPassword(), $p->getSalt());
+                            $p->setPassword($pass);
                             $em = $this->getDoctrine()->getManager();
                             $em->persist($p);
                             $em->flush();
