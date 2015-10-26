@@ -59,28 +59,32 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
 
-            $query = $this->getDoctrine()->getManager()->getRepository('inicialBundle:PerfilUsuario')
+            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
-                ->select('perfil', 'usuario', 'tipo_usuario')
+                ->select('perfil.id as id_perfil', 'perfil.nombreUsuario', 'perfil.email', 'perfil.activo as perfil_activo', 'usuario.nombres', 'tipo_usuario.id as id_tipo_usuario', 'tipo_usuario.nombre as nombre_tipo_usuario', 'password.activo as pass_activo')
                 ->innerJoin('inicialBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
+                ->innerJoin('inicialBundle:Passwords', 'password', 'WITH', 'perfil.id = password.perfil')
                 ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('perfil.nombreUsuario = :user')
+                ->andwhere('password.password = :pass')
+                ->andwhere('password.activo = true')
                 ->setParameter('user', $username)
-
+                ->setParameter('pass', $password)
                 ->getQuery();
 
+            $user = $query->getOneOrNullResult();
 
-            $user = $query->getArrayResult();
+            /*$user = $query->getArrayResult();
 
             $passwords = $this->getDoctrine()
                 ->getRepository('inicialBundle:Passwords')
                 ->findBy(array('perfil'=>$user[0]['id'],'activo'=>true));
             $test_pass = $this->getDoctrine()
-                ->getRepository('inicialBundle:Passwords')->find($passwords[0]->getId());
+                ->getRepository('inicialBundle:Passwords')->find($passwords[0]->getId());*/
 
             if ($user){
 
-                print_r($password);
+                /*print_r($password);
                 print_r('<br>');
                 print_r($passwords[0]->getPassword());
                 print_r('<br>');
@@ -93,7 +97,7 @@ class DefaultController extends Controller
                 print_r($validador);
                 print_r($pass);
 
-                exit;
+                exit;*/
                 $session = $request ->getSession();
                 $session -> set("email", $user['email']);
                 $session -> set("perfil_activo", $user['perfil_activo']);
@@ -179,19 +183,26 @@ class DefaultController extends Controller
         if($request->headers->get('referer')==$this->generateUrl('inicial_lista_representante', array(), true)){
             $plantilla = 'detalle_representante';
             $accion = 'Detalle Representante';
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario', 'alumnos')
+                ->innerJoin('usuario.alumno', 'alumnos')
+                ->where('usuario.id = :id')
+                ->andWhere('usuario.activo = true')
+                ->setParameter('id', $id)
+                ->getQuery();
+
         }
         else{
             $plantilla = 'detalle_usuario';
             $accion = 'Detalle Usuario';
+            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->where('usuario.id = :id')
+                ->andWhere('usuario.activo = true')
+                ->setParameter('id', $id)
+                ->getQuery();
         }
-
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-            ->createQueryBuilder('usuario')
-            ->where('usuario.id = :id')
-            ->andWhere('usuario.activo = true')
-            ->setParameter('id', $id)
-            ->getQuery();
-
 
         $datos = $query->getArrayResult();
 
