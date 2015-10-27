@@ -236,8 +236,8 @@ inicial_agregar_usuario:
     defaults: { _controller: inicialBundle:Default:crear_usuario }
 
 inicial_detalle_usuario:
-    path:     /detalle_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:detalle_usuario }
+    path:     /detalle_usuario/{id}-{tipo}
+    defaults: { _controller: inicialBundle:Default:detalle_usuario, tipo: null }
 
 inicial_editar_usuario:
     path:     /editar_usuario/{id}
@@ -266,8 +266,8 @@ inicial_editar_representante:
     defaults: { _controller: inicialBundle:Default:editar_representante }
 
 inicial_detalle_representante:
-    path:     /detalle_representante/{id}
-    defaults: { _controller: inicialBundle:Default:detalle_representante }
+    path:     /detalle_representante/{id}-{tipo}
+    defaults: { _controller: inicialBundle:Default:detalle_representante , tipo: null }
 
 inicial_lista_representante:
     path:     /lista_representante

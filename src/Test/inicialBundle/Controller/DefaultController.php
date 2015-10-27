@@ -166,11 +166,11 @@ class DefaultController extends Controller
 
         return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>'Listado de '.$elemento, 'datos'=>$datos));
     }
-    public function detalle_usuarioAction($id, Request $request)
+    public function detalle_usuarioAction($id, $tipo, Request $request)
     {
         //hacer consulta simple a la bbdd
 
-        if($request->headers->get('referer')==$this->generateUrl('inicial_lista_representante', array(), true)){
+        if($tipo == 'representante'){
             $plantilla = 'detalle_representante';
             $accion = 'Detalle Representante';
             $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
@@ -320,8 +320,32 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
 
+    public function detalle_alumnoAction($id, Request $request)
+    {
 
-    public function borrar_alumnoAction($id, Request $request)
+        //hacer consulta simple a la bbdd
+
+        $query = $this->getDoctrine()->getRepository('inicialBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno', 'usuarios')
+            ->innerJoin('alumno.usuario', 'usuarios')
+            ->where('alumno.id = :id')
+            ->andWhere('alumno.activo = true')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+
+        $datos = $query->getArrayResult();
+
+        if (!$datos)
+        {
+            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+        }
+        return $this->render('inicialBundle:Default:detalle_alumno.html.twig', array('accion'=>'Detalle Estudiante', 'datos'=>$datos));
+    }
+
+
+        public function borrar_alumnoAction($id, Request $request)
     {
         $alumno = $this->getDoctrine()
             ->getRepository('inicialBundle:Alumnos')

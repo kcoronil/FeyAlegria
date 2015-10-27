@@ -81,7 +81,7 @@
                                 {% if elemento.timestamp is defined %}
                                     {{ elemento|date('d/m/Y') }}
                                 {% elseif key == 'cedula' %}
-                                    <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                                    <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': 'representante'  }) }}">{{ elemento }}</a>
                                 {% else %}
                                     {{ elemento }}
                                 {% endif %}
