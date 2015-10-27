@@ -61,67 +61,57 @@ class DefaultController extends Controller
 
             $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
-                ->select('perfil.id as id_perfil', 'perfil.nombreUsuario', 'perfil.email', 'perfil.activo as perfil_activo', 'usuario.nombres', 'tipo_usuario.id as id_tipo_usuario', 'tipo_usuario.nombre as nombre_tipo_usuario', 'password.activo as pass_activo')
+                ->select('perfil', 'usuario', 'tipo_usuario')
                 ->innerJoin('inicialBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
-                ->innerJoin('inicialBundle:Passwords', 'password', 'WITH', 'perfil.id = password.perfil')
                 ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('perfil.nombreUsuario = :user')
-                ->andwhere('password.password = :pass')
-                ->andwhere('password.activo = true')
                 ->setParameter('user', $username)
-                ->setParameter('pass', $password)
+
                 ->getQuery();
 
-            $user = $query->getOneOrNullResult();
+            //$user = $query->getOneOrNullResult();
 
-            /*$user = $query->getArrayResult();
+            $user = $query->getArrayResult();
+
 
             $passwords = $this->getDoctrine()
                 ->getRepository('inicialBundle:Passwords')
-                ->findBy(array('perfil'=>$user[0]['id'],'activo'=>true));
-            $test_pass = $this->getDoctrine()
-                ->getRepository('inicialBundle:Passwords')->find($passwords[0]->getId());*/
+                ->findOneBy(array('perfil'=>$user[0]['id'],'activo'=>true));
 
             if ($user){
-
-                /*print_r($password);
-                print_r('<br>');
-                print_r($passwords[0]->getPassword());
-                print_r('<br>');
-                print_r($passwords[0]->getSalt());
-                print_r('<br>');
                 $factory = $this->get('security.encoder_factory');
-                $codificador = $factory->getEncoder($test_pass);
-                $validador = $codificador->isPasswordValid($password, $passwords[0]->getSalt(), $passwords[0]->getPassword());
-                $pass = $codificador->encodePassword($password, $passwords[0]->getSalt());
-                print_r($validador);
-                print_r($pass);
+                $codificador = $factory->getEncoder($passwords);
+                $validador = $codificador->isPasswordValid($passwords->getPassword(), $password, $passwords->getSalt());
+                if($validador) {
+                    $session = $request->getSession();
+                    $session->set("email", $user[0]['email']);
+                    $session->set("perfil_activo", $user[0]['activo']);
+                    $session->set("pass_activo", $passwords->getActivo());
 
-                exit;*/
-                $session = $request ->getSession();
-                $session -> set("email", $user['email']);
-                $session -> set("perfil_activo", $user['perfil_activo']);
-                $session -> set("pass_activo", $user['pass_activo']);
+                    if ($session->get('perfil_activo') == 1) {
 
-                if($session->get('perfil_activo')==1){
-
-                    if($session->get('pass_activo')==1 ){
-                        $session -> set("id", $user['id_perfil']);
-                        $session -> set("autenticado", true);
-                        $session -> set("nombre_usuario", $user['nombreUsuario']);
-                        $session -> set("nombres", $user['nombres']);
-                        $session -> set("tipo_usuario", $user['nombre_tipo_usuario']);
-                        $session -> set("id_tipo_usuario", $user['id_tipo_usuario']);
+                        if ($session->get('pass_activo') == 1) {
+                            $session->set("id", $user[0]['id']);
+                            $session->set("autenticado", true);
+                            $session->set("nombre_usuario", $user[0]['nombreUsuario']);
+                            $session->set("nombres", $user[1]['nombres']);
+                            $session->set("tipo_usuario", $user[2]['nombre']);
+                            $session->set("id_tipo_usuario", $user[2]['id']);
+                            return $this->render('inicialBundle:Default:index.html.twig');
+                        } else {
+                            $this->get('session')->getFlashBag()->add(
+                                'warning', 'Clave Inactiva debe actualizar su clave');
+                        }
+                    } else {
+                        $this->get('session')->getFlashBag()->add(
+                            'danger', 'Usuario Inactivo Contactar con el administrador del sistema');
                         return $this->render('inicialBundle:Default:index.html.twig');
-                    }
-                    else{
-                        $this -> get('session') -> getFlashBag() -> add(
-                            'warning', 'Clave Inactiva debe actualizar su clave');
                     }
                 }
                 else{
-                        $this -> get('session') -> getFlashBag() -> add(
-                            'danger', 'Usuario Inactivo Contactar con el administrador del sistema');
+                    $this -> get('session') -> getFlashBag() -> add(
+                        'danger', 'Datos incorrectos'
+                    );
                     return $this->render('inicialBundle:Default:index.html.twig');
                 }
             }
@@ -551,16 +541,18 @@ class DefaultController extends Controller
                             $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
                             $p->setPerfil($perfil);
                             $p->setActivo(true);
+
                             $factory = $this->get('security.encoder_factory');
                             $codificador = $factory->getEncoder($p);
-                            $pass = $codificador->encodePassword($p->getPassword(), $p->getSalt());
+                            $salt = $p->getSalt();
+                            $p->setSalt($salt);
+                            $pass = $codificador->encodePassword($p->getPassword(), $salt);
                             $p->setPassword($pass);
                             $em = $this->getDoctrine()->getManager();
                             $em->persist($p);
                             $em->flush();
                             $this->get('session')->getFlashBag()->add(
                                 'success', 'Contraseña Cambiada con éxito');
-
                             $borrar_passtmp= $this->getDoctrine()->getEntityManager();
                             $borrar_passtmp_query = $borrar_passtmp->getRepository('inicialBundle:RecuperarPasswordTmp')->find($datos[0]['id']);
                             $borrar_passtmp->remove($borrar_passtmp_query);
