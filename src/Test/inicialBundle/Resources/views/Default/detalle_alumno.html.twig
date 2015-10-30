@@ -62,121 +62,120 @@
 {% block content %}
     <div class="row text-center">
         <h2 class="clase">{{ accion }}</h2>
-            {% if datos is not defined %}
-                <div class="col-sm-6 col-sm-offset-3">
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <p>No existe Estudiante con ese ID</p>
-                    </div>
+        {% if datos is not defined %}
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <p>No existe Estudiante con ese ID</p>
                 </div>
-            {% else %}
-                <div class="col-sm-6 col-sm-offset-3">
-                    <table class="table-bordered table-hover table-responsive" width="100%">
-                        <tbody>
-                        <tr>
-                            <th colspan="2" class="text-center">Datos del Usuario</th>
-                        </tr>
-                        <tr>
-                            <th>Cedula: </th><td>{{ datos.0.cedula }}</td>
-                        </tr>
-                        <tr>
-                            <th>Cedula Estudiantil: </th><td>{{ datos.0.cedulaEstudiantil }}</td>
-                        </tr>
-                        <tr>
-                            <th>Apellidos: </th><td>{{ datos.0.apellidos }}</td>
-                        </tr>
-                        <tr>
-                            <th>Nombres: </th><td>{{ datos.0.nombres }}</td>
-                        </tr>
-                        <tr>
-                            <th>Fecha Nacimiento: </th><td>{{ datos.0.fechaNacimiento|date('d/m/Y') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Lugar de Nacimiento: </th><td>{{ datos.0.lugarNacimiento }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                {% if datos.0.usuario is defined%}
-                    <div class="row">
-                        <div id="div_tbl_alumnos" class="col-sm-12">
-                            <h4>Representanrtes Registrados</h4>
-                            <table id="tbl_alumnos" class="table table-bordered table-hover table-responsive"  width="100%">
-                                <thead>
-                                <tr>
-                                    {% for key, campo in datos.0.usuario.0 %}
-                                        {% if (key == 'id') or ('_id' in key) %}
+            </div>
+        {% else %}
+            <div class="col-sm-6 col-sm-offset-3">
+                <table class="table-bordered table-hover table-responsive" width="100%">
+                    <tbody>
+                    <tr>
+                        <th colspan="2" class="text-center">Datos del Usuario</th>
+                    </tr>
+                    <tr>
+                        <th>Cedula: </th><td>{{ datos.0.cedula }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cedula Estudiantil: </th><td>{{ datos.0.cedulaEstudiantil }}</td>
+                    </tr>
+                    <tr>
+                        <th>Apellidos: </th><td>{{ datos.0.apellidos }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombres: </th><td>{{ datos.0.nombres }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Nacimiento: </th><td>{{ datos.0.fechaNacimiento|date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lugar de Nacimiento: </th><td>{{ datos.0.lugarNacimiento }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% if datos.0.usuario is defined%}
+                <div class="row">
+                    <div id="div_tbl_alumnos" class="col-sm-12">
+                        <h4>Representanrtes Registrados</h4>
+                        <table id="tbl_alumnos" class="table table-bordered table-hover table-responsive"  width="100%">
+                            <thead>
+                            <tr>
+                                {% for key, campo in datos.0.usuario.0 %}
+                                    {% if (key == 'id') or ('_id' in key) %}
+                                    {% else %}
+                                        {% if campo is iterable %}
+                                            {% for k, c  in campo %}
+                                                {% if k != 'id' %}
+                                                    <th>{{ k }}</th>
+                                                {% endif %}
+                                            {% endfor %}
                                         {% else %}
-                                            {% if campo is iterable %}
-                                                {% for k, c  in campo %}
-                                                    {% if k != 'id' %}
-                                                        <th>{{ k }}</th>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% else %}
-                                                <th>{{ key }}</th>
-                                            {% endif %}
+                                            <th>{{ key }}</th>
                                         {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for key, campo in datos.0.usuario.0 %}
-                                        {% if (key == 'id') or ('_id' in key) %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                {% for key, campo in datos.0.usuario.0 %}
+                                    {% if (key == 'id') or ('_id' in key) %}
+                                    {% else %}
+                                        {% if campo is iterable %}
+                                            {% for k, c  in campo %}
+                                                {% if k != 'id' %}
+                                                    <th>{{ k }}</th>
+                                                {% endif %}
+                                            {% endfor %}
                                         {% else %}
-                                            {% if campo is iterable %}
-                                                {% for k, c  in campo %}
-                                                    {% if k != 'id' %}
-                                                        <th>{{ k }}</th>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% else %}
-                                                <th>{{ key }}</th>
-                                            {% endif %}
+                                            <th>{{ key }}</th>
                                         {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for dato in datos.0.usuario %}
-                                    <tr>
-                                        {% for  key, elemento in dato %}
-                                            {% if  (key == 'id') or ( '_id' in key ) %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for dato in datos.0.usuario %}
+                                <tr>
+                                    {% for  key, elemento in dato %}
+                                        {% if  (key == 'id') or ( '_id' in key ) %}
+                                        {% else %}
+                                            {% if elemento.timestamp is defined %}
+                                                <td>{{ elemento|date('d/m/Y') }}</td>
+                                            {% elseif (key == 'cedula') or ('cedula' in key) %}
+                                                <td><a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': 'representante' }) }}">{{ elemento }}</a></td>
                                             {% else %}
-                                                {% if elemento.timestamp is defined %}
-                                                    <td>{{ elemento|date('d/m/Y') }}</td>
-                                                {% elseif (key == 'cedula') or ('cedula' in key) %}
-                                                    <td><a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': 'representante' }) }}">{{ elemento }}</a></td>
-                                                {% else %}
-                                                    {% if elemento is iterable %}
-                                                        {% for k, item in elemento.0 %}
-                                                            {% if  (k != 'id' ) or ('_id' not in key) %}
-                                                                {% if item.timestamp is defined %}
-                                                                    <td>{{ item|date('d/m/Y') }}</td>
-                                                                {% else %}
-                                                                    <td>{{ item }}</td>
-                                                                {% endif %}
+                                                {% if elemento is iterable %}
+                                                    {% for k, item in elemento.0 %}
+                                                        {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                            {% if item.timestamp is defined %}
+                                                                <td>{{ item|date('d/m/Y') }}</td>
+                                                            {% else %}
+                                                                <td>{{ item }}</td>
                                                             {% endif %}
-                                                        {% endfor %}
-                                                    {% else %}
-                                                        <td>{{ elemento }}</td>
-                                                    {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <td>{{ elemento }}</td>
                                                 {% endif %}
                                             {% endif %}
-                                        {% endfor %}
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-            {% if form is defined %}
-                <div class="col-sm-12 ">
-                    <div class="col-sm-4 col-sm-offset-4 text-left">
-                        {{ form(form) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             {% endif %}
-
+        {% endif %}
+        {% if form is defined %}
+            <div class="col-sm-12 ">
+                <div class="col-sm-4 col-sm-offset-4 text-left">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
