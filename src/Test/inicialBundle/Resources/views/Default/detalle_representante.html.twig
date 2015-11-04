@@ -92,7 +92,7 @@
                                 <thead>
                                 <tr>
                                     {% for key, campo in datos.0.alumno.0 %}
-                                        {% if (key == 'id') or ('_id' in key) %}
+                                        {% if (key == 'id')  or (key == 'activo') or ('_id' in key) %}
                                         {% else %}
                                             {% if campo is iterable %}
                                                 {% for k, c  in campo %}
@@ -108,7 +108,7 @@
                                 </tr>
                                 <tr>
                                     {% for key, campo in datos.0.alumno.0 %}
-                                        {% if (key == 'id') or ('_id' in key) %}
+                                        {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
                                         {% else %}
                                             {% if campo is iterable %}
                                                 {% for k, c  in campo %}
@@ -127,12 +127,12 @@
                                 {% for dato in datos.0.alumno %}
                                     <tr>
                                         {% for  key, elemento in dato %}
-                                            {% if  (key == 'id') or ( '_id' in key ) %}
+                                            {% if  (key == 'id') or (key == 'activo') or ( '_id' in key ) %}
                                             {% else %}
                                                 {% if elemento.timestamp is defined %}
                                                     <td>{{ elemento|date('d/m/Y') }}</td>
                                                 {% elseif (key == 'cedula') or ('cedula' in key) %}
-                                                    <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id, 'tipo': 'representante'}) }}">{{ elemento }}</a></td>
+                                                    <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id}) }}">{{ elemento }}</a></td>
                                                 {% else %}
                                                     {% if elemento is iterable %}
                                                         {% for k, item in elemento.0 %}

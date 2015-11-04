@@ -164,13 +164,13 @@ class DefaultController extends Controller
 
         $datos = $query->getArrayResult();
 
-        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>'Listado de '.$elemento, 'datos'=>$datos));
+        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>$elemento, 'datos'=>$datos));
     }
     public function detalle_usuarioAction($id, $tipo, Request $request)
     {
         //hacer consulta simple a la bbdd
 
-        if($tipo == 'representante'){
+        if(strtolower($tipo) == 'representantes'){
             $plantilla = 'detalle_representante';
             $accion = 'Detalle Representante';
             $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
@@ -821,7 +821,7 @@ class DefaultController extends Controller
     }
     public function editar_cursoAction($id, Request $request){
         $form = New CursoType('Editar Curso');
-        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento');
     }
     public function borrar_cursoAction($id, Request $request){
         $form = New CursoType('Borrar Curso');
@@ -834,7 +834,7 @@ class DefaultController extends Controller
     }
     public function editar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Editar Concepto Factura');
-        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento');
     }
     public function borrar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Borrar Concepto Factura');
@@ -847,7 +847,7 @@ class DefaultController extends Controller
     }
     public function editar_bancoAction($id, Request $request){
         $form = New BancosType('Editar Banco');
-        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento');
     }
     public function borrar_bancoAction($id, Request $request){
         $form = New BancosType('Borrar Banco');
@@ -860,7 +860,7 @@ class DefaultController extends Controller
     }
     public function editar_rolAction($id, Request $request){
         $form = New RolesType('Editar Rol');
-        return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento');
     }
     public function borrar_rolAction($id, Request $request){
         $form = New RolesType('Borrar Rol');
@@ -873,7 +873,7 @@ class DefaultController extends Controller
     }
     public function editar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Editar Periodo Escolar');
-        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento');
     }
     public function borrar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Borrar Periodo Escolar');
@@ -886,7 +886,7 @@ class DefaultController extends Controller
     }
     public function editar_elementoAction($id, Request $request){
         $form = New ElementosType('Editar elemento del sistema');
-        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento');
     }
     public function borrar_elementoAction($id, Request $request){
         $form = New ElementosType('Borrar elemento del sistema');
@@ -899,7 +899,7 @@ class DefaultController extends Controller
     }
     public function editar_eventoAction($id, Request $request){
         $form = New EventosType('Editar evento del sistema');
-        return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento');
     }
     public function borrar_eventoAction($id, Request $request){
         $form = New EventosType('Borrar evento del sistema');
@@ -912,7 +912,7 @@ class DefaultController extends Controller
     }
     public function editar_permisoAction($id, Request $request){
         $form = New PermisosType('Editar permiso del sistema');
-        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento');
     }
     public function borrar_permisoAction($id, Request $request){
         $form = New PermisosType('Borrar permiso del sistema');
@@ -925,7 +925,7 @@ class DefaultController extends Controller
     }
     public function editar_seccionAction($id, Request $request){
         $form = new SeccionType('Editar Seccion');
-        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento');
     }
     public function borrar_seccionAction($id, Request $request){
         $form = new SeccionType('Borrar Seccion');
@@ -938,7 +938,7 @@ class DefaultController extends Controller
     }
     public function editar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Editar Tipo Usuario');
-        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento');
     }
     public function borrar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Borrar Tipo Usuario');
@@ -951,7 +951,7 @@ class DefaultController extends Controller
     }
     public function editar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Editar Tipo Contacto');
-        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento');
     }
     public function borrar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Borrar Tipo Contacto');
@@ -964,7 +964,7 @@ class DefaultController extends Controller
     }
     public function editar_representante_contactoAction($id, Request $request){
         $form = new TipoContactoType('Editar Contacto Representante');
-        return $this->editar_generico($id, $request, $form, 'RepresentanteContacto', 'Editar Tipo Contacto', 'inicial_agregar_representante_contacto', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'RepresentanteContacto', 'Editar Tipo Contacto', 'inicial_agregar_representante_contacto', 'mantenimiento');
     }
     public function borrar_representante_contactoAction($id, Request $request){
         $form = new RepresentanteContactoType('Borrar Contacto Representante');
@@ -977,7 +977,7 @@ class DefaultController extends Controller
     }
     public function editar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Editar Tipo Factura');
-        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento', 'true');
+        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento');
     }
     public function borrar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Borrar Tipo Factura');
