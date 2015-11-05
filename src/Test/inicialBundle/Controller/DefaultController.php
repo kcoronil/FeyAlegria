@@ -250,6 +250,53 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
+    public function crear_usuario_generico($request, $tipo)
+    {
+        $p = new Usuarios();
+        if($tipo == 'representante'){
+            $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
+            $formulario -> remove('tipoUsuario');
+            $formulario -> remove('principal');
+            $tipo_usuario = $this->getDoctrine()
+                ->getRepository('inicialBundle:TipoUsuario')
+                ->find(5);
+            $p->setTipoUsuario($tipo_usuario);
+            $p->setPrincipal('true');
+            $elemento = 'Representante';
+        }
+        else{
+            $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
+            $formulario -> remove('alumno');
+            $formulario -> remove('principal');
+            $formulario -> remove('representanteContacto');
+            $elemento = 'Usuario';
+        }
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', $elemento.' Creado con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
+                }
+            }
+        }
+
+        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
+    }
+
     public function borrar_usuarioAction($id, Request $request)
     {
         $usuario = $this->getDoctrine()
@@ -345,7 +392,7 @@ class DefaultController extends Controller
     }
 
 
-        public function borrar_alumnoAction($id, Request $request)
+    public function borrar_alumnoAction($id, Request $request)
     {
         $alumno = $this->getDoctrine()
             ->getRepository('inicialBundle:Alumnos')
