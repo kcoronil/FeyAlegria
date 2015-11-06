@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="RosaMolas\usuariosBundle\Entity\Usuarios" table="usuarios">
+        <indexes>
+            <index name="usuarios_sexo_id" columns="sexo_id"/>
+            <index name="IDX_EF687F24ABE41B6" columns="tipo_usuario_id"/>
+        </indexes>
+        <unique-constraints>
+            <unique-constraint name="usuarios_cedula_key" columns="cedula"/>
+        </unique-constraints>
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="cedula" type="integer" column="cedula" nullable="false"/>
+        <field name="apellidos" type="string" column="apellidos" length="30" nullable="false"/>
+        <field name="nombres" type="string" column="nombres" length="30" nullable="false"/>
+        <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="false"/>
+        <field name="direccion" type="text" column="direccion" nullable="false"/>
+        <field name="principal" type="boolean" column="principal" nullable="false"/>
+        <field name="activo" type="boolean" column="activo" nullable="false"/>
+        <one-to-many field="representanteContacto" mapped-by="representante" target-entity="RepresentanteContacto">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+        </one-to-many>
+        <many-to-one field="sexo" target-entity="RosaMolas\genericoBundle\Entity\Sexo">
+            <join-columns>
+                <join-column name="sexo_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="tipoUsuario" target-entity="TipoUsuario">
+            <join-columns>
+                <join-column name="tipo_usuario_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-many field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="usuario">
+        <cascade>
+            <cascade-persist/>
+        </cascade>
+        <join-table name="alumnos_representantes">
+            <join-columns>
+                <join-column name="representante_id" referenced-column-name="id"/>
+            </join-columns>
+            <inverse-join-columns>
+                <join-column name="alumno_id" referenced-column-name="id"/>
+            </inverse-join-columns>
+        </join-table>
+    </many-to-many>
+    </entity>
+</doctrine-mapping>
+

@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Test\inicialBundle\inicialBundle(),
             new RosaMolas\alumnosBundle\alumnosBundle(),
             new RosaMolas\genericoBundle\genericoBundle(),
+            new RosaMolas\usuariosBundle\usuariosBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

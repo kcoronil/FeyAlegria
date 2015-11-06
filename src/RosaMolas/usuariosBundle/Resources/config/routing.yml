@@ -1,0 +1,58 @@
+#------------------------- usuarios ----------------------------
+inicial_logout:
+    path:     /logout
+    defaults: { _controller: usuariosBundle:Default:logout }
+
+inicial_solicitar_pass:
+    path:     /solicitar_pass/
+    defaults: { _controller: usuariosBundle:Default:solicitar_pass }
+
+inicial_recuperar_pass:
+    path:     /recuperar_pass/{token}
+    defaults: { _controller: usuariosBundle:Default:recuperar_pass, token: null  }
+
+inicial_agregar_usuario:
+    path:     /crear_usuario
+    defaults: { _controller: usuariosBundle:Default:crear_usuario }
+
+inicial_detalle_usuario:
+    path:     /detalle_usuario/{id}-{tipo}
+    defaults: { _controller: usuariosBundle:Default:detalle_usuario, tipo: null }
+
+inicial_editar_usuario:
+    path:     /editar_usuario/{id}
+    defaults: { _controller: usuariosBundle:Default:editar_usuario }
+
+inicial_borrar_usuario:
+    path:     /borrar_usuario/{id}
+    defaults: { _controller: usuariosBundle:Default:borrar_usuario }
+
+inicial_lista_usuario:
+    path:     /lista_usuario
+    defaults: { _controller: usuariosBundle:Default:lista_usuario }
+
+inicial_pdf_usuario:
+    path:     /pdf_lista_usuario
+    defaults: { _controller: usuariosBundle:Default:lista_usuario_pdf }
+
+#------------------------- usuarios (representantes) ----------------------------
+
+inicial_agregar_representante:
+    path:     /crear_representante
+    defaults: { _controller: usuariosBundle:Default:crear_usuario }
+
+inicial_editar_representante:
+    path:     /editar_representante/{id}
+    defaults: { _controller: usuariosBundle:Default:editar_representante }
+
+inicial_detalle_representante:
+    path:     /detalle_representante/{id}-{tipo}
+    defaults: { _controller: usuariosBundle:Default:detalle_representante , tipo: null }
+
+inicial_lista_representante:
+    path:     /lista_representante
+    defaults: { _controller: usuariosBundle:Default:lista_usuario }
+
+inicial_pdf_representante:
+    path:     /pdf_lista_representante
+    defaults: { _controller: usuariosBundle:Default:lista_usuario_pdf }

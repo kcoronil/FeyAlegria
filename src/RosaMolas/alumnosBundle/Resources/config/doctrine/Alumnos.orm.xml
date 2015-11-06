@@ -28,7 +28,7 @@
               <join-column name="sexo_id" referenced-column-name="id"/>
           </join-columns>
       </many-to-one>
-      <many-to-many field="usuario" target-entity="Test\inicialBundle\entity\Usuarios" mapped-by="alumno">
+      <many-to-many field="usuario" target-entity="RosaMolas\usuariosBundle\entity\Usuarios" mapped-by="alumno">
           <cascade>
               <cascade-persist/>
           </cascade>

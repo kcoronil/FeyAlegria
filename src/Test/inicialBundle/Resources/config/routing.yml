@@ -183,66 +183,6 @@ inicial_borrar_representante_contacto:
     path:     /borrar_representante_contacto/{id}
     defaults: { _controller: inicialBundle:Default:borrar_representante_contacto }
 
-#------------------------- usuarios ----------------------------
-
-inicial_logout:
-    path:     /logout
-    defaults: { _controller: inicialBundle:Default:logout }
-
-inicial_solicitar_pass:
-    path:     /solicitar_pass/
-    defaults: { _controller: inicialBundle:Default:solicitar_pass }
-
-inicial_recuperar_pass:
-    path:     /recuperar_pass/{token}
-    defaults: { _controller: inicialBundle:Default:recuperar_pass, token: null  }
-
-inicial_agregar_usuario:
-    path:     /crear_usuario
-    defaults: { _controller: inicialBundle:Default:crear_usuario }
-
-inicial_detalle_usuario:
-    path:     /detalle_usuario/{id}-{tipo}
-    defaults: { _controller: inicialBundle:Default:detalle_usuario, tipo: null }
-
-inicial_editar_usuario:
-    path:     /editar_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:editar_usuario }
-
-inicial_borrar_usuario:
-    path:     /borrar_usuario/{id}
-    defaults: { _controller: inicialBundle:Default:borrar_usuario }
-
-inicial_lista_usuario:
-    path:     /lista_usuario
-    defaults: { _controller: inicialBundle:Default:lista_usuario }
-
-inicial_pdf_usuario:
-    path:     /pdf_lista_usuario
-    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
-
-#------------------------- usuarios (representantes) ----------------------------
-
-inicial_agregar_representante:
-    path:     /crear_representante
-    defaults: { _controller: inicialBundle:Default:crear_usuario }
-
-inicial_editar_representante:
-    path:     /editar_representante/{id}
-    defaults: { _controller: inicialBundle:Default:editar_representante }
-
-inicial_detalle_representante:
-    path:     /detalle_representante/{id}-{tipo}
-    defaults: { _controller: inicialBundle:Default:detalle_representante , tipo: null }
-
-inicial_lista_representante:
-    path:     /lista_representante
-    defaults: { _controller: inicialBundle:Default:lista_usuario }
-
-inicial_pdf_representante:
-    path:     /pdf_lista_representante
-    defaults: { _controller: inicialBundle:Default:lista_usuario_pdf }
-
 
 #--------------------- controlador representantes sin uso -----------------
 representantes_home:

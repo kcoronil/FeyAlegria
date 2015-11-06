@@ -4,47 +4,39 @@ namespace Test\inicialBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Test\inicialBundle\Entity\Bancos;
+use RosaMolas\genericoBundle\Entity\Bancos;
 use Test\inicialBundle\Entity\ConceptosFactura;
-use Test\inicialBundle\Entity\Elementos;
-use Test\inicialBundle\Entity\Eventos;
-use Test\inicialBundle\Entity\PeriodoEscolarAlumno;
+use RosaMolas\genericoBundle\Entity\Elementos;
+use RosaMolas\genericoBundle\Entity\Eventos;
 use Test\inicialBundle\Entity\PeriodoEscolarCurso;
-use Test\inicialBundle\Entity\Permisos;
-use Test\inicialBundle\Entity\RepresentanteContacto;
+use RosaMolas\usuariosBundle\Entity\Permisos;
+use RosaMolas\usuariosBundle\Entity\RepresentanteContacto;
 use Test\inicialBundle\Entity\Seccion;
-use Test\inicialBundle\Entity\TipoContacto;
+use RosaMolas\usuariosBundle\Entity\TipoContacto;
 use Test\inicialBundle\Entity\TipoFactura;
-use Test\inicialBundle\Entity\TipoUsuario;
+use RosaMolas\usuariosBundle\Entity\TipoUsuario;
 use Test\inicialBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
-use Test\inicialBundle\Entity\RecuperarPasswordTmp;
-use Test\inicialBundle\Entity\Usuarios;
-use Test\inicialBundle\Form\AlumnosTypeUsuario;
+use RosaMolas\usuariosBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Form\ConceptosFacturaType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EventosType;
-use Test\inicialBundle\Form\PeriodoEscolarAlumnoType;
 use Test\inicialBundle\Form\PeriodoEscolarCursoType;
 use Test\inicialBundle\Form\PeriodoEscolarType;
-use Test\inicialBundle\Form\PermisosType;
-use Test\inicialBundle\Form\RepresentanteContactoType;
+use RosaMolas\usuariosBundle\Form\PermisosType;
+use RosaMolas\usuariosBundle\Form\RepresentanteContactoType;
 use Test\inicialBundle\Form\SeccionType;
-use Test\inicialBundle\Form\TipoContactoType;
+use RosaMolas\usuariosBundle\Form\TipoContactoType;
 use Test\inicialBundle\Form\TipoFacturaType;
-use Test\inicialBundle\Form\TipoUsuarioType;
-use Test\inicialBundle\Form\UsuariosType;
-use Test\inicialBundle\Entity\Roles;
-use Test\inicialBundle\Form\RolesType;
-use Test\inicialBundle\Entity\PerfilUsuario;
-use Test\inicialBundle\Form\PerfilUsuarioType;
-use Test\inicialBundle\Entity\Alumnos;
-use Test\inicialBundle\Form\AlumnosTypeSimple;
+use RosaMolas\usuariosBundle\Form\TipoUsuarioType;
+use RosaMolas\usuariosBundle\Entity\Roles;
+use RosaMolas\usuariosBundle\Form\RolesType;
+use RosaMolas\usuariosBundle\Entity\PerfilUsuario;
+use RosaMolas\usuariosBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Curso;
 use Test\inicialBundle\Form\CursoType;
-use Test\inicialBundle\Entity\Passwords;
-use Test\inicialBundle\Form\PasswordsType;
-use Test\inicialBundle\Form\UsuariosTypeSimple;
+use RosaMolas\usuariosBundle\Entity\Passwords;
+use RosaMolas\usuariosBundle\Form\UsuariosTypeSimple;
 
 
 class DefaultController extends Controller
@@ -56,14 +48,14 @@ class DefaultController extends Controller
             $session->clear();
             $username=$request->get('usuario');
             $password= $request->get('password');
-            $em = $this->getDoctrine()->getManager();
+            //$em = $this->getDoctrine()->getManager();
 
 
-            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
                 ->select('perfil', 'usuario', 'tipo_usuario')
-                ->innerJoin('inicialBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->innerJoin('usuariosBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
+                ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('perfil.nombreUsuario = :user')
                 ->setParameter('user', $username)
 
@@ -75,7 +67,7 @@ class DefaultController extends Controller
 
 
             $passwords = $this->getDoctrine()
-                ->getRepository('inicialBundle:Passwords')
+                ->getRepository('usuariosBundle:Passwords')
                 ->findOneBy(array('perfil'=>$user[0]['id'],'activo'=>true));
 
             if ($user){
@@ -134,223 +126,6 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('inicial_homepage'));
     }
 
-    public function lista_usuarioAction(Request $request)
-    {
-        //hacer consulta simple a la bbdd
-
-        if($request->get('_route')=='inicial_lista_representante'){
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true')
-                ->andWhere('tipo_usuario.id=5')
-                ->orderBy('usuario.id', 'DESC')
-                ->getQuery();
-            $elemento = 'Representantes';
-
-        }
-        else{
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true')
-                ->andWhere('tipo_usuario.id!=5')
-                ->orderBy('usuario.id')
-                ->getQuery();
-            $elemento = 'Usuarios';
-        }
-
-        $datos = $query->getArrayResult();
-
-        return $this->render('inicialBundle:Default:lista_usuario.html.twig', array('accion'=>$elemento, 'datos'=>$datos));
-    }
-    public function detalle_usuarioAction($id, $tipo, Request $request)
-    {
-        //hacer consulta simple a la bbdd
-
-        if(strtolower($tipo) == 'representantes'){
-            $plantilla = 'detalle_representante';
-            $accion = 'Detalle Representante';
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario', 'alumnos')
-                ->innerJoin('usuario.alumno', 'alumnos')
-                ->where('usuario.id = :id')
-                ->andWhere('usuario.activo = true')
-                ->setParameter('id', $id)
-                ->getQuery();
-
-        }
-        else{
-            $plantilla = 'detalle_usuario';
-            $accion = 'Detalle Usuario';
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->where('usuario.id = :id')
-                ->andWhere('usuario.activo = true')
-                ->setParameter('id', $id)
-                ->getQuery();
-        }
-
-        $datos = $query->getArrayResult();
-
-        if (!$datos)
-        {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
-        }
-
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('accion'=>$accion, 'datos'=>$datos));
-    }
-    public function crear_usuarioAction(Request $request)
-    {
-        $p = new Usuarios();
-        if($request->get('_route')=='inicial_agregar_representante'){
-            $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
-            $formulario -> remove('tipoUsuario');
-            $formulario -> remove('principal');
-            $tipo_usuario = $this->getDoctrine()
-                ->getRepository('inicialBundle:TipoUsuario')
-                ->find(5);
-            $p->setTipoUsuario($tipo_usuario);
-            $p->setPrincipal('true');
-            $elemento = 'Representante';
-        }
-        else{
-            $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
-            $formulario -> remove('alumno');
-            $formulario -> remove('principal');
-            $formulario -> remove('representanteContacto');
-            $elemento = 'Usuario';
-        }
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                print_r($elemento);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', $elemento.' Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
-                }
-            }
-        }
-
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
-    }
-
-    public function crear_usuario_generico($request, $tipo)
-    {
-        $p = new Usuarios();
-        if($tipo == 'representante'){
-            $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
-            $formulario -> remove('tipoUsuario');
-            $formulario -> remove('principal');
-            $tipo_usuario = $this->getDoctrine()
-                ->getRepository('inicialBundle:TipoUsuario')
-                ->find(5);
-            $p->setTipoUsuario($tipo_usuario);
-            $p->setPrincipal('true');
-            $elemento = 'Representante';
-        }
-        else{
-            $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
-            $formulario -> remove('alumno');
-            $formulario -> remove('principal');
-            $formulario -> remove('representanteContacto');
-            $elemento = 'Usuario';
-        }
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', $elemento.' Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
-                }
-            }
-        }
-
-        return $this->render('inicialBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
-    }
-
-    public function borrar_usuarioAction($id, Request $request)
-    {
-        $usuario = $this->getDoctrine()
-            ->getRepository('inicialBundle:Usuarios')
-            ->find($id);
-        if (!$usuario)
-        {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
-        }
-        $formulario = $this->createForm(new UsuariosTypeSimple('Borrar Usuario'), $usuario);
-        $formulario -> remove('tipoUsuario');
-        $formulario -> remove('principal');
-        $formulario -> remove('cedula');
-        $formulario -> remove('nombres');
-        $formulario -> remove('apellidos');
-        $formulario -> remove('fechaNacimiento');
-        $formulario -> remove('direccion');
-        $formulario -> remove('sexo');
-        $formulario -> remove('activo');
-        $formulario -> remove('guardar_crear');
-        $formulario-> handleRequest($request);
-
-        $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-            ->createQueryBuilder('usuario')
-            ->where('usuario.id = :id')
-            ->andWhere('usuario.activo = true')
-            ->setParameter('id', $id)
-            ->getQuery();
-
-        $datos = $query->getArrayResult();
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $usuario->setActivo(false);
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'warning', 'Usuario borrado con éxito'
-                );
-                return $this->redirect($this->generateUrl('inicial_lista_usuario'));
-
-            }
-        }
-        $this->get('session')->getFlashBag()->add(
-            'danger', 'Seguro que desea borrar este registro?'
-        );
-        $atajo = 'inicial_agregar_banco';
-        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario', 'atajo'=>$atajo));
-    }
-
-
     public function consultaAction()
     {
         $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolar')
@@ -371,7 +146,7 @@ class DefaultController extends Controller
         if ($request->getMethod() == 'POST') {
             $email = $request->get('email');
 
-            $query = $this->getDoctrine()->getRepository('inicialBundle:PerfilUsuario')
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
                 ->where('perfil.email = :correo')
                 ->andWhere('perfil.activo = true')
@@ -389,7 +164,7 @@ class DefaultController extends Controller
 
 
                 $perfil = $this->getDoctrine()
-                    ->getRepository('inicialBundle:PerfilUsuario')
+                    ->getRepository('usuariosBundle:PerfilUsuario')
                     ->find(($datos[0]['id']));
 
                 $recup_pass = new RecuperarPasswordTmp();
@@ -442,7 +217,7 @@ class DefaultController extends Controller
 
                 if($request->server->get('REQUEST_TIME')-$datos[0]['fecha']->getTimestamp()<$delta){
                     $perfil = $this->getDoctrine()
-                        ->getRepository('inicialBundle:PerfilUsuario')
+                        ->getRepository('usuariosBundle:PerfilUsuario')
                         ->find($datos[0]['idPerfil']['id']);
 
                     $p = new Passwords();
@@ -812,10 +587,17 @@ class DefaultController extends Controller
         $form = New PermisosType('Borrar permiso del sistema');
         return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar', 'true');
     }
-    public function crear_seccionAction(Request $request){
+
+    public function crear_seccion3Action(Request $request){
         $curso = New Seccion();
         $form = new SeccionType('Crear Seccion');
         return $this->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento', 'true');
+    }
+
+    public function crear_seccionAction(Request $request){
+        $curso = New Seccion();
+        $form = new SeccionType('Crear Seccion');
+        return $this->get('funciones_genericas')->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento', 'true');
     }
     public function editar_seccionAction($id, Request $request){
         $form = new SeccionType('Editar Seccion');
