@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno" table="periodo_escolar_alumno">
+    <indexes>
+      <index name="periodo_escolar_alumno_periodo_escolar_curso_id" columns="periodo_escolar_curso_id"/>
+      <index name="periodo_escolar_alumno_alumno_id" columns="alumno_id"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-one field="periodoEscolarCurso" target-entity="Test\inicialBundle\Entity\PeriodoEscolarCurso">
+      <join-columns>
+        <join-column name="periodo_escolar_curso_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="alumno" target-entity="Alumnos" inversed-by="periodoEscolarAlumno">
+      <join-columns>
+        <join-column name="alumno_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

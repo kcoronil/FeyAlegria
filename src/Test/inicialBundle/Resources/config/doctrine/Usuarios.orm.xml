@@ -23,7 +23,7 @@
                 <cascade-persist/>
             </cascade>
         </one-to-many>
-        <many-to-one field="sexo" target-entity="Sexo">
+        <many-to-one field="sexo" target-entity="RosaMolas\genericoBundle\Entity\Sexo">
             <join-columns>
                 <join-column name="sexo_id" referenced-column-name="id"/>
             </join-columns>
@@ -33,7 +33,7 @@
                 <join-column name="tipo_usuario_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
-        <many-to-many field="alumno" target-entity="Alumnos" inversed-by="usuario">
+        <many-to-many field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="usuario">
         <cascade>
             <cascade-persist/>
         </cascade>

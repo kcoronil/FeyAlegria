@@ -4,6 +4,7 @@ namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use RosaMolas\AlumnosBundle\Entity\Alumnos;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

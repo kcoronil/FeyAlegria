@@ -55,7 +55,7 @@ class Representantes
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Sexo
+     * @var \RosaMolas\genericoBundle\Entity\Sexo
      */
     private $sexo;
 
@@ -257,10 +257,10 @@ class Representantes
     /**
      * Set sexo
      *
-     * @param \Test\inicialBundle\Entity\Sexo $sexo
+     * @param \RosaMolas\genericoBundle\Entity\Sexo $sexo
      * @return Representantes
      */
-    public function setSexo(\Test\inicialBundle\Entity\Sexo $sexo = null)
+    public function setSexo(\RosaMolas\genericoBundle\Entity\Sexo $sexo = null)
     {
         $this->sexo = $sexo;
 
@@ -270,7 +270,7 @@ class Representantes
     /**
      * Get sexo
      *
-     * @return \Test\inicialBundle\Entity\Sexo 
+     * @return \RosaMolas\genericoBundle\Entity\Sexo
      */
     public function getSexo()
     {

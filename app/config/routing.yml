@@ -1,3 +1,11 @@
+generico:
+    resource: "@genericoBundle/Resources/config/routing.yml"
+    prefix:   /
+
+alumnos:
+    resource: "@alumnosBundle/Resources/config/routing.yml"
+    prefix:   /
+
 inicial:
     resource: "@inicialBundle/Resources/config/routing.yml"
     prefix:   /

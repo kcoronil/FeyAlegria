@@ -1,0 +1,3 @@
+generico_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: genericoBundle:Default:index }

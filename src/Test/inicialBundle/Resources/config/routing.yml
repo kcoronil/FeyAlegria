@@ -183,40 +183,6 @@ inicial_borrar_representante_contacto:
     path:     /borrar_representante_contacto/{id}
     defaults: { _controller: inicialBundle:Default:borrar_representante_contacto }
 
-
-# ------------------ alumnos ------------------------------
-inicial_lista_alumno:
-    path:     /lista_alumno
-    defaults: { _controller: inicialBundle:Default:lista_alumno }
-
-inicial_detalle_alumno:
-    path:     /detalle_alumno/{id}
-    defaults: { _controller: inicialBundle:Default:detalle_alumno }
-
-inicial_agregar_alumno:
-    path:     /crear_alumno
-    defaults: { _controller: inicialBundle:Default:crear_alumno }
-
-inicial_agregar_alumno_usuario:
-    path:     /crear_alumno_usuario
-    defaults: { _controller: inicialBundle:Default:crear_alumno_usuario }
-
-inicial_editar_alumno:
-    path:     /editar_alumno/{id}
-    defaults: { _controller: inicialBundle:Default:editar_alumno }
-
-inicial_borrar_alumno:
-    path:     /borrar_alumno/{id}
-    defaults: { _controller: inicialBundle:Default:borrar_alumno }
-
-inicial_pdf_alumno:
-    path:     /pdf_lista_alumno
-    defaults: { _controller: inicialBundle:Default:lista_alumno_pdf }
-
-inicial_agregar_periodo_alumno:
-    path:     /crear_periodo_alumno
-    defaults: { _controller: inicialBundle:Default:crear_periodo_alumno }
-
 #------------------------- usuarios ----------------------------
 
 inicial_logout:
