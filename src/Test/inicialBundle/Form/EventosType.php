@@ -45,7 +45,7 @@ class EventosType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\Eventos'
+            'data_class' => 'RosaMolas\genericoBundle\Entity\Eventos'
         ));
     }
 

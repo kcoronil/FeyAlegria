@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\inicialBundle\Form;
+namespace RosaMolas\genericoBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,7 +45,7 @@ class BancosType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\Bancos'
+            'data_class' => 'RosaMolas\genericoBundle\Entity\Bancos'
         ));
     }
 

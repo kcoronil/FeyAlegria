@@ -7,27 +7,27 @@ inicial_homepage:
     defaults: { _controller: inicialBundle:Default:index }
 
 #--------------------- mantenimiento -------------------------
-inicial_agregar_rol:
+inicial_agregar_roles:
     path:     /crear_rol
     defaults: { _controller: inicialBundle:Default:crear_rol }
 
-inicial_editar_rol:
+inicial_editar_roles:
     path:     /editar_rol/{id}
     defaults: { _controller: inicialBundle:Default:editar_rol }
 
-inicial_borrar_rol:
+inicial_borrar_roles:
     path:     /borrar_rol/{id}
     defaults: { _controller: inicialBundle:Default:borrar_rol }
 
-inicial_agregar_banco:
+inicial_agregar_bancos:
     path:     /crear_banco
     defaults: { _controller: inicialBundle:Default:crear_banco }
 
-inicial_editar_banco:
+inicial_editar_bancos:
     path:     /editar_banco/{id}
     defaults: { _controller: inicialBundle:Default:editar_banco }
 
-inicial_borrar_banco:
+inicial_borrar_bancos:
     path:     /borrar_banco/{id}
     defaults: { _controller: inicialBundle:Default:borrar_banco }
 
@@ -75,39 +75,39 @@ inicial_borrar_curso:
     path:     /borrar_curso/{id}
     defaults: { _controller: inicialBundle:Default:borrar_curso }
 
-inicial_agregar_elemento:
+inicial_agregar_elementos:
     path:     /crear_elemento
     defaults: { _controller: inicialBundle:Default:crear_elemento }
 
-inicial_editar_elemento:
+inicial_editar_elementos:
     path:     /editar_elemento/{id}
     defaults: { _controller: inicialBundle:Default:editar_elemento }
 
-inicial_borrar_elemento:
+inicial_borrar_elementos:
     path:     /borrar_elemento/{id}
     defaults: { _controller: inicialBundle:Default:borrar_elemento }
 
-inicial_agregar_evento:
+inicial_agregar_eventos:
     path:     /crear_evento
     defaults: { _controller: inicialBundle:Default:crear_evento }
 
-inicial_editar_evento:
+inicial_editar_eventos:
     path:     /editar_evento/{id}
     defaults: { _controller: inicialBundle:Default:editar_evento }
 
-inicial_borrar_evento:
+inicial_borrar_eventos:
     path:     /borrar_evento/{id}
     defaults: { _controller: inicialBundle:Default:borrar_evento }
 
-inicial_agregar_permiso:
+inicial_agregar_permisos:
     path:     /crear_permiso
     defaults: { _controller: inicialBundle:Default:crear_permiso }
 
-inicial_editar_permiso:
+inicial_editar_permisos:
     path:     /editar_permiso/{id}
     defaults: { _controller: inicialBundle:Default:editar_permiso }
 
-inicial_borrar_permiso:
+inicial_borrar_permisos:
     path:     /borrar_permiso/{id}
     defaults: { _controller: inicialBundle:Default:borrar_permiso }
 

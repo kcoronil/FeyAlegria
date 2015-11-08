@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Test\inicialBundle\Entity\Eventos" table="eventos">
+  <entity name="RosaMolas\genericoBundle\Entity\Eventos" table="eventos">
     <unique-constraints>
       <unique-constraint name="eventos_nombre_key" columns="nombre"/>
     </unique-constraints>

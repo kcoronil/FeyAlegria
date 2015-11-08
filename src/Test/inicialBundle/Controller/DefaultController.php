@@ -15,9 +15,8 @@ use Test\inicialBundle\Entity\Seccion;
 use RosaMolas\usuariosBundle\Entity\TipoContacto;
 use Test\inicialBundle\Entity\TipoFactura;
 use RosaMolas\usuariosBundle\Entity\TipoUsuario;
-use Test\inicialBundle\Form\BancosType;
+use RosaMolas\genericoBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
-use RosaMolas\usuariosBundle\Entity\RecuperarPasswordTmp;
 use Test\inicialBundle\Form\ConceptosFacturaType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EventosType;
@@ -35,8 +34,7 @@ use RosaMolas\usuariosBundle\Entity\PerfilUsuario;
 use RosaMolas\usuariosBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Curso;
 use Test\inicialBundle\Form\CursoType;
-use RosaMolas\usuariosBundle\Entity\Passwords;
-use RosaMolas\usuariosBundle\Form\UsuariosTypeSimple;
+
 
 
 class DefaultController extends Controller
@@ -139,196 +137,6 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:lista_periodo.html.twig', array('accion'=>'Listado de Periodo', 'datos'=>$datos));
 
     }
-
-
-    public function solicitar_passAction(Request $request)
-    {
-        if ($request->getMethod() == 'POST') {
-            $email = $request->get('email');
-
-            $query = $this->getDoctrine()->getRepository('usuariosBundle:PerfilUsuario')
-                ->createQueryBuilder('perfil')
-                ->where('perfil.email = :correo')
-                ->andWhere('perfil.activo = true')
-                ->setParameter('correo', $email)
-                ->getQuery();
-            $datos = $query->getArrayResult();
-
-            if (!$datos) {
-                $this->get('session')->getFlashBag()->add(
-                    'danger', 'Correo no registrado'
-                );
-                return $this->render('inicialBundle:Default:index.html.twig');
-            } else {
-                $token = sha1(uniqid($datos[0]['nombreUsuario'], true));
-
-
-                $perfil = $this->getDoctrine()
-                    ->getRepository('usuariosBundle:PerfilUsuario')
-                    ->find(($datos[0]['id']));
-
-                $recup_pass = new RecuperarPasswordTmp();
-                $recup_pass->setidPerfil($perfil);
-                $recup_pass->setFecha(new \DateTime(date('Y-m-d H:i:s')));
-                $recup_pass->setToken($token);
-                $em = $this->getDoctrine()->getManager();
-
-                $em->persist($recup_pass);
-                $em->flush();
-
-                $enlace = $this->generateUrl('inicial_recuperar_pass', array('token'=> $token), true);
-
-
-                $mensaje_email = \Swift_Message::newInstance()
-                    ->setSubject('Restaurar Contraseña Sistema Fe y Alegria')
-                    ->setFrom('ed.acevedo.programacion@gmail.com')
-                    ->setTo($datos[0]['email'])
-                    ->setBody('Usted ha solicitado cambiar la contaseña para acceder a nuestro sistema el dia '.date('d-m-Y H:i:s').'<br><br> Para recuperacion de contraseña haga click en el siguiente enlace: '.$enlace);
-                $this->get('mailer')->send($mensaje_email);
-                $this->get('session')->getFlashBag()->add(
-                    'success', 'enlace de recuperacion de contraseña enviado'
-                );
-                return $this->render('inicialBundle:Default:index.html.twig');
-            }
-        }
-        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
-    }
-    public function recuperar_passAction($token, Request $request){
-        if($token && preg_match('/^[0-9A-F]{40}$/i', $token)) {
-
-            $query = $this->getDoctrine()->getRepository('inicialBundle:RecuperarPasswordTmp')
-                ->createQueryBuilder('rec_pass')
-                ->select('rec_pass', 'perfil')
-                ->innerJoin('rec_pass.idPerfil','perfil')
-                ->where('rec_pass.token = :token')
-                ->setParameter('token', $token)
-                ->getQuery();
-
-            $datos = $query->getArrayResult();
-            if (!$datos)
-            {
-                $this->get('session')->getFlashBag()->add(
-                    'danger', 'Enlace no valido'
-                );
-                return $this->render('inicialBundle:Default:index.html.twig');
-            }
-            else{
-                $delta = 72000;
-
-                if($request->server->get('REQUEST_TIME')-$datos[0]['fecha']->getTimestamp()<$delta){
-                    $perfil = $this->getDoctrine()
-                        ->getRepository('usuariosBundle:PerfilUsuario')
-                        ->find($datos[0]['idPerfil']['id']);
-
-                    $p = new Passwords();
-                    $formulario = $this->createForm(new PasswordsType(), $p);
-                    $formulario-> handleRequest($request);
-                    if($request->getMethod()=='POST') {
-
-                        if ($formulario->isValid()) {
-                            $desact_pass = $this->getDoctrine()->getEntityManager();
-                            $test_desact = $desact_pass->getRepository('inicialBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
-                            $test_desact->setActivo(false);
-                            $desact_pass->flush();
-
-                            $p->setFechaCreacion(new \DateTime(date('Y-m-d H:i:s')));
-                            $p->setPerfil($perfil);
-                            $p->setActivo(true);
-
-                            $factory = $this->get('security.encoder_factory');
-                            $codificador = $factory->getEncoder($p);
-                            $salt = $p->getSalt();
-                            $p->setSalt($salt);
-                            $pass = $codificador->encodePassword($p->getPassword(), $salt);
-                            $p->setPassword($pass);
-                            $em = $this->getDoctrine()->getManager();
-                            $em->persist($p);
-                            $em->flush();
-                            $this->get('session')->getFlashBag()->add(
-                                'success', 'Contraseña Cambiada con éxito');
-                            $borrar_passtmp= $this->getDoctrine()->getEntityManager();
-                            $borrar_passtmp_query = $borrar_passtmp->getRepository('inicialBundle:RecuperarPasswordTmp')->find($datos[0]['id']);
-                            $borrar_passtmp->remove($borrar_passtmp_query);
-                            $borrar_passtmp->flush();
-
-                            return $this->redirect($this->generateUrl('inicial_homepage'));
-                        }
-                    }
-                    return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Recuperar Contraseña', 'form'=>$formulario->createView()));
-                }
-                else{
-                    $this->get('session')->getFlashBag()->add(
-                        'danger', 'enlace de excedio el tiempo para ser usado'
-                    );
-                    return $this->render('inicialBundle:Default:index.html.twig');
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
-    }
-    public function lista_usuario_pdfAction(Request $request)
-    {
-        //hacer consulta simple a la bbdd
-
-
-        if($request->get('_route')=='inicial_pdf_representante'){
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true')
-                ->andWhere('tipo_usuario.id=5')
-                ->orderBy('usuario.id')
-                ->getQuery();
-            $elemento = 'REPRESENTANTES';
-
-        }
-        else{
-            $query = $this->getDoctrine()->getRepository('inicialBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('inicialBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true')
-                ->andWhere('tipo_usuario.id!=5')
-                ->orderBy('usuario.id')
-                ->getQuery();
-            $elemento = 'USUARIOS';
-        }
-
-        $datos = $query->getArrayResult();
-        $mpdfService = $this->get('tfox.mpdfport');
-        $html = "<table>
-					<tr>
-						<td><img src='public/images/logo-FyA.jpg' width='150px' height='auto'></td>
-					</tr>
-				</table>
-				<br/>
-				<table border='1' style='border-collapse:collapse; width:750px;'>
-					<tr>
-						<th colspan='4'>$elemento REGISTRADOS</th>
-					</tr>
-					<tr>
-						<th>ID</th>
-						<th>NOMBRE</th>
-						<th>APELIDO</th>
-						<th>CEDULA</th>
-					</tr>";
-
-        foreach($datos as $dato){
-            $html.="<tr>
-							<td>".$dato['id']."</td>
-							<td>".$dato['nombres']."</td>
-							<td>".$dato['apellidos']."</td>
-							<td>".$dato['cedula']."</td>
-						</tr>";
-        }
-        $html.=	"</table>";
-        $response = $mpdfService->generatePdfResponse($html);
-
-        return $response;
-
-    }
-
     public function crear_perfilAction(Request $request)
     {
         $p = new PerfilUsuario();
@@ -355,89 +163,6 @@ class DefaultController extends Controller
             }
         }
         return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
-    }
-
-    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
-    {
-        $p = $modelo;
-        $formulario = $this->createForm($formulario_base, $p);
-
-        if($remover){
-            foreach($remover as $campo){
-                $formulario->remove($campo);
-            }
-        }
-
-        $formulario-> handleRequest($request);
-
-        if($datos) {
-            $query = $this->getDoctrine()->getRepository('inicialBundle:' . $objeto)
-                ->createQueryBuilder(strtolower($objeto))
-                ->where(strtolower($objeto) . '.activo = true')
-                ->getQuery();
-
-
-            $datos = $query->getArrayResult();
-        }
-        if($request->getMethod()=='POST') {
-            if ($formulario->isValid()) {
-                $p->setActivo(true);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', $objeto.' creado con éxito'
-                );
-                if(array_key_exists('guardar_crear', $formulario)){
-                    if ($formulario->get('guardar')->isClicked()) {
-                        return $this->redirect($this->generateUrl('inicial_homepage'));
-                    }
-                    if ($formulario->get('guardar_crear')->isClicked()) {
-                        return $this->redirect($this->generateUrl($url_redireccion));
-                    }
-                }
-                else {
-                    return $this->redirect($this->generateUrl($url_redireccion));
-                }
-            }
-        }
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
-            'datos'=>$datos, 'accion'=>$accion, 'url_editar'=>$url_editar,
-            'url_borrar'=>$url_borrar, 'operaciones_datos'=>true));
-    }
-
-    public function editar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla, $remover = null)
-    {
-
-        $p = $this->getDoctrine()
-            ->getRepository('inicialBundle:'.$objeto)
-            ->find($id);
-        if (!$p)
-        {
-            throw $this -> createNotFoundException('No existe '.$objeto.' con este id: '.$id);
-        }
-        $formulario = $this->createForm($formulario_base, $p);
-        $formulario -> remove('guardar_crear');
-        $formulario -> remove('activo');
-        if($remover){
-            foreach($remover as $campo){
-                $formulario->remove($campo);
-            }
-        }
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-                $this->get('session')->getFlashBag()->add(
-                    'success', $objeto.' editado con éxito'
-                );
-                return $this->redirect($this->generateUrl($url_redireccion));
-            }
-        }
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(), 'accion'=>$accion));
     }
 
     public function borrar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)
@@ -484,51 +209,108 @@ class DefaultController extends Controller
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
     }
     public function crear_cursoAction(Request $request){
-        $curso = New Curso();
+        $modelo = New Curso();
         $form = New CursoType('Crear Curso');
-        return $this->crear_generico($request, $curso, $form,'Curso', 'Crear Curso', 'inicial_agregar_curso', 'inicial_editar_curso', 'inicial_borrar_curso', 'mantenimiento', 'true');
+        $objeto = 'Curso';
+        $clase = 'inicialBundle:Curso';
+        $titulo = 'Curso';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'clase'=>$clase, 'formulario_base'=>$form, 'objeto'=>$objeto, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
     public function editar_cursoAction($id, Request $request){
         $form = New CursoType('Editar Curso');
-        return $this->editar_generico($id, $request, $form,'Curso', 'Editar Curso', 'inicial_agregar_curso', 'mantenimiento');
+        $objeto = 'Curso';
+        $clase = 'inicialBundle:Curso';
+        $titulo = 'Curso';
+        $url_redireccion = 'inicial_agregar_curso';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_cursoAction($id, Request $request){
         $form = New CursoType('Borrar Curso');
         return $this->borrar_generico($id, $request, $form,'Curso', 'Borrar Curso', 'inicial_agregar_curso', 'borrar', 'true');
     }
     public function crear_conceptos_facturaAction(Request $request){
-        $curso = New ConceptosFactura();
+        $modelo = New ConceptosFactura();
         $form = new ConceptosFacturaType('Crear Concepto Factura');
-        return $this->crear_generico($request, $curso, $form, 'ConceptosFactura', 'Crear Concepto Factura', 'inicial_agregar_conceptos_factura', 'inicial_editar_conceptos_factura', 'inicial_borrar_conceptos_factura', 'mantenimiento', 'true');
+        $objeto = 'ConceptosFactura';
+        $clase = 'inicialBundle:ConceptosFactura';
+        $titulo = 'Conceptos de Factura';
+        $url_redireccion = 'inicial_agregar_conceptos_factura';
+        $url_editar = 'inicial_editar_conceptos_factura';
+        $url_borrar = 'inicial_borrar_conceptos_factura';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Editar Concepto Factura');
-        return $this->editar_generico($id, $request, $form, 'ConceptosFactura', 'Editar Concepto Factura', 'inicial_agregar_conceptos_factura', 'mantenimiento');
+        $objeto = 'ConceptosFactura';
+        $clase = 'inicialBundle:ConceptosFactura';
+        $titulo = 'Conceptos de Factura';
+        $url_redireccion = 'inicial_agregar_conceptos_factura';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Borrar Concepto Factura');
         return $this->borrar_generico($id, $request, $form, 'ConceptosFactura', 'Borrar Concepto Factura', 'inicial_agregar_conceptos_factura', 'borrar', 'true');
     }
     public function crear_bancoAction(Request $request){
-        $curso = New Bancos();
+        $modelo = New Bancos();
         $form = new BancosType('Crear Banco');
-        return $this->crear_generico($request, $curso, $form, 'Bancos', 'Crear Banco', 'inicial_agregar_banco', 'inicial_editar_banco', 'inicial_borrar_banco', 'mantenimiento', 'true');
+        $objeto = 'Bancos';
+        $clase = 'genericoBundle:Bancos';
+        $titulo = 'Bancos';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_bancoAction($id, Request $request){
         $form = New BancosType('Editar Banco');
-        return $this->editar_generico($id, $request, $form, 'Bancos', 'Editar Banco', 'inicial_agregar_banco', 'mantenimiento');
+        $objeto = 'Bancos';
+        $clase = 'genericoBundle:Bancos';
+        $titulo = 'Banco';
+        $url_redireccion = 'inicial_agregar_bancos';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_bancoAction($id, Request $request){
         $form = New BancosType('Borrar Banco');
         return $this->borrar_generico($id, $request, $form, 'Bancos', 'Borrar Banco', 'inicial_agregar_banco', 'borrar', 'true');
     }
     public function crear_rolAction(Request $request){
-        $curso = New Roles();
+        $modelo = New Roles();
         $form = new RolesType('Crear Rol');
-        return $this->crear_generico($request, $curso, $form, 'Roles', 'Crear Rol', 'inicial_agregar_rol', 'inicial_editar_rol', 'inicial_borrar_rol', 'mantenimiento', 'true');
+        $objeto = 'Roles';
+        $clase = 'usuariosBundle:Roles';
+        $titulo = 'Rol';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_rolAction($id, Request $request){
         $form = New RolesType('Editar Rol');
+        $objeto = 'Roles';
+        $clase = 'usuariosBundle:Roles';
+        $titulo = 'Rol';
+        $url_redireccion = 'inicial_agregar_roles';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+
         return $this->editar_generico($id, $request, $form, 'Roles', 'Editar Rol', 'inicial_agregar_rol', 'mantenimiento');
     }
     public function borrar_rolAction($id, Request $request){
@@ -536,38 +318,80 @@ class DefaultController extends Controller
         return $this->borrar_generico($id, $request, $form, 'Roles', 'Borrar Rol', 'inicial_agregar_rol', 'borrar', 'true');
     }
     public function crear_periodoAction(Request $request){
-        $curso = New PeriodoEscolar();
+        $modelo = New PeriodoEscolar();
         $form = new PeriodoEscolarType('Crear Periodo Escolar');
-        return $this->crear_generico($request, $curso, $form, 'PeriodoEscolar', 'Crear Periodo Escolar', 'inicial_agregar_periodo', 'inicial_editar_periodo', 'inicial_borrar_periodo', 'mantenimiento', 'true');
+        $objeto = 'PeriodoEscolar';
+        $clase = 'inicialBundle:PeriodoEscolar';
+        $titulo = 'Periodo Escolar';
+        $url_redireccion = 'inicial_agregar_periodo';
+        $url_editar = 'inicial_editar_periodo';
+        $url_borrar = 'inicial_borrar_periodo';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Editar Periodo Escolar');
-        return $this->editar_generico($id, $request, $form, 'PeriodoEscolar', 'Editar Periodo Escolar', 'inicial_agregar_periodo', 'mantenimiento');
+        $objeto = 'PeriodoEscolar';
+        $clase = 'inicialBundle:PeriodoEscolar';
+        $titulo = 'Periodo Escolar';
+        $url_redireccion = 'inicial_agregar_periodo';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Borrar Periodo Escolar');
         return $this->borrar_generico($id, $request, $form, 'PeriodoEscolar', 'Borrar Periodo Escolar', 'inicial_agregar_periodo', 'borrar', 'true');
     }
     public function crear_elementoAction(Request $request){
-        $curso = New Elementos();
+        $modelo = New Elementos();
         $form = new ElementosType('Crear elemento del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Elementos', 'Crear Elemento del Sistema', 'inicial_agregar_elemento', 'inicial_editar_elemento', 'inicial_borrar_elemento', 'mantenimiento', 'true');
+        $objeto = 'Elementos';
+        $clase = 'genericoBundle:Elementos';
+        $titulo = 'Elemento';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
     public function editar_elementoAction($id, Request $request){
         $form = New ElementosType('Editar elemento del sistema');
-        return $this->editar_generico($id, $request, $form, 'Elementos', 'Editar Elemento del Sistema', 'inicial_agregar_elemento', 'mantenimiento');
+        $objeto = 'Elementos';
+        $clase = 'genericoBundle:Elementos';
+        $titulo = 'Elemento del Sistema';
+        $url_redireccion = 'inicial_agregar_elementos';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_elementoAction($id, Request $request){
         $form = New ElementosType('Borrar elemento del sistema');
         return $this->borrar_generico($id, $request, $form, 'Elementos', 'Borrar Elemento del Sistema', 'inicial_agregar_elemento', 'borrar', 'true');
     }
     public function crear_eventoAction(Request $request){
-        $curso = New Eventos();
+        $modelo = New Eventos();
         $form = new EventosType('Crear evento del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Eventos', 'Crear Evento del Sistema', 'inicial_agregar_evento', 'inicial_editar_evento', 'inicial_borrar_evento', 'mantenimiento', 'true');
+        $objeto = 'Eventos';
+        $clase = 'genericoBundle:Eventos';
+        $titulo = 'Evento del Sistema';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
     public function editar_eventoAction($id, Request $request){
         $form = New EventosType('Editar evento del sistema');
+        $objeto = 'Eventos';
+        $clase = 'genericoBundle:Eventos';
+        $titulo = 'Evento del Sistema';
+        $url_redireccion = 'inicial_agregar_eventos';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+
         return $this->editar_generico($id, $request, $form, 'Eventos', 'Editar Evento del Sistema', 'inicial_agregar_evento', 'mantenimiento');
     }
     public function borrar_eventoAction($id, Request $request){
@@ -575,84 +399,169 @@ class DefaultController extends Controller
         return $this->borrar_generico($id, $request, $form, 'Eventos', 'Borrar Evento del Sistema', 'inicial_agregar_evento', 'borrar', 'true');
     }
     public function crear_permisoAction(Request $request){
-        $curso = New Permisos();
+        $modelo = New Permisos();
         $form = new PermisosType('Crear permiso del sistema');
-        return $this->crear_generico($request, $curso, $form, 'Permisos', 'Crear Permisos del Sistema', 'inicial_agregar_permiso', 'inicial_editar_permiso', 'inicial_borrar_permiso', 'mantenimiento', 'true');
+        $objeto = 'Permisos';
+        $clase = 'usuariosBundle:Permisos';
+        $titulo = 'Permisos del Sistema';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
     public function editar_permisoAction($id, Request $request){
         $form = New PermisosType('Editar permiso del sistema');
-        return $this->editar_generico($id, $request, $form, 'Permisos', 'Editar Permisos del Sistema', 'inicial_agregar_permiso', 'mantenimiento');
+        $objeto = 'Permisos';
+        $clase = 'usuariosBundle:Permisos';
+        $titulo = 'Permisos del Sistema';
+        $url_redireccion = 'inicial_agregar_permisos';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_permisoAction($id, Request $request){
         $form = New PermisosType('Borrar permiso del sistema');
         return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar', 'true');
     }
-
-    public function crear_seccion3Action(Request $request){
-        $curso = New Seccion();
-        $form = new SeccionType('Crear Seccion');
-        return $this->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento', 'true');
-    }
-
     public function crear_seccionAction(Request $request){
-        $curso = New Seccion();
-        $form = new SeccionType('Crear Seccion');
-        return $this->get('funciones_genericas')->crear_generico($request, $curso, $form, 'Seccion', 'Crear Seccion', 'inicial_agregar_seccion', 'inicial_editar_seccion', 'inicial_borrar_seccion', 'mantenimiento', 'true');
+        $modelo = New Seccion();
+        $form = new SeccionType('Crear Sección');
+        $objeto = 'Seccion';
+        $clase = 'inicialBundle:Seccion';
+        $titulo = 'Sección';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
     public function editar_seccionAction($id, Request $request){
         $form = new SeccionType('Editar Seccion');
-        return $this->editar_generico($id, $request, $form, 'Seccion', 'Editar Seccion', 'inicial_agregar_seccion', 'mantenimiento');
+        $objeto = 'Seccion';
+        $clase = 'inicialBundle:Seccion';
+        $titulo = 'Sección';
+        $url_redireccion = 'inicial_agregar_seccion';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_seccionAction($id, Request $request){
         $form = new SeccionType('Borrar Seccion');
         return $this->borrar_generico($id, $request, $form, 'Seccion', 'Borrar Seccion', 'inicial_agregar_seccion', 'borrar', 'true');
     }
     public function crear_tipo_usuarioAction(Request $request){
-        $curso = New TipoUsuario();
+        $modelo = New TipoUsuario();
         $form = new TipoUsuarioType('Crear Tipo Usuario');
-        return $this->crear_generico($request, $curso, $form, 'TipoUsuario', 'Crear Tipo Usuario', 'inicial_agregar_tipo_usuario', 'inicial_editar_tipo_usuario', 'inicial_borrar_tipo_usuario', 'mantenimiento', 'true');
+        $objeto = 'TipoUsuario';
+        $clase = 'usuariosBundle:TipoUsuario';
+        $titulo = 'Tipo Usuario';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_usuario';
+        $url_editar = 'inicial_editar_tipo_usuario';
+        $url_borrar = 'inicial_borrar_tipo_usuario';
+
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Editar Tipo Usuario');
-        return $this->editar_generico($id, $request, $form, 'TipoUsuario', 'Editar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'mantenimiento');
+        $objeto = 'TipoUsuario';
+        $clase = 'usuariosBundle:TipoUsuario';
+        $titulo = 'Tipo de Usuario';
+        $url_redireccion = 'inicial_agregar_tipo_usuario';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Borrar Tipo Usuario');
         return $this->borrar_generico($id, $request, $form, 'TipoUsuario', 'Borrar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'borrar', 'true');
     }
     public function crear_tipo_contactoAction(Request $request){
-        $curso = New TipoContacto();
+        $modelo = New TipoContacto();
         $form = new TipoContactoType('Crear Tipo Contacto');
-        return $this->crear_generico($request, $curso, $form, 'TipoContacto', 'Crear Tipo Contacto', 'inicial_agregar_tipo_contacto', 'inicial_editar_tipo_contacto', 'inicial_borrar_tipo_contacto', 'mantenimiento', 'true');
+        $objeto = 'TipoContacto';
+        $clase = 'usuariosBundle:TipoContacto';
+        $titulo = 'Tipo de Contacto';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_contacto';
+        $url_editar = 'inicial_editar_tipo_contacto';
+        $url_borrar = 'inicial_borrar_tipo_contacto';
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Editar Tipo Contacto');
-        return $this->editar_generico($id, $request, $form, 'TipoContacto', 'Editar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'mantenimiento');
+        $objeto = 'TipoContacto';
+        $clase = 'usuariosBundle:TipoContacto';
+        $titulo = 'Tipo de Contacto';
+        $url_redireccion = 'inicial_agregar_tipo_contacto';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Borrar Tipo Contacto');
         return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar', 'true');
     }
     public function crear_representante_contactoAction(Request $request){
-        $curso = New RepresentanteContacto();
+        $modelo = New RepresentanteContacto();
         $form = new RepresentanteContactoType('Crear Contacto Representante');
-        return $this->crear_generico($request, $curso, $form, 'RepresentanteContacto', 'Crear Contacto Representante', 'inicial_agregar_representante_contacto', 'inicial_editar_representante_contacto', 'inicial_borrar_representante_contacto', 'mantenimiento', 'true');
+        $objeto = 'RepresentanteContacto';
+        $clase = 'inicialBundle:RepresentanteContacto';
+        $titulo = 'Contacto para Representante';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_representante_contacto';
+        $url_editar = 'inicial_editar_representante_contacto';
+        $url_borrar = 'inicial_borrar_representante_contacto';
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_representante_contactoAction($id, Request $request){
         $form = new TipoContactoType('Editar Contacto Representante');
-        return $this->editar_generico($id, $request, $form, 'RepresentanteContacto', 'Editar Tipo Contacto', 'inicial_agregar_representante_contacto', 'mantenimiento');
+        $objeto = 'RepresentanteContacto';
+        $clase = 'usuariosBundle:RepresentanteContacto';
+        $titulo = 'Curso';
+        $url_redireccion = 'inicial_agregar_representante_contacto';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function borrar_representante_contactoAction($id, Request $request){
         $form = new RepresentanteContactoType('Borrar Contacto Representante');
         return $this->borrar_generico($id, $request, $form, 'RepresentanteContacto', 'Borrar Tipo Contacto', 'inicial_agregar_representante_contacto', 'borrar', 'true');
     }
     public function crear_tipo_facturaAction(Request $request){
-        $curso = New TipoFactura();
+        $modelo = New TipoFactura();
         $form = new TipoFacturaType('Crear Tipo Factura');
-        return $this->crear_generico($request, $curso, $form, 'TipoFactura', 'Crear Tipo Factura', 'inicial_agregar_tipo_factura', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'mantenimiento', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'inicialBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $url_editar = 'inicial_editar_tipo_factura';
+        $url_borrar = 'inicial_borrar_tipo_factura';
+
+        return $this->forward('funciones_genericas:crear_generico', array('request'=>$request, 'modelo'=>$modelo, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'url_editar'=>$url_editar, 'url_borrar'=>$url_borrar,'plantilla'=>$plantilla, 'datos'=>$datos, 'remover' => $remover));
     }
+
     public function editar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Editar Tipo Factura');
+        $objeto = 'TipoFactura';
+        $clase = 'inicialBundle:TipoFactura';
+        $titulo = 'Tipo Factura';
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $plantilla = 'inicialBundle:Default:mantenimiento';
+        $remover = null;
+        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+
         return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento');
     }
     public function borrar_tipo_facturaAction($id, Request $request){
@@ -660,16 +569,6 @@ class DefaultController extends Controller
         return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar', 'true');
     }
 
-    public function editar_usuarioAction($id, Request $request){
-        $form = new UsuariosTypeSimple('Editar Usuario');
-        return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
-    }
-
-    public function editar_representanteAction($id, Request $request){
-        $form = new UsuariosTypeSimple('Editar Representante');
-        $remover =['tipoUsuario', 'principal'];
-        return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario', $remover);
-    }
 
     public function crear_gradoAction(Request $request){
         $p = New PeriodoEscolarCurso();

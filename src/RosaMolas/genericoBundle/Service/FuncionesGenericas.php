@@ -1,13 +1,19 @@
 <?php
 
-namespace Test\inicialBundle\Controller;
+namespace RosaMolas\genericoBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 
 class FuncionesGenericas extends Controller
 {
-    public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
+
+
+    public function crear_generico($request, $modelo, $formulario_base, $objeto, $clase, $titulo, $url_redireccion= null, $url_editar= null, $url_borrar= null, $plantilla, $datos = null, $remover = null)
     {
         $p = $modelo;
         $formulario = $this->createForm($formulario_base, $p);
@@ -17,11 +23,9 @@ class FuncionesGenericas extends Controller
                 $formulario->remove($campo);
             }
         }
-
         $formulario-> handleRequest($request);
-
         if($datos) {
-            $query = $this->getDoctrine()->getRepository('inicialBundle:' . $objeto)
+            $query = $this->getDoctrine()->getRepository($clase)
                 ->createQueryBuilder(strtolower($objeto))
                 ->where(strtolower($objeto) . '.activo = true')
                 ->getQuery();
@@ -30,13 +34,16 @@ class FuncionesGenericas extends Controller
             $datos = $query->getArrayResult();
         }
         if($request->getMethod()=='POST') {
+            if(!$url_redireccion) {
+                $url_redireccion = 'inicial_agregar_' . strtolower($objeto);
+            }
             if ($formulario->isValid()) {
                 $p->setActivo(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', $objeto.' creado con éxito'
+                    'success', strtolower($titulo).' creado con éxito'
                 );
                 if(array_key_exists('guardar_crear', $formulario)){
                     if ($formulario->get('guardar')->isClicked()) {
@@ -51,16 +58,21 @@ class FuncionesGenericas extends Controller
                 }
             }
         }
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
-            'datos'=>$datos, 'accion'=>$accion, 'url_editar'=>$url_editar,
+        if(!$url_editar) {
+            $url_editar = 'inicial_editar_' . strtolower($objeto);
+        }
+        if(!$url_borrar) {
+            $url_borrar = 'inicial_borrar_' . strtolower($objeto);
+        }
+        return $this->render($plantilla.'.html.twig', array('form'=>$formulario->createView(),
+            'datos'=>$datos, 'accion'=>'Crear '.$titulo, 'url_editar'=>$url_editar,
             'url_borrar'=>$url_borrar, 'operaciones_datos'=>true));
     }
-
-    public function editar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla, $remover = null)
+    public function editar_generico($id, $request, $formulario_base, $objeto, $clase, $titulo, $url_redireccion, $plantilla, $remover = null)
     {
 
         $p = $this->getDoctrine()
-            ->getRepository('inicialBundle:'.$objeto)
+            ->getRepository($clase)
             ->find($id);
         if (!$p)
         {
@@ -82,12 +94,12 @@ class FuncionesGenericas extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', $objeto.' editado con éxito'
+                    'success', strtolower($titulo).' editado con éxito'
                 );
                 return $this->redirect($this->generateUrl($url_redireccion));
             }
         }
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(), 'accion'=>$accion));
+        return $this->render($plantilla.'.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Editar '.$titulo));
     }
 
     public function borrar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)

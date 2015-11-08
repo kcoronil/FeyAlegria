@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Test\inicialBundle\Entity\Pagos" table="pagos">
+  <entity name="RosaMolas\genericoBundle\Entity\Pagos" table="pagos">
     <indexes>
       <index name="pagos_banco_id" columns="banco_id"/>
       <index name="IDX_DA9B0DFFF04F795F" columns="factura_id"/>

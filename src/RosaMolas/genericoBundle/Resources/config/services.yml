@@ -5,3 +5,5 @@ services:
 
   funciones_genericas:
     class: RosaMolas\genericoBundle\Service\FuncionesGenericas
+    arguments:
+      container: "@service_container"
