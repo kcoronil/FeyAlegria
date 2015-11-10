@@ -3,6 +3,7 @@
 namespace RosaMolas\genericoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
@@ -28,7 +29,6 @@ class DefaultController extends Controller
                 ->createQueryBuilder(strtolower($objeto))
                 ->where(strtolower($objeto) . '.activo = true')
                 ->getQuery();
-
 
             $datos = $query->getArrayResult();
         }
@@ -135,5 +135,14 @@ class DefaultController extends Controller
         $atajo = $url_redireccion;
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
+    }
+    public function inscripcion_completa(Request $request){
+        $session = $this->getRequest()->getSession();
+
+        $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request);
+        return $this->render('usuariosBundle:Default:crear_usuario.html.twig', $resultado);
+        return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
+        //$session->set("id_tipo_usuario", $user[2]['id']);
+
     }
 }

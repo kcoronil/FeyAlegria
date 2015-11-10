@@ -128,54 +128,6 @@ class DefaultController extends Controller
                 }
             }
         }
-
-        return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
-    }
-
-    public function crear_usuario_generico($request, $tipo)
-    {
-        $p = new Usuarios();
-        if($tipo == 'representante'){
-            $formulario = $this->createForm(new UsuariosType('Crear Representante'), $p);
-            $formulario -> remove('tipoUsuario');
-            $formulario -> remove('principal');
-            $tipo_usuario = $this->getDoctrine()
-                ->getRepository('inicialBundle:TipoUsuario')
-                ->find(5);
-            $p->setTipoUsuario($tipo_usuario);
-            $p->setPrincipal('true');
-            $elemento = 'Representante';
-        }
-        else{
-            $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
-            $formulario -> remove('alumno');
-            $formulario -> remove('principal');
-            $formulario -> remove('representanteContacto');
-            $elemento = 'Usuario';
-        }
-        $formulario -> remove('activo');
-        $formulario-> handleRequest($request);
-
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'success', $elemento.' Creado con éxito'
-                );
-                if ($formulario->get('guardar')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
-                }
-
-                if ($formulario->get('guardar_crear')->isClicked()) {
-                    return $this->redirect($this->generateUrl('inicial_agregar_usuario'));
-                }
-            }
-        }
-
         return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
     }
 
@@ -250,7 +202,6 @@ class DefaultController extends Controller
         $remover = null;
         $remover =['representanteContacto', 'principal'];
         return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
-        return $this->editar_generico($id, $request, $form, 'Usuarios', 'Editar Usuario', 'inicial_lista_usuario', 'crear_usuario');
     }
     public function lista_usuario_pdfAction(Request $request)
     {
