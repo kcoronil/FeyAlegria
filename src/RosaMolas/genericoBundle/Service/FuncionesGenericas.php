@@ -17,7 +17,6 @@ class FuncionesGenericas extends Controller
     {
         $p = $modelo;
         $formulario = $this->createForm($formulario_base, $p);
-
         if($remover){
             foreach($remover as $campo){
                 $formulario->remove($campo);
@@ -47,15 +46,21 @@ class FuncionesGenericas extends Controller
                 );
                 if(array_key_exists('guardar_crear', $formulario)){
                     if ($formulario->get('guardar')->isClicked()) {
-                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                        return array('resulado'=>'exito', 'url'=> 'inicial_homepage');
                     }
                     if ($formulario->get('guardar_crear')->isClicked()) {
-                        return $this->redirect($this->generateUrl($url_redireccion));
+                        return array('resulado'=>'exito', 'url'=> $url_redireccion);
                     }
                 }
                 else {
-                    return $this->redirect($this->generateUrl($url_redireccion));
+                    return array('resulado'=>'exito', 'url'=> $url_redireccion);
+
                 }
+            }
+            else{
+                return array('form'=>$formulario->createView(),
+                    'datos'=>$datos, 'accion'=>'Crear '.$titulo, 'url_editar'=>$url_editar,
+                    'url_borrar'=>$url_borrar, 'operaciones_datos'=>true);
             }
         }
         if(!$url_editar) {
@@ -64,9 +69,9 @@ class FuncionesGenericas extends Controller
         if(!$url_borrar) {
             $url_borrar = 'inicial_borrar_' . strtolower($objeto);
         }
-        return $this->render($plantilla.'.html.twig', array('form'=>$formulario->createView(),
+        return array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>'Crear '.$titulo, 'url_editar'=>$url_editar,
-            'url_borrar'=>$url_borrar, 'operaciones_datos'=>true));
+            'url_borrar'=>$url_borrar, 'operaciones_datos'=>true);
     }
     public function editar_generico($id, $request, $formulario_base, $objeto, $clase, $titulo, $url_redireccion, $plantilla, $remover = null)
     {

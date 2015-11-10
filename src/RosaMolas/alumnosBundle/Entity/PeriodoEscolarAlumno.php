@@ -4,6 +4,7 @@ namespace RosaMolas\alumnosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Test\inicialBundle\Entity\PeriodoEscolarCurso;
 
 /**
  * PeriodoEscolarAlumno
@@ -94,10 +95,10 @@ class PeriodoEscolarAlumno
     /**
      * Set periodoEscolarCurso
      *
-     * @param \RosaMolas\AlumnosBundle\Entity\PeriodoEscolarCurso $periodoEscolarCurso
+     * @param \Test\inicialBundle\Entity\PeriodoEscolarCurso $periodoEscolarCurso
      * @return PeriodoEscolarAlumno
      */
-    public function setPeriodoEscolarCurso(PeriodoEscolarCurso $periodoEscolarCurso = null)
+    public function setPeriodoEscolarCurso(PeriodoEscolarCurso$periodoEscolarCurso = null)
     {
         $this->periodoEscolarCurso = $periodoEscolarCurso;
 
@@ -107,7 +108,7 @@ class PeriodoEscolarAlumno
     /**
      * Get periodoEscolarCurso
      *
-     * @return \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCurso
+     * @return \Test\inicialBundle\Entity\PeriodoEscolarCurso
      */
     public function getPeriodoEscolarCurso()
     {

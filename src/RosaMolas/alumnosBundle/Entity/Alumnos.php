@@ -4,6 +4,8 @@ namespace RosaMolas\alumnosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use RosaMolas\usuariosBundle\Entity\Usuarios;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Alumnos
@@ -134,6 +136,8 @@ class Alumnos
     /**
      * @var integer
      *
+     * @Assert\Type(type="integer",message="el valor {{ value }} no es númerico.")
+     *
      * @ORM\Column(name="cedula", type="integer", nullable=true)
      */
     private $cedula;
@@ -148,12 +152,25 @@ class Alumnos
     /**
      * @var string
      *
+     * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     *
+     *
+     *
      * @ORM\Column(name="apellidos", type="string", length=30)
      */
     private $apellidos;
 
     /**
      * @var string
+     *
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
+     *
      *
      * @ORM\Column(name="nombres", type="string", length=30)
      */
