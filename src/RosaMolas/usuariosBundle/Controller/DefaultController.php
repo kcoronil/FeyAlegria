@@ -180,7 +180,7 @@ class DefaultController extends Controller
             'danger', 'Seguro que desea borrar este registro?'
         );
         $atajo = 'inicial_agregar_banco';
-        return $this->render('usuariosBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario', 'atajo'=>$atajo));
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario'));
     }
     public function editar_representanteAction($id, Request $request){
         $form = new UsuariosTypeSimple('Editar Representante');
@@ -315,12 +315,12 @@ class DefaultController extends Controller
                 return $this->render('inicialBundle:Default:index.html.twig');
             }
         }
-        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
+        return $this->render('usuariosBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
     }
     public function recuperar_passAction($token, Request $request){
         if($token && preg_match('/^[0-9A-F]{40}$/i', $token)) {
 
-            $query = $this->getDoctrine()->getRepository('inicialBundle:RecuperarPasswordTmp')
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:RecuperarPasswordTmp')
                 ->createQueryBuilder('rec_pass')
                 ->select('rec_pass', 'perfil')
                 ->innerJoin('rec_pass.idPerfil','perfil')
@@ -334,7 +334,7 @@ class DefaultController extends Controller
                 $this->get('session')->getFlashBag()->add(
                     'danger', 'Enlace no valido'
                 );
-                return $this->render('inicialBundle:Default:index.html.twig');
+                return $this->render('usuariosBundle:Default:index.html.twig');
             }
             else{
                 $delta = 72000;
@@ -351,7 +351,7 @@ class DefaultController extends Controller
 
                         if ($formulario->isValid()) {
                             $desact_pass = $this->getDoctrine()->getEntityManager();
-                            $test_desact = $desact_pass->getRepository('inicialBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
+                            $test_desact = $desact_pass->getRepository('usu ariosBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
                             $test_desact->setActivo(false);
                             $desact_pass->flush();
 
@@ -371,23 +371,32 @@ class DefaultController extends Controller
                             $this->get('session')->getFlashBag()->add(
                                 'success', 'Contraseña Cambiada con éxito');
                             $borrar_passtmp= $this->getDoctrine()->getEntityManager();
-                            $borrar_passtmp_query = $borrar_passtmp->getRepository('inicialBundle:RecuperarPasswordTmp')->find($datos[0]['id']);
+                            $borrar_passtmp_query = $borrar_passtmp->getRepository('usuariosBundle:RecuperarPasswordTmp')->find($datos[0]['id']);
                             $borrar_passtmp->remove($borrar_passtmp_query);
                             $borrar_passtmp->flush();
 
                             return $this->redirect($this->generateUrl('inicial_homepage'));
                         }
                     }
-                    return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Recuperar Contraseña', 'form'=>$formulario->createView()));
+                    return $this->render('usuariosBundle:Default:recuperar_pass.html.twig', array('accion'=>'Recuperar Contraseña', 'form'=>$formulario->createView()));
                 }
                 else{
                     $this->get('session')->getFlashBag()->add(
                         'danger', 'enlace de excedio el tiempo para ser usado'
                     );
-                    return $this->render('inicialBundle:Default:index.html.twig');
+                    return $this->render('usuariosBundle:Default:index.html.twig');
                 }
             }
         }
-        return $this->render('inicialBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
+        return $this->render('usuariosBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
+    }
+    public function logoutAction(Request $request)
+    {
+        $session = $request ->getSession();
+        $session -> clear();
+        $this -> get('session') -> getFlashBag() -> add(
+            'info', 'Sesión Cerrada'
+        );
+        return $this->redirect($this->generateUrl('inicial_homepage'));
     }
 }

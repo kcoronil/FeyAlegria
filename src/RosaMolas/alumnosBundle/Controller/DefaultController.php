@@ -100,7 +100,7 @@ class DefaultController extends Controller
     {
 
         $p = $this->getDoctrine()
-            ->getRepository('inicialBundle:'.$objeto)
+            ->getRepository('alumnosBundle:'.$objeto)
             ->find($id);
         if (!$p)
         {

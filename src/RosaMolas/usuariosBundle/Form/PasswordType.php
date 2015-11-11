@@ -33,7 +33,7 @@ class PasswordType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\Passwords'
+            'data_class' => 'RosaMolas\usuariosBundle\Entity\Passwords'
         ));
     }
 

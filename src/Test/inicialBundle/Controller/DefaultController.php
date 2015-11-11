@@ -114,15 +114,7 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:index.html.twig');
     }
-    public function logoutAction(Request $request)
-    {
-        $session = $request ->getSession();
-        $session -> clear();
-        $this -> get('session') -> getFlashBag() -> add(
-            'info', 'Sesión Cerrada'
-        );
-        return $this->redirect($this->generateUrl('inicial_homepage'));
-    }
+
 
     public function consultaAction()
     {
