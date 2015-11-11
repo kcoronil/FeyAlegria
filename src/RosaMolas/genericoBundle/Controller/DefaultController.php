@@ -4,6 +4,7 @@ namespace RosaMolas\genericoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Test\inicialBundle\Entity\TrazaEventosUsuarios;
 
 class DefaultController extends Controller
 {
@@ -143,6 +144,26 @@ class DefaultController extends Controller
         return $this->render('usuariosBundle:Default:crear_usuario.html.twig', $resultado);
         return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
         //$session->set("id_tipo_usuario", $user[2]['id']);
+    }
+    public function registro_traza_usuario($request, $modelo, $elemento, $evento, $objeto){
+        //$tableName = $em->getClassMetadata('StoreBundle:User')->getTableName();
+        $p = new TrazaEventosUsuarios();
+        $session = $this->getRequest()->getSession();
+
+
+            $em = $this->getDoctrine()->getManager();
+            $tableName = $em->getClassMetadata($modelo)->getTableName();
+            $nombre_entidad = $modelo->getShortName();
+            $p->setElemento($elemento);
+            $p->setUsuario($session->get('usuario_id'));
+            $p->setidEvento($evento);
+            $p->setidObjeto($objeto->getId());
+            $em->persist($p);
+            $em->flush();
+
+            return array('resultado' => true);
+
+
 
     }
 }

@@ -81,7 +81,7 @@ class DefaultController extends Controller
                     if ($session->get('perfil_activo') == 1) {
 
                         if ($session->get('pass_activo') == 1) {
-                            $session->set("id", $user[0]['id']);
+                            $session->set("usuario_id", $user[0]['id']);
                             $session->set("autenticado", true);
                             $session->set("nombre_usuario", $user[0]['nombreUsuario']);
                             $session->set("nombres", $user[1]['nombres']);
