@@ -11,6 +11,9 @@ class MontosAlumnos
 {
     /**
      * @var string
+     *
+     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
+     *
      */
     private $monto;
 
@@ -25,7 +28,7 @@ class MontosAlumnos
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Alumnos
+     * @var \RosaMolas\alumnosBundle\Entity\Alumnos
      */
     private $alumno;
 

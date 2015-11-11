@@ -49,6 +49,19 @@ class TrazaEventosUsuarios
      */
     private $idObjeto;
 
+    /**
+     * @var string
+     */
+    private $detalles;
+
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha", type="datetimetz", nullable=true)
+     */
+    private $fecha;
+
 
     /**
      * Get id
@@ -150,5 +163,52 @@ class TrazaEventosUsuarios
     public function getidObjeto()
     {
         return $this->idObjeto;
+    }
+
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Curso
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->detalles;
+    }
+
+    /**
+     * Set fecha
+     *
+     * @param \DateTime $fecha
+     * @return TrazaEventosUsuarios
+     */
+    public function setFecha($fecha)
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    /**
+     * Get fecha
+     *
+     * @return \DateTime
+     */
+    public function getFecha()
+    {
+        return $this->fecha;
     }
 }

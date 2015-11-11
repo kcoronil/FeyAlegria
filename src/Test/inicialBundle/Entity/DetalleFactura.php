@@ -11,6 +11,12 @@ class DetalleFactura
 {
     /**
      * @var string
+     *
+     * @var integer
+     *
+     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
+     *
+     * @ORM\Column(name="cedula", type="integer", nullable=true)
      */
     private $monto;
 

@@ -12,11 +12,6 @@ class Factura
     /**
      * @var string
      */
-    private $nombre;
-
-    /**
-     * @var string
-     */
     private $monto;
 
     /**
@@ -30,7 +25,7 @@ class Factura
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\PeriodoEscolarAlumno
+     * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno
      */
     private $periodoEscolarAlumnos;
 

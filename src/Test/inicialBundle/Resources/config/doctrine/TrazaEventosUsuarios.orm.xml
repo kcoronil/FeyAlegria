@@ -10,6 +10,8 @@
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="idObjeto" type="integer" column="id_objeto" nullable="false"/>
+    <field name="nombre" type="string" column="detalles" length="200" nullable="false"/>
+    <field name="fecha" type="datetimetz" column="fecha" nullable="false"/>
     <many-to-one field="usuario" target-entity="Usuarios">
       <join-columns>
         <join-column name="usuario_id" referenced-column-name="id"/>

@@ -11,7 +11,6 @@
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
-    <field name="nombre" type="string" column="nombre" length="10" nullable="false"/>
     <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <many-to-one field="tipoFactura" target-entity="TipoFactura">

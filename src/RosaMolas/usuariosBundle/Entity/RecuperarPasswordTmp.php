@@ -89,14 +89,13 @@ class RecuperarPasswordTmp
     public function setFecha($fecha)
     {
         $this->fecha = $fecha;
-
         return $this;
     }
 
     /**
      * Get fecha
-     *
      * @return \DateTime
+     *
      */
     public function getFecha()
     {

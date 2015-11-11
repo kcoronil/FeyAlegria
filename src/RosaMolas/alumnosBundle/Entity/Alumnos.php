@@ -104,26 +104,6 @@ class Alumnos
         $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
     }
 
-    /*
-        public function removePeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
-        {
-            if($this->periodoEscolarAlumno->contains($periodoEscolarAlumno)){
-                $this->periodoEscolarAlumno->removeElement($periodoEscolarAlumno);
-                $periodoEscolarAlumno->setAlumno(null);
-            }
-            return $this;
-        }
-
-        public function getPeriodoEscolarCurso()
-        {
-            return array_map(
-              function($periodoEscolarAlumno){
-                  return $periodoEscolarAlumno->getPeriodoEscolarCurso();
-              },$this->periodoEscolarAlumno->toArray()
-            );
-        }
-    */
-
     /**
      * @var integer
      *
@@ -144,8 +124,14 @@ class Alumnos
 
     /**
      * @var string
-     *
      * @ORM\Column(name="cedula_estudiantil", type="string", nullable=true, length=20)
+     *
+     * @Assert\Length(min = 3, max = 20,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     *
+     *
      */
     private $cedulaEstudiantil;
 
@@ -153,28 +139,52 @@ class Alumnos
      * @var string
      *
      * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
-     * @Assert\Length(min = 3, max = 30,
+     * @Assert\Length(min = 3, max = 50,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      *
-     *
-     *
      * @ORM\Column(name="apellidos", type="string", length=30)
      */
-    private $apellidos;
+    private $primerApellido;
 
     /**
      * @var string
      *
-     * @Assert\Length(min = 3, max = 30,
+     * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
+     * @Assert\Length(min = 3, max = 50,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     *
+     * @ORM\Column(name="apellidos", type="string", length=30)
+     */
+
+    private $segundoApellido;
+
+    /**
+     * @var string
+     *
+     * @Assert\Length(min = 3, max = 50,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
      *
+     * @ORM\Column(name="nombres", type="string", length=30)
+     */
+
+    private $primerNombre;
+
+    /**
+     * @var string
+     *
+     * @Assert\Length(min = 3, max = 50,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
      *
      * @ORM\Column(name="nombres", type="string", length=30)
      */
-    private $nombres;
+
+    private $segundoNombre;
 
     /**
      * @var \DateTime
@@ -187,13 +197,20 @@ class Alumnos
      * @var string
      *
      * @ORM\Column(name="lugar_nacimiento", type="string", length=60)
+     *
+     * @Assert\Length(min = 3, max = 60,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     *
      */
     private $lugarNacimiento;
 
     /**
      * @var integer
-     *
      * @ORM\Column(name="sexo", type="integer")
+     *
+     * @Assert\NotBlank()
      */
     private $sexo;
 
@@ -262,49 +279,95 @@ class Alumnos
     }
 
     /**
-     * Set apellidos
+     * Set primerApellido
      *
-     * @param string $apellidos
+     * @param string $primerApellido
      * @return Alumnos
      */
-    public function setApellidos($apellidos)
+    public function setPrimerApellido($primerApellido)
     {
-        $this->apellidos = $apellidos;
+        $this->primerApellido = $primerApellido;
 
         return $this;
     }
 
     /**
-     * Get apellidos
+     * Get primerApellido
      *
      * @return string 
      */
-    public function getApellidos()
+    public function getPrimerApellido()
     {
-        return $this->apellidos;
+        return $this->primerApellido;
     }
 
     /**
-     * Set nombres
+     * Set segundoApellido
      *
-     * @param string $nombres
+     * @param string $segundoApellido
      * @return Alumnos
      */
-    public function setNombres($nombres)
+    public function setSegundoApellido($segundoApellido)
     {
-        $this->nombres = $nombres;
+        $this->segundoApellido = $segundoApellido;
 
         return $this;
     }
 
     /**
-     * Get nombres
+     * Get segundoApellido
+     *
+     * @return string
+     */
+    public function getSegundoApellido()
+    {
+        return $this->segundoApellido;
+    }
+
+    /**
+     * Set primerNombre
+     *
+     * @param string $primerNombre
+     * @return Alumnos
+     */
+    public function setPrimerNombre($primerNombre)
+    {
+        $this->primerNombre = $primerNombre;
+
+        return $this;
+    }
+
+    /**
+     * Get primerNombre
+     *
+     * @return string
+     */
+    public function getPrimerNombre()
+    {
+        return $this->primerNombre;
+    }
+
+    /**
+     * Set segundoNombre
+     *
+     * @param string $segundoNombre
+     * @return Alumnos
+     */
+    public function setSegundoNombre($segundoNombre)
+    {
+        $this->segundoNombre = $segundoNombre;
+
+        return $this;
+    }
+
+    /**
+     * Get segundoNombre
      *
      * @return string 
      */
-    public function getNombres()
+    public function getSegundoNombre()
     {
-        return $this->nombres;
+        return $this->segundoNombre;
     }
 
     /**
@@ -401,6 +464,6 @@ class Alumnos
     }
     public function __toString()
     {
-        return $this->nombres;
+        return $this->primerNombre.' '.$this->primerApellido;
     }
 }

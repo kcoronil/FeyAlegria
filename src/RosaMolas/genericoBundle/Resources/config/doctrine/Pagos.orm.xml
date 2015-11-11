@@ -11,9 +11,10 @@
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
-    <field name="fecha" type="date" column="fecha" nullable="false"/>
+    <field name="fechaDeposito" type="date" column="fecha_deposito" nullable="false"/>
     <field name="numeroDeposito" type="string" column="numero_deposito" length="20" nullable="false"/>
     <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
+    <field name="fechaRegistro" type="datetimetz" column="fecha_registro" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <many-to-one field="banco" target-entity="Bancos">
       <join-columns>

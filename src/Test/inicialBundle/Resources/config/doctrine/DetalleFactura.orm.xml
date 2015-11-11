@@ -8,7 +8,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
-    <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
+    <field name="monto" type="decimal" column="monto" precision="10" scale="2" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <many-to-one field="factura" target-entity="Factura">
       <join-columns>

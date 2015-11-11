@@ -12,7 +12,12 @@ class Pagos
     /**
      * @var \DateTime
      */
-    private $fecha;
+    private $fechaDeposito;
+
+    /**
+     * @var \DateTime
+     */
+    private $fechaRegistro;
 
     /**
      * @var string
@@ -40,32 +45,57 @@ class Pagos
     private $factura;
 
     /**
-     * @var \Test\inicialBundle\Entity\Bancos
+     * @var \RosaMolas\genericoBundle\Entity\Bancos
      */
     private $banco;
 
 
     /**
-     * Set fecha
+     * Set fechaRegistro
      *
-     * @param \DateTime $fecha
+     * @param \DateTime $fechaRegistro
      * @return Pagos
      */
-    public function setFecha($fecha)
+    public function setFechaRegistro($fechaRegistro)
     {
-        $this->fecha = $fecha;
+        $this->fechaDeposito = $fechaRegistro;
 
         return $this;
     }
 
     /**
-     * Get fecha
+     * Get fechaRegistro
+     *
+     * @return \DateTime
+     */
+    public function getFechaRegistro()
+    {
+        return $this->fechaRegistro;
+    }
+
+
+
+    /**
+     * Set fechaDeposito
+     *
+     * @param \DateTime $fechaDeposito
+     * @return Pagos
+     */
+    public function setFechaDeposito($fechaDeposito)
+    {
+        $this->fechaDeposito = $fechaDeposito;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaDeposito
      *
      * @return \DateTime 
      */
-    public function getFecha()
+    public function getFechaDeposito()
     {
-        return $this->fecha;
+        return $this->fechaDeposito;
     }
 
     /**
@@ -173,10 +203,10 @@ class Pagos
     /**
      * Set banco
      *
-     * @param \Test\inicialBundle\Entity\Bancos $banco
+     * @param \RosaMolas\genericoBundle\Entity\Bancos $banco
      * @return Pagos
      */
-    public function setBanco(\Test\inicialBundle\Entity\Bancos $banco = null)
+    public function setBanco(\RosaMolas\genericoBundle\Entity\Bancos $banco = null)
     {
         $this->banco = $banco;
 
@@ -186,7 +216,7 @@ class Pagos
     /**
      * Get banco
      *
-     * @return \Test\inicialBundle\Entity\Bancos 
+     * @return \RosaMolas\genericoBundle\Entity\Bancos
      */
     public function getBanco()
     {
