@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Factura
@@ -11,6 +12,8 @@ class Factura
 {
     /**
      * @var string
+     *
+     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
      */
     private $monto;
 
@@ -34,29 +37,6 @@ class Factura
      */
     private $tipoFactura;
 
-
-    /**
-     * Set nombre
-     *
-     * @param string $nombre
-     * @return Factura
-     */
-    public function setNombre($nombre)
-    {
-        $this->nombre = $nombre;
-
-        return $this;
-    }
-
-    /**
-     * Get nombre
-     *
-     * @return string 
-     */
-    public function getNombre()
-    {
-        return $this->nombre;
-    }
 
     /**
      * Set monto

@@ -51,7 +51,6 @@ class Passwords
     public $activo;
 
     /**
-     * @var \PerfilUsuario
      *
      * @ORM\ManyToOne(targetEntity="PerfilUsuario")
      * @ORM\JoinColumns({

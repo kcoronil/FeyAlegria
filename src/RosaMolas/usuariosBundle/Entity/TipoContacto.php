@@ -3,6 +3,7 @@
 namespace RosaMolas\usuariosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * TipoContacto
@@ -25,6 +26,12 @@ class TipoContacto
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=10)
+     *  @Assert\Length(min = 3, max = 60,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\NotBlank()
+     *
      */
     private $nombre;
 

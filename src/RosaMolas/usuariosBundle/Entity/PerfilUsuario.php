@@ -5,6 +5,7 @@ namespace RosaMolas\usuariosBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * PerfilUsuario
@@ -93,6 +94,11 @@ class PerfilUsuario implements UserInterface
      * @var string
      *
      * @ORM\Column(name="nombre_usuario", type="string", length=30)
+     *
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\Length(min = 6, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      */
     private $nombreUsuario = null;
 
@@ -100,6 +106,9 @@ class PerfilUsuario implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=100)
+     * @Assert\Email(
+     * message = "El correo '{{ value }}' no es un correo valido.",
+     * checkMX = true)
      */
     private $email;
 
@@ -107,6 +116,11 @@ class PerfilUsuario implements UserInterface
      * @var string
      *
      * @ORM\Column(name="lugar_nacimiento", type="string", length=60)
+     * @Assert\Length(min = 3, max = 60,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     *
      */
     private $lugarNacimiento = null;
 
@@ -114,6 +128,11 @@ class PerfilUsuario implements UserInterface
      * @var string
      *
      * @ORM\Column(name="pregunta_secreta", type="string", length=20)
+     * @Assert\Length(min = 3, max = 20,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     *
      */
     private $preguntaSecreta = null;
 
@@ -126,7 +145,10 @@ class PerfilUsuario implements UserInterface
 
     /**
      * @var string
-     *
+     * @Assert\Length(min = 3, max = 20,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
      * @ORM\Column(name="respuesta", type="string", length=20)
      */
     private $respuesta = null;

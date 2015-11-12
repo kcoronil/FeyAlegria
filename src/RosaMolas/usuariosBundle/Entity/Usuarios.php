@@ -92,7 +92,10 @@ class Usuarios
 
     /**
      * @var string
-     *
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
      * @Assert\NotBlank()
@@ -103,6 +106,11 @@ class Usuarios
      * @var string
      *
      * @ORM\Column(name="nombres", type="string", length=30)
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\NotBlank()
      *
      * @Assert\NotBlank()
      */
@@ -131,10 +139,13 @@ class Usuarios
      * @var string
      *
      * @ORM\Column(name="direccion", type="text")
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
      *
      * @Assert\NotBlank()
      */
-
 
     private $direccion;
 

@@ -130,8 +130,6 @@ class Alumnos
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
-     *
-     *
      */
     private $cedulaEstudiantil;
 
@@ -197,12 +195,11 @@ class Alumnos
      * @var string
      *
      * @ORM\Column(name="lugar_nacimiento", type="string", length=60)
-     *
      * @Assert\Length(min = 3, max = 60,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
-     *
+     * @Assert\NotBlank()
      */
     private $lugarNacimiento;
 

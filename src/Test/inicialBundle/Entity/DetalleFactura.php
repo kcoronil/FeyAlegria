@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * DetalleFactura
@@ -11,8 +12,6 @@ class DetalleFactura
 {
     /**
      * @var string
-     *
-     * @var integer
      *
      * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
      *

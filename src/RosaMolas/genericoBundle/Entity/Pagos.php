@@ -3,6 +3,7 @@
 namespace RosaMolas\genericoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Pagos
@@ -21,11 +22,18 @@ class Pagos
 
     /**
      * @var string
+     *
+     * @Assert\Length(min = 20, max = 20,
+     * minMessage = "Este campo debe tener {{ limit }} carácteres",
+     * maxMessage = "Este campo debe tener {{ limit }} carácteres")
+     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
+     *
      */
     private $numeroDeposito;
 
     /**
      * @var string
+     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
      */
     private $monto;
 
