@@ -141,7 +141,7 @@ class Alumnos
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      *
-     * @ORM\Column(name="apellidos", type="string", length=30)
+     * @ORM\Column(name="primer_apellidos", type="string", length=30)
      */
     private $primerApellido;
 
@@ -153,7 +153,7 @@ class Alumnos
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      *
-     * @ORM\Column(name="apellidos", type="string", length=30)
+     * @ORM\Column(name="segundo_apellidos", type="string", length=30)
      */
 
     private $segundoApellido;
@@ -166,7 +166,7 @@ class Alumnos
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
      *
-     * @ORM\Column(name="nombres", type="string", length=30)
+     * @ORM\Column(name="primer_nombre", type="string", length=30)
      */
 
     private $primerNombre;
@@ -179,7 +179,7 @@ class Alumnos
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Type(type="alpha",message="el valor {{ value }} no es alfabético.")
      *
-     * @ORM\Column(name="nombres", type="string", length=30)
+     * @ORM\Column(name="segundo_nombre", type="string", length=30)
      */
 
     private $segundoNombre;

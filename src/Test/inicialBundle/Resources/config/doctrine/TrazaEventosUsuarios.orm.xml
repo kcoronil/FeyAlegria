@@ -10,19 +10,19 @@
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="idObjeto" type="integer" column="id_objeto" nullable="false"/>
-    <field name="nombre" type="string" column="detalles" length="200" nullable="false"/>
+    <field name="detalles" type="string" column="detalles" length="200" nullable="false"/>
     <field name="fecha" type="datetimetz" column="fecha" nullable="false"/>
-    <many-to-one field="usuario" target-entity="Usuarios">
+    <many-to-one field="usuario" target-entity="RosaMolas\usuariosBundle\Entity\Usuarios">
       <join-columns>
         <join-column name="usuario_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="elemento" target-entity="Elementos">
+    <many-to-one field="elemento" target-entity="RosaMolas\genericoBundle\Entity\Elementos">
       <join-columns>
         <join-column name="elemento_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="idEvento" target-entity="Eventos">
+    <many-to-one field="idEvento" target-entity="RosaMolas\genericoBundle\Entity\Eventos">
       <join-columns>
         <join-column name="id_evento" referenced-column-name="id"/>
       </join-columns>

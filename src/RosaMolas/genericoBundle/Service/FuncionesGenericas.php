@@ -3,6 +3,8 @@
 namespace RosaMolas\genericoBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Validator\Constraints\DateTime;
+use Test\inicialBundle\Entity\TrazaEventosUsuarios;
 
 
 class FuncionesGenericas extends Controller
@@ -13,7 +15,7 @@ class FuncionesGenericas extends Controller
     }
 
 
-    public function crear_generico($request, $modelo, $formulario_base, $objeto, $clase, $titulo, $url_redireccion= null, $url_editar= null, $url_borrar= null, $plantilla, $datos = null, $remover = null)
+    public function crear_generico($request, $modelo, $formulario_base, $objeto, $clase, $titulo, $url_redireccion= null, $url_editar= null, $url_borrar= null, $datos = null, $remover = null)
     {
         $p = $modelo;
         $formulario = $this->createForm($formulario_base, $p);
@@ -26,7 +28,6 @@ class FuncionesGenericas extends Controller
         if($datos) {
             $query = $this->getDoctrine()->getRepository($clase)
                 ->createQueryBuilder(strtolower($objeto))
-                ->where(strtolower($objeto) . '.activo = true')
                 ->getQuery();
 
 
@@ -149,5 +150,40 @@ class FuncionesGenericas extends Controller
         $atajo = $url_redireccion;
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
+    }
+    public function registro_traza_usuario($modelo, $nombre_evento, $objeto){
+        //$tableName = $em->getClassMetadata('StoreBundle:User')->getTableName();
+
+        $evento = $this->getDoctrine()
+            ->getRepository('genericoBundle:Eventos')
+            ->findOneBy(array('nombre'=>$nombre_evento));
+
+        $session = $this->getRequest()->getSession();
+        $usuario = $this->getDoctrine()
+            ->getRepository('usuariosBundle:Usuarios')
+            ->find($session->get('usuario_id'));
+
+
+        $manager = $this->getDoctrine()->getManager();
+        $manager2 = $this->getDoctrine()->getManager();
+        $nombre_tabla = $manager2->getClassMetadata($modelo)->getTableName();
+        $elemento = $this->getDoctrine()
+            ->getRepository('genericoBundle:Elementos')
+            ->findOneBy(array('nombre'=>$nombre_tabla));
+        $id_objeto = $objeto->getId();
+        $nombre_entidad = $manager2->getClassMetadata($modelo)->getReflectionClass()->getName();
+        $detalle = $nombre_tabla.','.$nombre_entidad;
+
+        $p = new TrazaEventosUsuarios();
+        $p->setElemento($elemento);
+        $p->setUsuario($usuario);
+        $p->setidEvento($evento);
+        $p->setidObjeto($id_objeto);
+        $p->setDetalles($detalle);
+        $p->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+        $manager->persist($p);
+        $manager->flush();
+
+        return array('resultado' => true);
     }
 }

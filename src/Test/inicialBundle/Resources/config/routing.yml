@@ -184,6 +184,18 @@ inicial_borrar_representante_contacto:
     defaults: { _controller: inicialBundle:Default:borrar_representante_contacto }
 
 
+inicial_agregar_traza:
+    path:     /crear_traza
+    defaults: { _controller: inicialBundle:Default:crear_traza }
+
+inicial_editar_traza:
+    path:     /editar_traza/{id}
+    defaults: { _controller: inicialBundle:Default:editar_tipo_factura }
+
+inicial_borrar_traza:
+    path:     /borrar_traza/{id}
+    defaults: { _controller: inicialBundle:Default:borrar_tipo_factura }
+
 #--------------------- controlador representantes sin uso -----------------
 representantes_home:
     path:     /representantes

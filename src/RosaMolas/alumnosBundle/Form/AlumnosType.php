@@ -25,8 +25,10 @@ class AlumnosType extends AbstractType
         $builder
             ->add('cedula')
             ->add('cedulaEstudiantil')
-            ->add('apellidos')
-            ->add('nombres')
+            ->add('primerApellido')
+            ->add('segundoApellido')
+            ->add('primerNombre')
+            ->add('segundoNombre')
             ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ))
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,

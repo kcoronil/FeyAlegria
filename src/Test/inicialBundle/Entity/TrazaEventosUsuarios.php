@@ -173,24 +173,24 @@ class TrazaEventosUsuarios
 
 
     /**
-     * Set nombre
+     * Set detalles
      *
-     * @param string $nombre
-     * @return Curso
+     * @param string $detalles
+     * @return TrazaEventosUsuarios
      */
-    public function setNombre($nombre)
+    public function setDetalles($detalles)
     {
-        $this->nombre = $nombre;
+        $this->detalles = $detalles;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get detalles
      *
      * @return string
      */
-    public function getNombre()
+    public function getDetalles()
     {
         return $this->detalles;
     }

@@ -17,6 +17,7 @@ use Test\inicialBundle\Entity\TipoFactura;
 use RosaMolas\usuariosBundle\Entity\TipoUsuario;
 use RosaMolas\genericoBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
+use Test\inicialBundle\Entity\TrazaEventosUsuarios;
 use Test\inicialBundle\Form\ConceptosFacturaType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EventosType;
@@ -34,7 +35,7 @@ use RosaMolas\usuariosBundle\Entity\PerfilUsuario;
 use RosaMolas\usuariosBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Curso;
 use Test\inicialBundle\Form\CursoType;
-
+use Test\inicialBundle\Form\TrazaEventosUsuariosType;
 
 
 class DefaultController extends Controller
@@ -212,7 +213,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -244,7 +245,7 @@ class DefaultController extends Controller
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $datos = 'true';
         $remover = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -277,7 +278,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -310,7 +311,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -343,7 +344,7 @@ class DefaultController extends Controller
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $datos = 'true';
         $remover = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -376,7 +377,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -404,11 +405,11 @@ class DefaultController extends Controller
         $titulo = 'Evento del Sistema';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $datos = 'true';
-        $remover = null;
+        $remover = '';
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -440,7 +441,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -472,7 +473,7 @@ class DefaultController extends Controller
         $url_redireccion = null;
         $url_editar = null;
         $url_borrar = null;
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -504,7 +505,7 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_tipo_usuario';
         $url_editar = 'inicial_editar_tipo_usuario';
         $url_borrar = 'inicial_borrar_tipo_usuario';
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -537,7 +538,7 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_tipo_contacto';
         $url_editar = 'inicial_editar_tipo_contacto';
         $url_borrar = 'inicial_borrar_tipo_contacto';
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -570,7 +571,7 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_representante_contacto';
         $url_editar = 'inicial_editar_representante_contacto';
         $url_borrar = 'inicial_borrar_representante_contacto';
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
@@ -603,7 +604,24 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_tipo_factura';
         $url_editar = 'inicial_editar_tipo_factura';
         $url_borrar = 'inicial_borrar_tipo_factura';
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+    }
+    public function crear_trazaAction(Request $request){
+        $modelo = New TrazaEventosUsuarios();
+        $form = new TrazaEventosUsuariosType('Crear Traza');
+        $objeto = 'TrazaEventosUsuarios';
+        $clase = 'inicialBundle:TrazaEventosUsuarios';
+        $titulo = 'Traza';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_traza';
+        $url_editar = 'inicial_editar_traza';
+        $url_borrar = 'inicial_borrar_traza';
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }

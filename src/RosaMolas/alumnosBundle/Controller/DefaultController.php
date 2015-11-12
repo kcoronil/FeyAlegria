@@ -12,10 +12,6 @@ use RosaMolas\alumnosBundle\Entity\Alumnos;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name)
-    {
-        return $this->render('alumnosBundle:Default:index.html.twig', array('name' => $name));
-    }
     public function crear_alumnoAction(Request $request){
         $p = New Alumnos();
         $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
@@ -42,11 +38,6 @@ class DefaultController extends Controller
             'accion'=>'Crear Estudiante',));
     }
 
-
-
-
-
-
     public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
     {
         $p = $modelo;
@@ -57,7 +48,6 @@ class DefaultController extends Controller
                 $formulario->remove($campo);
             }
         }
-
         $formulario-> handleRequest($request);
 
         if($datos) {
@@ -121,6 +111,7 @@ class DefaultController extends Controller
             if ($formulario->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
+                $this->get('funciones_genericas')->registro_traza_usuario('alumnosBundle:'.$objeto, 'modificacion', $p );
                 $this->get('session')->getFlashBag()->add(
                     'success', $objeto.' editado con éxito'
                 );
@@ -142,7 +133,7 @@ class DefaultController extends Controller
         $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('nombre');
         $formulario-> handleRequest($request);
-
+        
         $query = $this->getDoctrine()->getRepository('inicialBundle:'.$objeto)
             ->createQueryBuilder(strtolower($objeto))
             ->where(strtolower($objeto).'.id = :id')
@@ -174,11 +165,6 @@ class DefaultController extends Controller
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
     }
 
-
-
-
-
-
     public function editar_alumnoAction($id, Request $request){
         $form = new AlumnosTypeSimple('Editar Estudiante');
         return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_homepage', 'crear_alumno_simple');
@@ -196,7 +182,6 @@ class DefaultController extends Controller
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura',  'mantenimiento', 'true');
     }
 
-
     public function lista_alumno_pdfAction()
     {
 
@@ -205,7 +190,7 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
             ->leftJoin('alumno.usuario', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
@@ -238,8 +223,8 @@ class DefaultController extends Controller
         foreach($datos as $dato){
             $html.="<tr>
 							<td>".$dato['id']."</td>
-							<td>".$dato['nombres']."</td>
-							<td>".$dato['apellidos']."</td>
+							<td>".$dato['primerNombre']."</td>
+							<td>".$dato['primerApellido']."</td>
 							<td>".$dato['cedula']."</td>
 							<td>".$dato['Nombre_Representante']." ".$dato['Apellido_Representante']."</td>
 						</tr>";
@@ -254,14 +239,13 @@ class DefaultController extends Controller
 
     }
 
-
     public function lista_alumnoAction()
     {
         //hacer consulta simple a la bbdd
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.apellidos', 'alumno.nombres', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
             ->leftJoin('alumno.usuario', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
@@ -311,8 +295,10 @@ class DefaultController extends Controller
         $formulario -> remove('usuario');
         $formulario -> remove('cedulaEstudiantil');
         $formulario -> remove('cedula');
-        $formulario -> remove('nombres');
-        $formulario -> remove('apellidos');
+        $formulario -> remove('primerNombre');
+        $formulario -> remove('segundoNombre');
+        $formulario -> remove('primerNombre');
+        $formulario -> remove('segundoApellido');
         $formulario -> remove('fechaNacimiento');
         $formulario -> remove('lugarNacimiento');
         $formulario -> remove('sexo');
@@ -349,7 +335,7 @@ class DefaultController extends Controller
             'danger', 'Seguro que desea borrar este registro?'
         );
         $atajo = 'inicial_lista_alumno';
-        return $this->render('alumnosBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
+        return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>'Borrar Estudiante', 'atajo'=>$atajo));
     }
 
