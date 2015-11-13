@@ -37,7 +37,7 @@ class RecuperarPasswordTmp
     private $fecha;
 
     /**
-     * @var \PerfilUsuario
+     * @var \RosaMolas\usuariosBundle\Entity\PerfilUsuario
      *
      * @ORM\ManyToOne(targetEntity="PerfilUsuario")
      * @ORM\JoinColumns({

@@ -30,9 +30,9 @@ class PerfilesRoles
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Roles
+     * @var \RosaMolas\usuariosBundle\Entity\Roles
      *
-     * @ORM\ManyToOne(targetEntity="Test\inicialBundle\Entity\Roles")
+     * @ORM\ManyToOne(targetEntity="RosaMolas\usuariosBundle\Entity\Roles")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="rol_id", referencedColumnName="id")
      * })
@@ -48,8 +48,6 @@ class PerfilesRoles
      * })
      */
     private $usuario;
-
-
 
     /**
      * Set activo
@@ -87,10 +85,10 @@ class PerfilesRoles
     /**
      * Set rol
      *
-     * @param \Test\inicialBundle\Entity\Roles $rol
+     * @param \RosaMolas\usuariosBundle\Entity\Roles $rol
      * @return PerfilesRoles
      */
-    public function setRol(\Test\inicialBundle\Entity\Roles $rol = null)
+    public function setRol(\RosaMolas\usuariosBundle\Entity\Roles $rol = null)
     {
         $this->rol = $rol;
 
@@ -100,7 +98,7 @@ class PerfilesRoles
     /**
      * Get rol
      *
-     * @return \Test\inicialBundle\Entity\Roles 
+     * @return \RosaMolas\usuariosBundle\Entity\Roles
      */
     public function getRol()
     {

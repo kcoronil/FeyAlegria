@@ -95,7 +95,8 @@ class PerfilUsuario implements UserInterface
      *
      * @ORM\Column(name="nombre_usuario", type="string", length=30)
      *
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * pattern="[0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      * @Assert\Length(min = 6, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
@@ -119,7 +120,10 @@ class PerfilUsuario implements UserInterface
      * @Assert\Length(min = 3, max = 60,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     *
+     * @Assert\Regex(
+     * pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      *
      */
     private $lugarNacimiento = null;
@@ -131,7 +135,8 @@ class PerfilUsuario implements UserInterface
      * @Assert\Length(min = 3, max = 20,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      *
      */
     private $preguntaSecreta = null;
@@ -148,7 +153,8 @@ class PerfilUsuario implements UserInterface
      * @Assert\Length(min = 3, max = 20,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      * @ORM\Column(name="respuesta", type="string", length=20)
      */
     private $respuesta = null;

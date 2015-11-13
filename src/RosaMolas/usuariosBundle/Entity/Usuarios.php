@@ -83,7 +83,7 @@ class Usuarios
      * @var integer
      *
      * @ORM\Column(name="cedula", type="integer")
-     *
+     * @Assert\Type(type="integer",message="el valor {{ value }} no es númerico.")
      * @Assert\NotBlank()
      */
 
@@ -95,7 +95,8 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
      * @Assert\NotBlank()
@@ -109,9 +110,8 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
-     * @Assert\NotBlank()
-     *
+     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfabético.")
      * @Assert\NotBlank()
      */
     private $nombres;
@@ -142,8 +142,8 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
-     *
+     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$",
+     * match=false, message="el valor {{ value }} no es alfanumérico.")
      * @Assert\NotBlank()
      */
 
@@ -151,7 +151,6 @@ class Usuarios
 
     /**
      * @var boolean
-     *
      * @ORM\Column(name="principal", type="boolean")
      */
     private $principal;

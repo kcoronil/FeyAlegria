@@ -26,19 +26,18 @@ class Elementos
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=20)
+     * @Assert\Length(min = 1, max = 255,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\NotBlank()
      */
     private $nombre;
 
     /**
      * @var boolean
-     *
      * @ORM\Column(name="activo", type="boolean")
-     *
-     * @Assert\Length(min = 1, max = 255,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
-     *
      */
     private $activo;
 

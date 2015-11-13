@@ -34,7 +34,7 @@ class UsuariosTypeCollection extends AbstractType
             ->add('apellidos')
             ->add('nombres')
             ->add('fechaNacimiento','date', array('widget'=>'single_text',
-                'format'=>'y-M-d', 'attr'=>array('class'=>'datepick')))
+                'format'=>'d-M-y', 'attr'=>array('class'=>'fecha_nacimiento')))
             ->add('direccion')
             ->add('sexo', 'entity', array('required' => true,'class' => 'genericoBundle:Sexo','empty_data' => 'hola',
                 'multiple'=>false, 'expanded'=>true,  'attr'=>array('class'=>'radio-inline')))

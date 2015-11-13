@@ -19,7 +19,7 @@ class Sexo
 
 
     /**
-     * @ORM\OneToMany(targetEntity="Test\inicialBundle\entity\Usuarios", mappedBy="sexo")
+     * @ORM\OneToMany(targetEntity="RosaMolas\usuariosBundle\entity\Usuarios", mappedBy="sexo")
      */
     protected $usuario;
 

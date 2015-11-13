@@ -14,11 +14,13 @@ function agregar_form(boton){
     var prototype = collectionHolder.attr('data-prototype');
     var form = prototype.replace(/__name__/g, collectionHolder.children().length);
     collectionHolder.append(form);
-    $('.datepick').not('.hasDatePicker').datepicker({
-        format: "yyyy/mm/dd",
-        language:"es"
+    $('.fecha_nacimiento').not('.hasDatePicker').datepicker({
+        format: "dd-mm-yyyy",
+        startView: 2,
+        language: "es",
+        endDate: '+0d'
     });
-    $('.datepick').on('change', function(){
+    $('.fecha_nacimiento').on('change', function(){
         $('.datepicker').hide();
     });
     return false;
@@ -55,12 +57,13 @@ function borrar_form(boton){
 
 // datepicker
 $(function () {
-    $(".datepick").datepicker({
-        format: "yyyy-mm-dd",
+    $(".fecha_nacimiento").datepicker({
+        format: "dd-mm-yyyy",
+        startView: 2,
         language: "es",
         endDate: '+0d'
     });
-    $('.datepick').on('change', function(){
+    $('.fecha_nacimiento').on('change', function(){
         $('.datepicker').hide();
     });
 });

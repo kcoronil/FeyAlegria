@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Roles
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="Test\inicialBundle\Entity\RolesRepository")
+ * @ORM\Entity(repositoryClass="RosaMolas\usuariosBundle\Entity\RolesRepository")
  */
 class Roles
 {
@@ -49,7 +49,8 @@ class Roles
      * @Assert\Length(min = 3, max = 20,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      * @Assert\NotBlank()
      */
     private $nombre;

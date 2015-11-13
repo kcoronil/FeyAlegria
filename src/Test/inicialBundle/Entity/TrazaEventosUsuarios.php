@@ -60,7 +60,6 @@ class TrazaEventosUsuarios
      */
     private $detalles;
 
-
     /**
      * @var \DateTime
      *

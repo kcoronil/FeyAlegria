@@ -20,12 +20,12 @@ class UsuariosRoles
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Usuarios
+     * @var \RosaMolas\usuariosBundle\Entity\Usuarios
      */
     private $usuario;
 
     /**
-     * @var \Test\inicialBundle\Entity\Roles
+     * @var \RosaMolas\usuariosBundle\Entity\Roles
      */
     private $rol;
 
@@ -66,10 +66,10 @@ class UsuariosRoles
     /**
      * Set usuario
      *
-     * @param \Test\inicialBundle\Entity\Usuarios $usuario
+     * @param \RosaMolas\usuariosBundle\Entity\Usuarios $usuario
      * @return UsuariosRoles
      */
-    public function setUsuario(\Test\inicialBundle\Entity\Usuarios $usuario = null)
+    public function setUsuario(\RosaMolas\usuariosBundle\Entity\Usuarios $usuario = null)
     {
         $this->usuario = $usuario;
 
@@ -79,7 +79,7 @@ class UsuariosRoles
     /**
      * Get usuario
      *
-     * @return \Test\inicialBundle\Entity\Usuarios 
+     * @return \RosaMolas\usuariosBundle\Entity\Usuarios
      */
     public function getUsuario()
     {
@@ -89,10 +89,10 @@ class UsuariosRoles
     /**
      * Set rol
      *
-     * @param \Test\inicialBundle\Entity\Roles $rol
+     * @param \RosaMolas\usuariosBundle\Entity\Roles $rol
      * @return UsuariosRoles
      */
-    public function setRol(\Test\inicialBundle\Entity\Roles $rol = null)
+    public function setRol(\RosaMolas\usuariosBundle\Entity\Roles $rol = null)
     {
         $this->rol = $rol;
 
@@ -102,7 +102,7 @@ class UsuariosRoles
     /**
      * Get rol
      *
-     * @return \Test\inicialBundle\Entity\Roles 
+     * @return \RosaMolas\usuariosBundle\Entity\Roles
      */
     public function getRol()
     {
