@@ -1,19 +1,21 @@
 <?php
 
-namespace Test\inicialBundle\Entity;
+namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Factura
+ * DetalleFactura
  */
-class Factura
+class DetalleFactura
 {
     /**
      * @var string
      *
      * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
+     *
+     * @ORM\Column(name="cedula", type="integer", nullable=true)
      */
     private $monto;
 
@@ -28,21 +30,21 @@ class Factura
     private $id;
 
     /**
-     * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno
+     * @var \RosaMolas\facturacionBundle\Entity\Factura
      */
-    private $periodoEscolarAlumnos;
+    private $factura;
 
     /**
-     * @var \Test\inicialBundle\Entity\TipoFactura
+     * @var \RosaMolas\facturacionBundle\Entity\ConceptosFactura
      */
-    private $tipoFactura;
+    private $concepto;
 
 
     /**
      * Set monto
      *
      * @param string $monto
-     * @return Factura
+     * @return DetalleFactura
      */
     public function setMonto($monto)
     {
@@ -65,7 +67,7 @@ class Factura
      * Set activo
      *
      * @param boolean $activo
-     * @return Factura
+     * @return DetalleFactura
      */
     public function setActivo($activo)
     {
@@ -95,48 +97,48 @@ class Factura
     }
 
     /**
-     * Set periodoEscolarAlumnos
+     * Set factura
      *
-     * @param \Test\inicialBundle\Entity\PeriodoEscolarAlumno $periodoEscolarAlumnos
-     * @return Factura
+     * @param \RosaMolas\facturacionBundle\Entity\Factura $factura
+     * @return DetalleFactura
      */
-    public function setPeriodoEscolarAlumnos(\Test\inicialBundle\Entity\PeriodoEscolarAlumno $periodoEscolarAlumnos = null)
+    public function setFactura(\RosaMolas\facturacionBundle\Entity\Factura $factura = null)
     {
-        $this->periodoEscolarAlumnos = $periodoEscolarAlumnos;
+        $this->factura = $factura;
 
         return $this;
     }
 
     /**
-     * Get periodoEscolarAlumnos
+     * Get factura
      *
-     * @return \Test\inicialBundle\Entity\PeriodoEscolarAlumno 
+     * @return \RosaMolas\facturacionBundle\Entity\Factura
      */
-    public function getPeriodoEscolarAlumnos()
+    public function getFactura()
     {
-        return $this->periodoEscolarAlumnos;
+        return $this->factura;
     }
 
     /**
-     * Set tipoFactura
+     * Set concepto
      *
-     * @param \Test\inicialBundle\Entity\TipoFactura $tipoFactura
-     * @return Factura
+     * @param \RosaMolas\facturacionBundle\Entity\ConceptosFactura $concepto
+     * @return DetalleFactura
      */
-    public function setTipoFactura(\Test\inicialBundle\Entity\TipoFactura $tipoFactura = null)
+    public function setConcepto(\RosaMolas\facturacionBundle\Entity\ConceptosFactura $concepto = null)
     {
-        $this->tipoFactura = $tipoFactura;
+        $this->concepto = $concepto;
 
         return $this;
     }
 
     /**
-     * Get tipoFactura
+     * Get concepto
      *
-     * @return \Test\inicialBundle\Entity\TipoFactura 
+     * @return \RosaMolas\facturacionBundle\Entity\ConceptosFactura
      */
-    public function getTipoFactura()
+    public function getConcepto()
     {
-        return $this->tipoFactura;
+        return $this->concepto;
     }
 }

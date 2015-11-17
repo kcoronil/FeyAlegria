@@ -5,7 +5,7 @@ namespace Test\inicialBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\genericoBundle\Entity\Bancos;
-use Test\inicialBundle\Entity\ConceptosFactura;
+use RosaMolas\facturacionBundle\Entity\ConceptosFactura;
 use RosaMolas\genericoBundle\Entity\Elementos;
 use RosaMolas\genericoBundle\Entity\Eventos;
 use Test\inicialBundle\Entity\PeriodoEscolarCurso;
@@ -13,7 +13,7 @@ use RosaMolas\usuariosBundle\Entity\Permisos;
 use RosaMolas\usuariosBundle\Entity\RepresentanteContacto;
 use Test\inicialBundle\Entity\Seccion;
 use RosaMolas\usuariosBundle\Entity\TipoContacto;
-use Test\inicialBundle\Entity\TipoFactura;
+use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\usuariosBundle\Entity\TipoUsuario;
 use RosaMolas\genericoBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
@@ -59,8 +59,6 @@ class DefaultController extends Controller
                 ->setParameter('user', $username)
 
                 ->getQuery();
-
-            //$user = $query->getOneOrNullResult();
 
             $user = $query->getArrayResult();
 

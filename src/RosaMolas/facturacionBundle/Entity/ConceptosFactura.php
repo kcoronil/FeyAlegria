@@ -1,23 +1,24 @@
 <?php
 
-namespace Test\inicialBundle\Entity;
+namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * TipoFactura
+ * ConceptosFactura
  */
-class TipoFactura
+class ConceptosFactura
 {
     /**
      * @var string
-     * @Assert\Length(min = 3, max = 40,
+     *
+     * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\NotBlank()
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
-     * message="el valor {{ value }} no es alfabético.")
+     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
+     *
      */
     private $nombre;
 
@@ -36,7 +37,7 @@ class TipoFactura
      * Set nombre
      *
      * @param string $nombre
-     * @return TipoFactura
+     * @return ConceptosFactura
      */
     public function setNombre($nombre)
     {
@@ -59,7 +60,7 @@ class TipoFactura
      * Set activo
      *
      * @param boolean $activo
-     * @return TipoFactura
+     * @return ConceptosFactura
      */
     public function setActivo($activo)
     {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="RosaMolas\facturacionBundle\Entity\TipoMontoConceptos" table="tipo_monto_conceptos">
+    <indexes>
+      <index name="IDX_462A26574DA12E3C" columns="conceptos_factura_id"/>
+      <index name="IDX_462A2657411EDF94" columns="tipo_monto_id"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
+    <many-to-one field="tipoMonto" target-entity="TipoMontos">
+      <join-columns>
+        <join-column name="tipo_monto_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="conceptosFactura" target-entity="ConceptosFactura">
+      <join-columns>
+        <join-column name="conceptos_factura_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

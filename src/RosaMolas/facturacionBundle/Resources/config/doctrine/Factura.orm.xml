@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="Test\inicialBundle\Entity\Factura" table="factura">
+  <entity name="RosaMolas\facturacionBundle\Entity\Factura" table="factura">
     <indexes>
       <index name="factura_periodo_escolar_alumnos_id" columns="periodo_escolar_alumnos_id"/>
       <index name="factura_tipo_factura_id" columns="tipo_factura_id"/>
