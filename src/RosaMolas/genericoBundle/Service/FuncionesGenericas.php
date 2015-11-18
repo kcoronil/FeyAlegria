@@ -35,7 +35,7 @@ class FuncionesGenericas extends Controller
         }
         if($request->getMethod()=='POST') {
             if(!$url_redireccion) {
-                $url_redireccion = 'inicial_agregar_' . strtolower($objeto);
+                $url_re5446107350direccion = 'inicial_agregar_' . strtolower($objeto);
             }
             if ($formulario->isValid()) {
                 $p->setActivo(true);

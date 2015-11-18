@@ -1,3 +1,27 @@
 facturacion_homepage:
     path:     /hello/{name}
     defaults: { _controller: facturacionBundle:Default:index }
+
+facturacion_agregar_tipo_montos:
+    path:     /crear_tipo_montos
+    defaults: { _controller: facturacionBundle:Default:crear_tipo_monto }
+
+facturacion_editar_tipo_montos:
+    path:     /editar_tipo_monto/{id}
+    defaults: { _controller: facturacionBundle:Default:editar_tipo_monto }
+
+facturacion_borrar_tipo_montos:
+    path:     /borrar_tipo_monto/{id}
+    defaults: { _controller: facturacionBundle:Default:borrar_tipo_monto }
+
+facturacion_agregar_tipo_montos_conceptos:
+    path:     /crear_tipo_montos_conceptos
+    defaults: { _controller: facturacionBundle:Default:crear_tipo_monto_conceptos }
+
+facturacion_editar_tipo_montos_conceptos:
+    path:     /editar_tipo_monto_conceptos/{id}
+    defaults: { _controller: facturacionBundle:Default:editar_tipo_monto_conceptos }
+
+facturacion_borrar_tipo_montos_conceptos:
+    path:     /borrar_tipo_monto_conceptos/{id}
+    defaults: { _controller: facturacionBundle:Default:borrar_tipo_monto_conceptos }

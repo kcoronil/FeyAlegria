@@ -47,7 +47,7 @@ class ConceptosFacturaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\ConceptosFactura'
+            'data_class' => 'RosaMolas\facturacionBundle\Entity\ConceptosFactura'
         ));
     }
 

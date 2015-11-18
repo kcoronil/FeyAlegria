@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\inicialBundle\Form;
+namespace RosaMolas\facturacionBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class TipoFacturaType extends AbstractType
+class TipoMontoConceptosType extends AbstractType
 {
     public function __construct ($titulo, $tipo_panel = null)
     {
@@ -17,7 +17,7 @@ class TipoFacturaType extends AbstractType
             $this->tipo_panel = $tipo_panel;
         }
         else{
-        $this->tipo_panel = null;
+            $this->tipo_panel = null;
         }
     }
     /**
@@ -27,7 +27,9 @@ class TipoFacturaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
+            ->add('monto')
+            ->add('tipoMonto')
+            ->add('conceptosFactura')
             ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
@@ -39,13 +41,14 @@ class TipoFacturaType extends AbstractType
             $view->vars['tipo_panel'] = $this->tipo_panel;
         }
     }
+    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RosaMolas\facturacionBundle\Entity\TipoFactura'
+            'data_class' => 'RosaMolas\facturacionBundle\Entity\TipoMontoConceptos'
         ));
     }
 
@@ -54,6 +57,6 @@ class TipoFacturaType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_tipofactura';
+        return 'rosamolas_facturacionbundle_tipomontoconceptos';
     }
 }

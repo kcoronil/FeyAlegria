@@ -4,6 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
-    <field name="nombre" type="string" column="nombre" nullable="true"/>
+    <field name="nombre" type="string" column="nombre" nullable="false" unique="true"/>
+      <field name="activo" type="boolean" column="activo" nullable="false"/>
   </entity>
 </doctrine-mapping>

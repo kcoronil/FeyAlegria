@@ -19,6 +19,10 @@ class TipoMontos
      */
     private $id;
 
+    /**
+     * @var boolean
+     */
+    private $activo;
 
     /**
      * Set nombre
@@ -51,5 +55,31 @@ class TipoMontos
     public function getId()
     {
         return $this->id;
+    }
+    /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return TipoMontos
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
+    }
+    public function __toString()
+    {
+        return $this->nombre;
     }
 }
