@@ -5,6 +5,9 @@ namespace RosaMolas\genericoBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Test\inicialBundle\Entity\TrazaEventosUsuarios;
+use RosaMolas\usuariosBundle\Entity\Usuarios;
+use RosaMolas\usuariosBundle\Form\UsuariosType;
+use RosaMolas\usuariosBundle\Form\UsuariosTypeSimple;
 
 class DefaultController extends Controller
 {
@@ -140,9 +143,43 @@ class DefaultController extends Controller
     public function inscripcion_completa(Request $request){
         $session = $this->getRequest()->getSession();
 
+        if(!$session->get('representante_inscripcion')) {
+            $p = new Usuarios();
+
+            $formulario_representante = $this->createForm(new UsuariosType('Crear Representante'), $p);
+            $formulario_representante->remove('tipoUsuario');
+            $formulario_representante->remove('principal');
+            $tipo_usuario = $this->getDoctrine()
+                ->getRepository('usuariosBundle:TipoUsuario')
+                ->find(5);
+            $p->setTipoUsuario($tipo_usuario->getId());
+            $p->setPrincipal('true');
+
+            $formulario_representante->remove('activo');
+            $formulario_representante->handleRequest($request);
+
+            if ($request->getMethod() == 'POST') {
+
+                if ($formulario_representante->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($p);
+                    $em->flush();
+                    $session->set("representante_inscripcion", $p);
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Representante Creado con éxito');
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+            }
+            return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form' => $formulario_representante->createView(), 'accion' => 'Crear Representante'));
+        }
+        if(!$session->get('alumnos_inscripcion')){
+
+        }
+
+        //$session = $this->getRequest()->getSession();
         $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request);
         return $this->render('usuariosBundle:Default:crear_usuario.html.twig', $resultado);
-        return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
+        //return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
         //$session->set("id_tipo_usuario", $user[2]['id']);
     }
 }

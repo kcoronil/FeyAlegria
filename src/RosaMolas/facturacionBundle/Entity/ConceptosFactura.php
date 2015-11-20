@@ -3,7 +3,6 @@
 namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ConceptosFactura
@@ -12,13 +11,6 @@ class ConceptosFactura
 {
     /**
      * @var string
-     *
-     * @Assert\Length(min = 3, max = 30,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
-     * message="el valor {{ value }} no es alfanumérico.")
-     *
      */
     private $nombre;
 
@@ -32,6 +24,18 @@ class ConceptosFactura
      */
     private $id;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $tipoFactura;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Set nombre
@@ -88,8 +92,37 @@ class ConceptosFactura
     {
         return $this->id;
     }
-    public function __toString()
+
+    /**
+     * Add tipoFactura
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
+     * @return ConceptosFactura
+     */
+    public function addTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura)
     {
-        return $this->nombre;
+        $this->tipoFactura[] = $tipoFactura;
+
+        return $this;
+    }
+
+    /**
+     * Remove tipoFactura
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
+     */
+    public function removeTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura)
+    {
+        $this->tipoFactura->removeElement($tipoFactura);
+    }
+
+    /**
+     * Get tipoFactura
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTipoFactura()
+    {
+        return $this->tipoFactura;
     }
 }

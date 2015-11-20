@@ -9,5 +9,6 @@
     </id>
     <field name="nombre" type="string" column="nombre" length="30" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-many field="tipoFactura" target-entity="TipoFactura" mapped-by="conceptosFactura"/>
   </entity>
 </doctrine-mapping>
