@@ -1,20 +1,24 @@
 <?php
 
-namespace RosaMolas\usuariosBundle\Service;
+namespace RosaMolas\alumnosBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
-use RosaMolas\usuariosBundle\Form\UsuariosType;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
+use Symfony\Component\HttpFoundation\Request;
+use RosaMolas\alumnosBundle\Entity\Alumnos;
+use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
+use RosaMolas\alumnosBundle\Form\PeriodoEscolarAlumnoType;
 
-
-class UsuariosFuncionesGenericas extends Controller
+class AlumnosFuncionesGenericas extends Controller
 {
     public function __construct($container)
     {
         $this->container = $container;
     }
 
-    public function crear_representante_generico($request)
+    public function crear_representante_test_generico($request)
     {
         $p = new Usuarios();
 
@@ -96,5 +100,28 @@ class UsuariosFuncionesGenericas extends Controller
             }
         }
         return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+    }
+    public function crear_alumnoAction(Request $request){
+        $p = New Alumnos();
+        $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Estudiante creado con éxito'
+                );
+                return array('alumnos'=>$p);
+                //return $this->redirect($this->generateUrl('inicial_agregar_alumno'));
+            }
+            else{
+                return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
+            }
+        }
+        return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
     }
 }
