@@ -95,7 +95,7 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/^[a-zA-Z]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
@@ -110,7 +110,7 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/^[a-zA-Z]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @Assert\NotBlank()
      */
@@ -139,10 +139,10 @@ class Usuarios
      * @var string
      *
      * @ORM\Column(name="direccion", type="text")
-     * @Assert\Length(min = 3, max = 30,
+     * @Assert\Length(min = 3, max = 300,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$",
+     * @Assert\Regex(pattern="/^[a-zA-Z0-9.]+$/i",
      * match=false, message="el valor {{ value }} no es alfanumérico.")
      * @Assert\NotBlank()
      */

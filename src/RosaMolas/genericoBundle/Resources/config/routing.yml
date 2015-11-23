@@ -1,3 +1,7 @@
 generico_homepage:
     path:     /hello/{name}
     defaults: { _controller: genericoBundle:Default:index }
+
+generico_inscripcion_completa:
+    path:     /inscripcion
+    defaults: { _controller: genericoBundle:Default:inscripcion_completa }

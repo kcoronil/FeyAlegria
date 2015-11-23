@@ -26,6 +26,9 @@
           </cascade>
       </one-to-many>
       <many-to-one field="sexo" target-entity="RosaMolas\genericoBundle\Entity\Sexo">
+          <cascade>
+              <cascade-persist/>
+          </cascade>
           <join-columns>
               <join-column name="sexo_id" referenced-column-name="id"/>
           </join-columns>

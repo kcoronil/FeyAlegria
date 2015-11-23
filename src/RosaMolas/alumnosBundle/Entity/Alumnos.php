@@ -50,7 +50,7 @@ class Alumnos
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno")
+     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno", cascade={"persist"})
      * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
      */
 
@@ -129,7 +129,7 @@ class Alumnos
      * @Assert\Length(min = 3, max = 20,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ 0-9a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/^[0-9]+$/i", match=false,
      * message="el valor {{ value }} no es alfanumérico.")
      */
     private $cedulaEstudiantil;
@@ -138,7 +138,7 @@ class Alumnos
      * @var string
      *
      * @Assert\Regex(
-     * pattern="[ a-zA-Z]*$", match=false,
+     * pattern="/[^a-zA-Z ]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @Assert\Length(min = 3, max = 50,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
@@ -151,7 +151,7 @@ class Alumnos
     /**
      * @var string
      *
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @Assert\Length(min = 3, max = 50,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
@@ -168,7 +168,7 @@ class Alumnos
      * @Assert\Length(min = 3, max = 50,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      *
      * @ORM\Column(name="primer_nombre", type="string", length=30)
@@ -183,7 +183,7 @@ class Alumnos
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\NotBlank()
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      *
      * @ORM\Column(name="segundo_nombre", type="string", length=30)
@@ -205,7 +205,7 @@ class Alumnos
      * @Assert\Length(min = 3, max = 60,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/[^a-zA-Z0-9. ]+$/i", match=false,
      * message="el valor {{ value }} no es alfabético.")
      */
     private $lugarNacimiento;

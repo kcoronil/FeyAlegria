@@ -4,33 +4,36 @@
     {% form_theme form "::formulario_bootstrap_div.html.twig" %}
 {% endif %}
 
-{% macro widget_prototype(widget, remove_text) %}
-    {% if widget.vars.prototype is defined %}
-        {% set form = widget.vars.prototype %}
-        {% set name = widget.vars.prototype.vars.name %}
-    {% else %}
-        {% set form = widget %}
-        {% set name = widget.vars.full_name %}
-    {% endif %}
-        <div data-content="{{ name }}" class="test_attr">
-            <div class="row">
-                <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
-                    <h4>Nuevo Estudiante</h4>
+    {% macro widget_prototype(widget, remove_text) %}
+        {% if widget.vars.prototype is defined %}
+            {% set form = widget.vars.prototype %}
+            {% set name = widget.vars.prototype.vars.name %}
+        {% else %}
+            {% set form = widget %}
+            {% set name = widget.vars.full_name %}
+        {% endif %}
+            <div data-content="{{ name }}" class="test_attr">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                        <h4>Nuevo Estudiante</h4>
+                    </div>
+                    <div class="col-sm-1 text-left">
+                        <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+                    </div>
                 </div>
-                <div class="col-sm-1 text-left">
-                    <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+                <div class="row">
+                    {{ form_widget(form) }}
                 </div>
             </div>
-            <div class="row">
-                {{ form_widget(form) }}
-            </div>
-        </div>
-{% endmacro %}
+    {% endmacro %}
+
 {% block extra_head %}
     <script type="text/javascript">
         $(document).ready(function() {
             {% if accion == 'Crear Representante' %}
-                agregar_form($('#contacto-add'));
+                if($('#cont_contacto').children().length<1) {
+                    agregar_form($('#contacto-add'));
+                }
             {% endif %}
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));
@@ -46,13 +49,14 @@
     </script>
 {% endblock %}
 {% block enlace_atajo %}
-    <li><a href="{{ path('inicial_lista_usuario') }}">Consultar Usuarios</a></li>
+
 {% endblock %}
 {% block content %}
     <div class="row text-center">
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
+                {% if accion == 'Crear Representante' %}
                     {{ form_start(form) }}
 
                         {% if form.tipoUsuario is defined %}
@@ -95,6 +99,9 @@
                             {{ form_row(form.guardar_crear) }}
                         {% endif %}
                     {{ form_end(form) }}
+                {% else %}
+                    {{ form(form) }}
+                {% endif %}
                 </div>
             </div>
         {% endif %}
