@@ -33,19 +33,19 @@
                 <join-column name="tipo_usuario_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
-        <many-to-many field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="usuario">
-        <cascade>
-            <cascade-persist/>
-        </cascade>
-        <join-table name="alumnos_representantes">
-            <join-columns>
-                <join-column name="representante_id" referenced-column-name="id"/>
-            </join-columns>
-            <inverse-join-columns>
-                <join-column name="alumno_id" referenced-column-name="id"/>
-            </inverse-join-columns>
-        </join-table>
-    </many-to-many>
+        <many-to-many field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="representante">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+            <join-table name="alumnos_representantes">
+                <join-columns>
+                    <join-column name="representante_id" referenced-column-name="id"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="alumno_id" referenced-column-name="id"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
     </entity>
 </doctrine-mapping>
 

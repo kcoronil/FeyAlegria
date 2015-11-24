@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RepresentanteContacto
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Usuarios", inversedBy="representante")
+     * @ORM\ManyToOne(targetEntity="Usuarios", inversedBy="representante", cascade={"persist"})
      * @ORM\JoinColumn(name="representante_id", referencedColumnName="id")
      */
 
@@ -27,6 +27,7 @@ class RepresentanteContacto
             $this->representante->add($representante);
         }
     }
+
 
     /**
      * @var integer

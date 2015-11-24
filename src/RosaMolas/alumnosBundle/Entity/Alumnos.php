@@ -39,7 +39,6 @@ class Alumnos
     public function addUsuario(Usuarios $usuario)
     {
         $usuario->addAlumno($this);
-
         $this->usuario[] = $usuario;
     }
 

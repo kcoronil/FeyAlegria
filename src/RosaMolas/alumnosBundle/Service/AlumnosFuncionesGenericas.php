@@ -18,7 +18,6 @@ class AlumnosFuncionesGenericas extends Controller
         $this->container = $container;
     }
     public function crear_alumno_generico(Request $request, $remover = null, $usuario = null){
-        print_r($usuario);
         $p = New Alumnos();
         $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
 
@@ -31,11 +30,13 @@ class AlumnosFuncionesGenericas extends Controller
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
+                /**/
+                $usuario->addAlumno($p);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
                 if($usuario){
                     $p->addUsuario($usuario);
                 }
-                $em = $this->getDoctrine()->getManager();
-                $em->merge($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
                     'success', 'Estudiante creado con éxito'
