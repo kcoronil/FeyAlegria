@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Alumnos
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="RosaMolas\alumnosBundle\Entity\AlumnosRepository")
+ * @UniqueEntity(fields={"cedula"}, message="Este número de cédula ya esta registrado")
+ * @UniqueEntity(fields={"cedulaEstudiantil"}, message="Este número de cédula ya esta registrado")
  */
 class Alumnos
 {

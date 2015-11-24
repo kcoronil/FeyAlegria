@@ -29,8 +29,10 @@
 {% block extra_head %}
     <script type="text/javascript">
         $(document).ready(function() {
-            {% if accion == 'Crear Representante' %}
-                agregar_form($('#contacto-add'));
+            {% if accion == 'Crear Representante' or accion == 'Editar Representante'%}
+                if($('#cont_contacto').children().length<1) {
+                    agregar_form($('#contacto-add'));
+                }
             {% endif %}
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));

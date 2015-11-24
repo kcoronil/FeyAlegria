@@ -142,27 +142,20 @@ class DefaultController extends Controller
     }
     public function inscripcion_completaAction(Request $request)
     {
-        $resultado = '';
-        print_r('0<br/>');
         $session = $this->getRequest()->getSession();
-
         if (!$session->get('representante_inscripcion')) {
-            print_r('1<br/>');
-            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true);
+            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, null, 'Crear Representante Principal');
+
             if (array_key_exists('representante', $resultado)) {
-                print_r('1-1');
                 $session->set("representante_inscripcion", $resultado['representante']);
                 return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
             }
         }
         else {
             if (!$session->get('alumnos_finalizado')) {
-                print_r('2<br/>');
-                print_r($session->get('alumnos_finalizado'));
                 $remover = array('usuario');
                 $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'));
                 if (array_key_exists('alumnos', $resultado)){
-                    print_r('2-1<br/>');
                     if(!$session->get('alumnos_inscripcion')){
                         $session->set("alumnos_inscripcion", array());
                     }
@@ -170,33 +163,45 @@ class DefaultController extends Controller
                     array_push($array_alumnos, $resultado['alumnos']);
                     $session->set("alumnos_inscripcion",$array_alumnos);
 
-                    //$session->set("alumnos_inscripcion", $resultado['alumnos']);
                     if(array_key_exists('alumnos_finalizado', $resultado)){
-                        print_r('2-2<br/>');
                         $session->set("alumnos_finalizado", true);
-                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                     }
-
+                    else{
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
                 }
             }
             else{
-                if (!$session->get('representantes_adic_inscripcion')) {
-                    print_r('3<br/>');
-                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request);
+                if (!$session->get('representantes_adic_finalizado')) {
+                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $session->get('alumnos_inscripcion'));
                     if (array_key_exists('representante', $resultado)) {
-                        $session->set("representantes_adic_inscripcion", $resultado['representante']);
+                        if(!$session->get('representantes_adic_inscripcion')){
+                            $session->set("representantes_adic_inscripcion", array());
+                        }
+                        $array_representantes_adic = $session->get('alumnos_inscripcion');
+                        array_push($array_representantes_adic, $resultado['representante']);
+                        $session->set("representantes_adic_inscripcion",$array_representantes_adic);
+
+                        if(array_key_exists('representantes_finalizado', $resultado)){
+                            $session->set("representantes_adic_finalizado", true);
+                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        }
+                        else{
+                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        }
                     }
                 }
                 else{
+                    $session->remove('representante_inscripcion');
+                    $session->remove('alumnos_inscripcion');
+                    $session->remove('alumnos_finalizado');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_adic_finalizado');
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
             }
-
         }
         return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
-        //$session = $this->getRequest()->getSession();
-        //$resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request);
-        //return $this->render('usuariosBundle:Default:crear_usuario.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear '.$elemento));
-        //$session->set("id_tipo_usuario", $user[2]['id']);
     }
 }

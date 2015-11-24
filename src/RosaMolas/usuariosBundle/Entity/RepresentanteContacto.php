@@ -5,12 +5,15 @@ namespace RosaMolas\usuariosBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * RepresentanteContacto
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="RosaMolas\usuariosBundle\Entity\RepresentanteContactoRepository")
+ * @UniqueEntity(fields={"contacto"}, message="Este contacto ya esta registrado")
  */
 class RepresentanteContacto
 {

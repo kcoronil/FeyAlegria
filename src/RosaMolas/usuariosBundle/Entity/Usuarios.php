@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use RosaMolas\AlumnosBundle\Entity\Alumnos;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Usuarios
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="Test\inicialBundle\Entity\UsuariosRepository")
+ * @ORM\Entity(repositoryClass="RosaMolas\usuariosBundle\Entity\UsuariosRepository")
+ * @UniqueEntity(fields={"cedula"}, message="Este número de cédula ya esta registrado")
+ *
  */
 class Usuarios
 {
@@ -95,7 +98,7 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/^[a-zA-Z]+$/i", match=false,
+     * @Assert\Regex(pattern="/\d/", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
@@ -110,7 +113,7 @@ class Usuarios
      * @Assert\Length(min = 3, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/^[a-zA-Z]+$/i", match=false,
+     * @Assert\Regex(pattern="/\d/", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @Assert\NotBlank()
      */
@@ -142,7 +145,7 @@ class Usuarios
      * @Assert\Length(min = 3, max = 300,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/^[a-zA-Z0-9.]+$/i",
+     * @Assert\Regex(pattern="/^[a-z\-0-9 ]$/i",htmlPattern = "^[a-zA-Z0-9]*$",
      * match=false, message="el valor {{ value }} no es alfanumérico.")
      * @Assert\NotBlank()
      */

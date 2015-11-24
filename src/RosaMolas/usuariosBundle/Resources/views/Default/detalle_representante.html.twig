@@ -79,6 +79,21 @@
                         <tr>
                             <th>Direccion: </th><td>{{ datos.0.direccion }}</td>
                         </tr>
+                       {% if datos.0.representanteContacto is defined %}
+                        <tr>
+                            <th colspan="2" class="text-center">Datos de Contacto</th>
+                        </tr>
+
+                            {% for contacto in datos.0.representanteContacto %}
+                            <tr>
+                                <th>{{ contacto.tipoContacto.nombre }}: </th><td>{{ contacto.contacto }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <th colspan="2" class="text-center"><a href="{{ path('inicial_editar_representante', { 'id': datos.0.id }) }}" >Agregar Datos de Contacto</a></th>
+                        </tr>
+                        {% endif %}
                         </tbody>
                     </table>
                     <br>
@@ -156,6 +171,12 @@
                             </table>
                         </div>
                     </div>
+                {% else %}
+                <div class="col-sm-12">
+                <p>No hay estudiantes registrados para este representante</p>
+                <p><a href="{{ path('inicial_agregar_alumno', { 'id': datos.0.id }) }}" >Click para Agregar Estudiante</a></p>
+
+                </div>
                 {% endif %}
             {% endif %}
         </div>

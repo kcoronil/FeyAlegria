@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 
-class AlumnosTypeSimple extends AbstractType
+class AlumnosTypeInscripcion extends AbstractType
 {
     public function __construct ($titulo)
     {
@@ -23,11 +23,6 @@ class AlumnosTypeSimple extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario','entity', array('label'=>'Representante', 'required' => true,
-                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.tipoUsuario=5');}))
             ->add('cedula')
             ->add('cedulaEstudiantil')
             ->add('primerApellido')

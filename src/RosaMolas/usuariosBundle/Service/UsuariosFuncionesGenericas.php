@@ -15,11 +15,14 @@ class UsuariosFuncionesGenericas extends Controller
         $this->container = $container;
     }
 
-    public function crear_representante_generico($request, $principal=false)
+    public function crear_representante_generico($request, $principal=false, $alumnos=null, $titulo=null)
     {
         $p = new Usuarios();
+        if(!$titulo){
+            $titulo= 'Crear Representante';
+        }
 
-        $formulario = $this->createForm(new UsuariosTypeSimple('Crear Representante'), $p);
+        $formulario = $this->createForm(new UsuariosTypeSimple($titulo), $p);
         $formulario -> remove('tipoUsuario');
         $formulario -> remove('principal');
         $tipo_usuario = $this->getDoctrine()
@@ -34,6 +37,14 @@ class UsuariosFuncionesGenericas extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
+                if($alumnos){
+                    foreach($alumnos as $alumno) {
+                        $alumno_query = $this->getDoctrine()
+                            ->getRepository('alumnosBundle:Alumnos')
+                            ->find($alumno->getId());
+                        $p->addAlumno($alumno_query);
+                    }
+                }
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
@@ -41,7 +52,13 @@ class UsuariosFuncionesGenericas extends Controller
                     'success', 'Representante Creado con éxito');
 
                 //return $this->redirect($this->generateUrl('inicial_homepage'));
-                return array('representante'=>$p);
+
+                if ($formulario->get('guardar')->isClicked()) {
+                    return array('representante'=>$p, 'representantes_finalizado'=>true);
+                }
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return array('representante'=>$p);
+                }
             }
             else{
                 return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');

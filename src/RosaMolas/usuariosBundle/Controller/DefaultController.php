@@ -52,12 +52,15 @@ class DefaultController extends Controller
         //hacer consulta simple a la bbdd
 
         if(strtolower($tipo) == 'representantes'){
+            $url_redirect = 'inicial_lista_representante';
             $plantilla = 'detalle_representante';
             $accion = 'Detalle Representante';
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
-                ->select('usuario', 'alumnos')
+                ->select('usuario', 'alumnos', 'contacto', 'tipo_contacto')
                 ->innerJoin('usuario.alumno', 'alumnos')
+                ->innerJoin('usuario.representanteContacto', 'contacto')
+                ->innerJoin('contacto.tipoContacto', 'tipo_contacto','WITH', 'contacto.tipoContacto = tipo_contacto.id')
                 ->where('usuario.id = :id')
                 ->andWhere('usuario.activo = true')
                 ->setParameter('id', $id)
@@ -66,6 +69,7 @@ class DefaultController extends Controller
         }
         else{
             $plantilla = 'detalle_usuario';
+            $url_redirect = 'inicial_lista_usuario';
             $accion = 'Detalle Usuario';
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
@@ -79,7 +83,34 @@ class DefaultController extends Controller
 
         if (!$datos)
         {
-            throw $this -> createNotFoundException('no usuario con este id: '.$id);
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario', 'contacto','tipo_contacto')
+                ->innerJoin('usuario.representanteContacto', 'contacto')
+                ->innerJoin('contacto.tipoContacto', 'tipo_contacto','WITH', 'contacto.tipoContacto = tipo_contacto.id')
+                ->where('usuario.id = :id')
+                ->andWhere('usuario.activo = true')
+                ->setParameter('id', $id)
+                ->getQuery();
+            $datos = $query->getArrayResult();
+
+            if(!$datos) {
+                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                    ->createQueryBuilder('usuario')
+                    ->select('usuario')
+                    ->where('usuario.id = :id')
+                    ->andWhere('usuario.activo = true')
+                    ->setParameter('id', $id)
+                    ->getQuery();
+                $datos = $query->getArrayResult();
+                if(!$datos) {
+
+                    $this->get('session')->getFlashBag()->add(
+                        'warning', 'No hay registros con este identificador '. $id
+                    );
+                    return $this->redirect($this->generateUrl($url_redirect));
+                }
+            }
         }
 
         return $this->render('usuariosBundle:Default:'.$plantilla.'.html.twig', array('accion'=>$accion, 'datos'=>$datos));

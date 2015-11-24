@@ -5,6 +5,7 @@ namespace RosaMolas\alumnosBundle\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeInscripcion;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\alumnosBundle\Entity\Alumnos;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
@@ -19,7 +20,7 @@ class AlumnosFuncionesGenericas extends Controller
     }
     public function crear_alumno_generico(Request $request, $remover = null, $usuario = null){
         $p = New Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeSimple('Crear Estudiante'), $p);
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante'), $p);
 
         if($remover){
             foreach($remover as $campo){
@@ -31,18 +32,20 @@ class AlumnosFuncionesGenericas extends Controller
             if ($formulario->isValid()) {
                 $p->setActivo(true);
                 /**/
-                $usuario->addAlumno($p);
+                if($usuario){
+                    $usuario_query = $this->getDoctrine()
+                        ->getRepository('usuariosBundle:Usuarios')
+                        ->find($usuario->getId());
+                    $p->addUsuario($usuario_query);
+                }
+
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
-                if($usuario){
-                    $p->addUsuario($usuario);
-                }
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Estudiante creado con éxito'
-                );
+                    'success', 'Estudiante creado con éxito');
+
                 if ($formulario->get('guardar')->isClicked()) {
-                    print_r('form_alumnos_fin<br/>');
                     return array('alumnos'=>$p, 'alumnos_finalizado'=>true);
                 }
                 if ($formulario->get('guardar_crear')->isClicked()) {
