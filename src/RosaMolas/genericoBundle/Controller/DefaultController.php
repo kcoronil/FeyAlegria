@@ -140,11 +140,13 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
     }
+
     public function inscripcion_completaAction(Request $request)
     {
         $session = $this->getRequest()->getSession();
         if (!$session->get('representante_inscripcion')) {
-            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, null, 'Crear Representante Principal');
+            $remover = array('guardar_crear');
+            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
 
             if (array_key_exists('representante', $resultado)) {
                 $session->set("representante_inscripcion", $resultado['representante']);
@@ -174,7 +176,7 @@ class DefaultController extends Controller
             }
             else{
                 if (!$session->get('representantes_adic_finalizado')) {
-                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $session->get('alumnos_inscripcion'));
+                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
                     if (array_key_exists('representante', $resultado)) {
                         if(!$session->get('representantes_adic_inscripcion')){
                             $session->set("representantes_adic_inscripcion", array());

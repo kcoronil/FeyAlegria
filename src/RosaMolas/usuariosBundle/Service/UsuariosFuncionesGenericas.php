@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\usuariosBundle\Form\UsuariosType;
 use RosaMolas\usuariosBundle\Form\UsuariosTypeSimple;
+use RosaMolas\usuariosBundle\Form\UsuariosTypeInscripcion;
 
 
 class UsuariosFuncionesGenericas extends Controller
@@ -15,16 +16,21 @@ class UsuariosFuncionesGenericas extends Controller
         $this->container = $container;
     }
 
-    public function crear_representante_generico($request, $principal=false, $alumnos=null, $titulo=null)
+    public function crear_representante_generico($request, $principal=false, $remover = null, $alumnos=null, $titulo=null)
     {
         $p = new Usuarios();
         if(!$titulo){
             $titulo= 'Crear Representante';
         }
 
-        $formulario = $this->createForm(new UsuariosTypeSimple($titulo), $p);
+        $formulario = $this->createForm(new UsuariosTypeInscripcion($titulo), $p);
         $formulario -> remove('tipoUsuario');
         $formulario -> remove('principal');
+        if($remover){
+            foreach($remover as $campo){
+                $formulario->remove($campo);
+            }
+        }
         $tipo_usuario = $this->getDoctrine()
             ->getRepository('usuariosBundle:TipoUsuario')
             ->find(5);
