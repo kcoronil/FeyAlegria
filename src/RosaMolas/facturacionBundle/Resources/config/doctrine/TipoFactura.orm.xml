@@ -9,7 +9,7 @@
     </id>
     <field name="nombre" type="string" column="nombre" length="40" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-many field="conceptosFactura" target-entity="ConceptosFactura" inversed-by="tipoFactura">
+    <many-to-many field="conceptosFactura" target-entity="RosaMolas\facturacionBundle\Entity\ConceptosFactura" inversed-by="tipoFactura">
       <join-table name="tipo_factura_conceptos">
         <join-columns>
           <join-column name="tipo_factura_id" referenced-column-name="id"/>

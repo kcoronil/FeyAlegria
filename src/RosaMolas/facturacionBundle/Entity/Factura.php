@@ -110,7 +110,7 @@ class Factura
     /**
      * Get periodoEscolarAlumnos
      *
-     * @return \Test\inicialBundle\Entity\PeriodoEscolarAlumno 
+     * @return \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno
      */
     public function getPeriodoEscolarAlumnos()
     {
@@ -120,7 +120,7 @@ class Factura
     /**
      * Set tipoFactura
      *
-     * @param \RosaMolas\facturacionBundle\TipoFactura $tipoFactura
+     * @param \RosaMolas\facturacionBundle\Entity/TipoFactura $tipoFactura
      * @return Factura
      */
     public function setTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura = null)
@@ -133,7 +133,7 @@ class Factura
     /**
      * Get tipoFactura
      *
-     * @return \Test\inicialBundle\Entity\TipoFactura 
+     * @return \RosaMolas\facturacionBundle\Entity\TipoFactura
      */
     public function getTipoFactura()
     {

@@ -104,6 +104,43 @@
                     {% else %}
                         {{ form(form) }}
                     {% endif %}
+                    {% if app.session.get('representante_inscripcion') %}
+                        <table class="table table-bordered table-responsive table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center">Representante</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>nombre:</th>
+                                    <td>{{ app.session.get('representante_inscripcion').nombres }} {{ app.session.get('representante_inscripcion').apellidos }}</td>
+                                    <th>cedula:</th>
+                                    <td>{{ app.session.get('representante_inscripcion').cedula}}</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    {% endif %}
+                    {% if app.session.get('alumnos_inscripcion') %}
+                        <table class="table table-bordered table-responsive table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center">Estudiantes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in app.session.get('alumnos_inscripcion') %}
+                                    <tr>
+                                        <th>nombre:</th>
+                                        <td>{{ estudiante.primerNombre }} estudiante.primerApellido }}</td>
+                                        <th>Grado:</th>
+                                        <td>estudiante.periodoEscolarCurso}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

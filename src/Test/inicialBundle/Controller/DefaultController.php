@@ -2,6 +2,7 @@
 
 namespace Test\inicialBundle\Controller;
 
+use RosaMolas\facturacionBundle\Form\ConceptosFacturaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\genericoBundle\Entity\Bancos;
@@ -13,12 +14,10 @@ use RosaMolas\usuariosBundle\Entity\Permisos;
 use RosaMolas\usuariosBundle\Entity\RepresentanteContacto;
 use Test\inicialBundle\Entity\Seccion;
 use RosaMolas\usuariosBundle\Entity\TipoContacto;
-use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\usuariosBundle\Entity\TipoUsuario;
 use RosaMolas\genericoBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
 use Test\inicialBundle\Entity\TrazaEventosUsuarios;
-use Test\inicialBundle\Form\ConceptosFacturaType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EventosType;
 use Test\inicialBundle\Form\PeriodoEscolarCursoType;
@@ -27,7 +26,6 @@ use RosaMolas\usuariosBundle\Form\PermisosType;
 use RosaMolas\usuariosBundle\Form\RepresentanteContactoType;
 use Test\inicialBundle\Form\SeccionType;
 use RosaMolas\usuariosBundle\Form\TipoContactoType;
-use Test\inicialBundle\Form\TipoFacturaType;
 use RosaMolas\usuariosBundle\Form\TipoUsuarioType;
 use RosaMolas\usuariosBundle\Entity\Roles;
 use RosaMolas\usuariosBundle\Form\RolesType;
@@ -156,49 +154,6 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:crear_perfil.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Perfil de Usuario'));
     }
 
-    public function borrar_generico($id, $request, $formulario_base, $objeto, $accion, $url_redireccion, $plantilla)
-    {
-        $p = $this->getDoctrine()
-            ->getRepository('inicialBundle:'.$objeto)
-            ->find($id);
-        if (!$p)
-        {
-            throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
-        }
-        $formulario = $this->createForm($formulario_base, $p);
-        $formulario -> remove('nombre');
-        $formulario-> handleRequest($request);
-
-        $query = $this->getDoctrine()->getRepository('inicialBundle:'.$objeto)
-            ->createQueryBuilder(strtolower($objeto))
-            ->where(strtolower($objeto).'.id = :id')
-            ->andWhere(strtolower($objeto).'.activo = true')
-            ->setParameter('id', $id)
-            ->getQuery();
-
-
-        $datos = $query->getArrayResult();
-        if($request->getMethod()=='POST') {
-
-            if ($formulario->isValid()) {
-                $p->setActivo('false');
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add(
-                    'warning', $objeto.' borrado con éxito'
-                );
-
-                return $this->redirect($this->generateUrl($url_redireccion));
-            }
-        }
-        $this->get('session')->getFlashBag()->add(
-            'danger', 'Seguro que desea borrar este registro?'
-        );
-        $atajo = $url_redireccion;
-        return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
-            'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
-    }
     public function crear_cursoAction(Request $request){
         $modelo = New Curso();
         $form = New CursoType('Crear Curso');
@@ -219,28 +174,39 @@ class DefaultController extends Controller
     }
     public function editar_cursoAction($id, Request $request){
         $form = New CursoType('Editar Curso');
-        $objeto = 'Curso';
         $clase = 'inicialBundle:Curso';
         $titulo = 'Curso';
         $url_redireccion = 'inicial_agregar_curso';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_cursoAction($id, Request $request){
         $form = New CursoType('Borrar Curso');
-        return $this->borrar_generico($id, $request, $form,'Curso', 'Borrar Curso', 'inicial_agregar_curso', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_conceptos_facturaAction(Request $request){
         $modelo = New ConceptosFactura();
         $form = new ConceptosFacturaType('Crear Concepto Factura');
         $objeto = 'ConceptosFactura';
-        $clase = 'inicialBundle:ConceptosFactura';
+        $clase = 'facturacionBundle:ConceptosFactura';
         $titulo = 'Conceptos de Factura';
         $url_redireccion = 'inicial_agregar_conceptos_factura';
         $url_editar = 'inicial_editar_conceptos_factura';
         $url_borrar = 'inicial_borrar_conceptos_factura';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
         $datos = 'true';
         $remover = null;
         $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
@@ -252,17 +218,28 @@ class DefaultController extends Controller
 
     public function editar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Editar Concepto Factura');
-        $objeto = 'ConceptosFactura';
-        $clase = 'inicialBundle:ConceptosFactura';
+        $clase = 'facturacionBundle:ConceptosFactura';
         $titulo = 'Conceptos de Factura';
         $url_redireccion = 'inicial_agregar_conceptos_factura';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_conceptos_facturaAction($id, Request $request){
         $form = New ConceptosFacturaType('Borrar Concepto Factura');
-        return $this->borrar_generico($id, $request, $form, 'ConceptosFactura', 'Borrar Concepto Factura', 'inicial_agregar_conceptos_factura', 'borrar', 'true');
+        $objeto = 'ConceptosFactura';
+        $clase = 'facturacionBundle:ConceptosFactura';
+        $titulo = 'Conceptos de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_bancoAction(Request $request){
         $modelo = New Bancos();
@@ -270,7 +247,6 @@ class DefaultController extends Controller
         $objeto = 'Bancos';
         $clase = 'genericoBundle:Bancos';
         $titulo = 'Bancos';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
         $datos = 'true';
         $remover = null;
         $url_redireccion = null;
@@ -285,17 +261,28 @@ class DefaultController extends Controller
 
     public function editar_bancoAction($id, Request $request){
         $form = New BancosType('Editar Banco');
-        $objeto = 'Bancos';
         $clase = 'genericoBundle:Bancos';
         $titulo = 'Banco';
         $url_redireccion = 'inicial_agregar_bancos';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_bancoAction($id, Request $request){
         $form = New BancosType('Borrar Banco');
-        return $this->borrar_generico($id, $request, $form, 'Bancos', 'Borrar Banco', 'inicial_agregar_banco', 'borrar', 'true');
+        $objeto = 'Bancos';
+        $clase = 'genericoBundle:Bancos';
+        $titulo = 'Banco';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_bancos';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $titulo, $objeto, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_rolAction(Request $request){
         $modelo = New Roles();
@@ -324,11 +311,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_roles';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_rolAction($id, Request $request){
         $form = New RolesType('Borrar Rol');
         return $this->borrar_generico($id, $request, $form, 'Roles', 'Borrar Rol', 'inicial_agregar_rol', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_periodoAction(Request $request){
         $modelo = New PeriodoEscolar();
@@ -357,11 +358,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_periodo';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_periodoAction($id, Request $request){
         $form = New PeriodoEscolarType('Borrar Periodo Escolar');
         return $this->borrar_generico($id, $request, $form, 'PeriodoEscolar', 'Borrar Periodo Escolar', 'inicial_agregar_periodo', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_elementoAction(Request $request){
         $modelo = New Elementos();
@@ -389,11 +404,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_elementos';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_elementoAction($id, Request $request){
         $form = New ElementosType('Borrar elemento del sistema');
         return $this->borrar_generico($id, $request, $form, 'Elementos', 'Borrar Elemento del Sistema', 'inicial_agregar_elemento', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_eventoAction(Request $request){
         $modelo = New Eventos();
@@ -421,11 +450,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_eventos';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_eventoAction($id, Request $request){
         $form = New EventosType('Borrar evento del sistema');
         return $this->borrar_generico($id, $request, $form, 'Eventos', 'Borrar Evento del Sistema', 'inicial_agregar_evento', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_permisoAction(Request $request){
         $modelo = New Permisos();
@@ -453,11 +496,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_permisos';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_permisoAction($id, Request $request){
         $form = New PermisosType('Borrar permiso del sistema');
         return $this->borrar_generico($id, $request, $form, 'Permisos', 'Borrar Permisos del Sistema', 'inicial_agregar_permiso', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_seccionAction(Request $request){
         $modelo = New Seccion();
@@ -485,11 +542,25 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_seccion';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_seccionAction($id, Request $request){
         $form = new SeccionType('Borrar Seccion');
         return $this->borrar_generico($id, $request, $form, 'Seccion', 'Borrar Seccion', 'inicial_agregar_seccion', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_tipo_usuarioAction(Request $request){
         $modelo = New TipoUsuario();
@@ -516,13 +587,25 @@ class DefaultController extends Controller
         $clase = 'usuariosBundle:TipoUsuario';
         $titulo = 'Tipo de Usuario';
         $url_redireccion = 'inicial_agregar_tipo_usuario';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_tipo_usuarioAction($id, Request $request){
         $form = new TipoUsuarioType('Borrar Tipo Usuario');
-        return $this->borrar_generico($id, $request, $form, 'TipoUsuario', 'Borrar Tipo Usuario', 'inicial_agregar_tipo_usuario', 'borrar', 'true');
+        $objeto = 'TipoUsuario';
+        $clase = 'usuariosBundle:TipoUsuario';
+        $titulo = 'Tipo de Usuario';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_usuario';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_tipo_contactoAction(Request $request){
         $modelo = New TipoContacto();
@@ -551,11 +634,24 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_tipo_contacto';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
     public function borrar_tipo_contactoAction($id, Request $request){
         $form = new TipoContactoType('Borrar Tipo Contacto');
-        return $this->borrar_generico($id, $request, $form, 'TipoContacto', 'Borrar Tipo Contacto', 'inicial_agregar_tipo_contacto', 'borrar', 'true');
+        $objeto = 'TipoContacto';
+        $clase = 'usuariosBundle:TipoContacto';
+        $titulo = 'Tipo de Contacto';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_contacto';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
     public function crear_representante_contactoAction(Request $request){
         $modelo = New RepresentanteContacto();
@@ -584,30 +680,27 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_agregar_representante_contacto';
         $plantilla = 'inicialBundle:Default:mantenimiento';
         $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
-    }
-    public function borrar_representante_contactoAction($id, Request $request){
-        $form = new RepresentanteContactoType('Borrar Contacto Representante');
-        return $this->borrar_generico($id, $request, $form, 'RepresentanteContacto', 'Borrar Tipo Contacto', 'inicial_agregar_representante_contacto', 'borrar', 'true');
-    }
-    public function crear_tipo_facturaAction(Request $request){
-        $modelo = New TipoFactura();
-        $form = new TipoFacturaType('Crear Tipo Factura');
-        $objeto = 'TipoFactura';
-        $clase = 'inicialBundle:TipoFactura';
-        $titulo = 'Tipo de Factura';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
-        $datos = 'true';
-        $remover = null;
-        $url_redireccion = 'inicial_agregar_tipo_factura';
-        $url_editar = 'inicial_editar_tipo_factura';
-        $url_borrar = 'inicial_borrar_tipo_factura';
-        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
         if(array_key_exists('resulado', $resultado)) {
             return $this->redirect($this->generateUrl($resultado['url']));
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
+    public function borrar_representante_contactoAction($id, Request $request){
+        $form = new RepresentanteContactoType('Borrar Contacto Representante');
+        return $this->borrar_generico($id, $request, $form, 'RepresentanteContacto', 'Borrar Tipo Contacto', 'inicial_agregar_representante_contacto', 'borrar', 'true');
+        $objeto = 'TipoFactura';
+        $clase = 'facturacionBundle:TipoFactura';
+        $titulo = 'Tipo de Factura';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
+    }
+
     public function crear_trazaAction(Request $request){
         $modelo = New TrazaEventosUsuarios();
         $form = new TrazaEventosUsuariosType('Crear Traza');
@@ -625,24 +718,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
-
-    public function editar_tipo_facturaAction($id, Request $request){
-        $form = new TipoFacturaType('Editar Tipo Factura');
-        $objeto = 'TipoFactura';
-        $clase = 'inicialBundle:TipoFactura';
-        $titulo = 'Tipo Factura';
-        $url_redireccion = 'inicial_agregar_tipo_factura';
-        $plantilla = 'inicialBundle:Default:mantenimiento';
-        $remover = null;
-        return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
-
-        return $this->editar_generico($id, $request, $form, 'TipoFactura', 'Editar Tipo Factura', 'inicial_agregar_tipo_factura', 'mantenimiento');
-    }
-    public function borrar_tipo_facturaAction($id, Request $request){
-        $form = new TipoFacturaType('Borrar Tipo Factura');
-        return $this->borrar_generico($id, $request, $form, 'TipoFactura', 'Borrar Tipo Factura', 'inicial_agregar_tipo_factura', 'borrar', 'true');
-    }
-
 
     public function crear_gradoAction(Request $request){
         $p = New PeriodoEscolarCurso();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\inicialBundle\Form;
+namespace RosaMolas\facturacionBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

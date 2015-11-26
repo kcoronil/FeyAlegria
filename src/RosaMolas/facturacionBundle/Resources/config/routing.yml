@@ -25,3 +25,15 @@ facturacion_editar_tipo_montos_conceptos:
 facturacion_borrar_tipo_montos_conceptos:
     path:     /borrar_tipo_monto_conceptos/{id}
     defaults: { _controller: facturacionBundle:Default:borrar_tipo_monto_conceptos }
+
+inicial_agregar_tipo_factura:
+    path:     /crear_tipo_factura
+    defaults: { _controller: facturacionBundle:Default:crear_tipo_factura }
+
+inicial_editar_tipo_factura:
+    path:     /editar_tipo_factura/{id}
+    defaults: { _controller: facturacionBundle:Default:editar_tipo_factura }
+
+inicial_borrar_tipo_factura:
+    path:     /borrar_tipo_factura/{id}
+    defaults: { _controller: facturacionBundle:Default:borrar_tipo_factura }

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
 
+
 /**
  * PeriodoEscolarCurso
  */
@@ -68,19 +69,6 @@ class PeriodoEscolarCurso
             $this->periodoEscolarAlumno->toArray()
         );
     }
-
-    /*public function getperiodoEscolarAlumno()
-    {
-        return $this->periodoEscolarAlumno;
-    }
-
-
-    public function addperiodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
-    {
-        $periodoEscolarAlumno->setPeriodoEscolarCurso($this);
-
-        $this->periodoEscolarAlumno = $periodoEscolarAlumno;
-    }*/
     /**
      * @var boolean
      */
@@ -92,23 +80,14 @@ class PeriodoEscolarCurso
     private $id;
 
     /**
-     * @var string
+     * @var \Test\inicialBundle\Entity\CursoSeccion
      */
+    private $cursoSeccion;
 
     /**
      * @var \Test\inicialBundle\Entity\PeriodoEscolar
      */
     private $periodoEscolar;
-
-    /**
-     * @var \Test\inicialBundle\Entity\Seccion
-     */
-    private $seccion;
-
-    /**
-     * @var \Test\inicialBundle\Entity\Curso
-     */
-    private $curso;
 
 
     /**
@@ -145,6 +124,29 @@ class PeriodoEscolarCurso
     }
 
     /**
+     * Set cursoSeccion
+     *
+     * @param \Test\inicialBundle\Entity\CursoSeccion $cursoSeccion
+     * @return PeriodoEscolarCurso
+     */
+    public function setCursoSeccion(\Test\inicialBundle\Entity\CursoSeccion $cursoSeccion = null)
+    {
+        $this->cursoSeccion = $cursoSeccion;
+
+        return $this;
+    }
+
+    /**
+     * Get cursoSeccion
+     *
+     * @return \Test\inicialBundle\Entity\CursoSeccion 
+     */
+    public function getCursoSeccion()
+    {
+        return $this->cursoSeccion;
+    }
+
+    /**
      * Set periodoEscolar
      *
      * @param \Test\inicialBundle\Entity\PeriodoEscolar $periodoEscolar
@@ -166,55 +168,8 @@ class PeriodoEscolarCurso
     {
         return $this->periodoEscolar;
     }
-
-    /**
-     * Set seccion
-     *
-     * @param \Test\inicialBundle\Entity\Seccion $seccion
-     * @return PeriodoEscolarCurso
-     */
-    public function setSeccion(\Test\inicialBundle\Entity\Seccion $seccion = null)
-    {
-        $this->seccion = $seccion;
-
-        return $this;
-    }
-
-    /**
-     * Get seccion
-     *
-     * @return \Test\inicialBundle\Entity\Seccion 
-     */
-    public function getSeccion()
-    {
-        return $this->seccion;
-    }
-
-    /**
-     * Set curso
-     *
-     * @param \Test\inicialBundle\Entity\Curso $curso
-     * @return PeriodoEscolarCurso
-     */
-    public function setCurso(\Test\inicialBundle\Entity\Curso $curso = null)
-    {
-        $this->curso = $curso;
-
-        return $this;
-    }
-
-    /**
-     * Get curso
-     *
-     * @return \Test\inicialBundle\Entity\Curso 
-     */
-    public function getCurso()
-    {
-        return $this->curso;
-    }
-
     public function __toString()
     {
-        return $this->curso->getNombre().$this->seccion->getNombre();
+        return $this->cursoSeccion->getCurso()->getNombre().$this->cursoSeccion->getSeccion()->getNombre();
     }
 }

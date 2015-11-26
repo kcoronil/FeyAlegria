@@ -221,6 +221,15 @@ class Alumnos
     private $sexo;
 
     /**
+     * @var integer
+     * @ORM\Column(name="sexo", type="integer")
+     *
+     * @Assert\NotBlank()
+     */
+    private $tipoFacturacion;
+
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="activo", type="boolean")
@@ -468,6 +477,30 @@ class Alumnos
     {
         return $this->activo;
     }
+
+    /**
+     * Set tipoFacturacion
+     *
+     * @param integer $tipoFacturacion
+     * @return Alumnos
+     */
+    public function setTipoFacturacion($tipoFacturacion)
+    {
+        $this->tipoFacturacion = $tipoFacturacion;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoFacturacion
+     *
+     * @return integer
+     */
+    public function getTipoFacturacion()
+    {
+        return $this->tipoFacturacion;
+    }
+
     public function __toString()
     {
         return $this->primerNombre.' '.$this->primerApellido;
