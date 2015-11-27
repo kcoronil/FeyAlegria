@@ -19,6 +19,11 @@ class Etapa
      */
     private $id;
 
+    /**
+     * @var boolean
+     */
+    private $activo = true;
+
 
     /**
      * Set nombre
@@ -44,6 +49,30 @@ class Etapa
     }
 
     /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return Etapa
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
+    }
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -51,5 +80,9 @@ class Etapa
     public function getId()
     {
         return $this->id;
+    }
+    public function __toString()
+    {
+        return $this->nombre;
     }
 }

@@ -16,11 +16,11 @@ class Seccion
 
     /**
      * @var string
-     * @Assert\Length(min = 3, max = 40,
+     * @Assert\Length(min = 1, max = 40,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\NotBlank()
-     * @Assert\Regex(pattern="[ a-zA-Z]*$", match=false,
+     * @Assert\Regex(pattern="/^[a-z\-0-9]$/i",htmlPattern = "^[a-zA-Z0-9]*$", match=false,
      * message="el valor {{ value }} no es alfabético.")
      */
     private $nombre;
