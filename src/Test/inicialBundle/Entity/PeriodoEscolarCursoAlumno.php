@@ -10,7 +10,7 @@ use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
 /**
  * PeriodoEscolarCurso
  */
-class PeriodoEscolarCurso
+class PeriodoEscolarCursoAlumno
 {
     /**
      * @ORM\ManyToOne(targetEntity="PeriodoEscolar", inversedBy="grado")
@@ -88,6 +88,11 @@ class PeriodoEscolarCurso
      * @var \Test\inicialBundle\Entity\PeriodoEscolar
      */
     private $periodoEscolar;
+
+    /**
+     * @var \RosaMolas\alumnosBundle\Entity\Alumnos
+     */
+    private $alumno;
 
 
     /**
@@ -168,6 +173,22 @@ class PeriodoEscolarCurso
     {
         return $this->periodoEscolar;
     }
+
+    /**
+     * Set Alumno
+     *
+     * @param \RosaMolas\alumnosBundle\Entity\Alumnos $alumno
+     * @return PeriodoEscolarCurso
+     */
+    public function setAlumno(\RosaMolas\alumnosBundle\Entity\Alumnos $alumno = null)
+    {
+        $this->alumno = $alumno;
+
+        return $this;
+    }
+
+
+
     public function __toString()
     {
         return $this->cursoSeccion->getCurso()->getNombre().$this->cursoSeccion->getSeccion()->getNombre();

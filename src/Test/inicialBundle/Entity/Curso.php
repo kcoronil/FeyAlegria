@@ -34,6 +34,12 @@ class Curso
      */
     private $id;
 
+    /**
+     * @var integer
+     */
+    private $paso;
+
+
 
     /**
      * Set nombre
@@ -90,6 +96,30 @@ class Curso
     {
         return $this->id;
     }
+
+    /**
+     * Set paso
+     *
+     * @param integer $paso
+     * @return Curso
+     */
+    public function setPaso($paso)
+    {
+        $this->paso = $paso;
+
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getPaso()
+    {
+        return $this->paso;
+    }
+
     public function __toString()
     {
         return $this->nombre;

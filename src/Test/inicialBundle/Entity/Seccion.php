@@ -20,7 +20,7 @@ class Seccion
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\NotBlank()
-     * @Assert\Regex(pattern="/^[a-z\-0-9]$/i",htmlPattern = "^[a-zA-Z0-9]*$", match=false,
+     * @Assert\Regex(pattern="/^[a-zA-Z\d]+$/", match=false,
      * message="el valor {{ value }} no es alfabético.")
      */
     private $nombre;

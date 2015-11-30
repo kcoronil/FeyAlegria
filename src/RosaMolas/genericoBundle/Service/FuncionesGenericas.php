@@ -48,14 +48,14 @@ class FuncionesGenericas extends Controller
                 );
                 if(array_key_exists('guardar_crear', $formulario)){
                     if ($formulario->get('guardar')->isClicked()) {
-                        return array('resulado'=>'exito', 'url'=> 'inicial_homepage');
+                        return array('resulado'=>'exito', 'url'=> 'inicial_homepage', 'objeto_creado' => $p);
                     }
                     if ($formulario->get('guardar_crear')->isClicked()) {
-                        return array('resulado'=>'exito', 'url'=> $url_redireccion);
+                        return array('resulado'=>'exito', 'url'=> $url_redireccion, 'objeto_creado' => $p);
                     }
                 }
                 else {
-                    return array('resulado'=>'exito', 'url'=> $url_redireccion);
+                    return array('resulado'=>'exito', 'url'=> $url_redireccion, 'objeto_creado' => $p);
 
                 }
             }
