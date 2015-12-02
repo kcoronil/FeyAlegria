@@ -4,247 +4,86 @@ namespace RosaMolas\alumnosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use RosaMolas\usuariosBundle\Entity\Usuarios;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Alumnos
- *
- * @ORM\Table()
- * @ORM\Entity(repositoryClass="RosaMolas\alumnosBundle\Entity\AlumnosRepository")
- * @UniqueEntity(fields={"cedula"}, message="Este número de cédula ya esta registrado")
- * @UniqueEntity(fields={"cedulaEstudiantil"}, message="Este número de cédula ya esta registrado")
  */
 class Alumnos
 {
     /**
-     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
-     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")}
-     * )
-     **/
-
-    protected $usuario;
-
-    public function __construct() {
-        $this->usuario = new ArrayCollection();
-        $this->periodoEscolarAlumno = new ArrayCollection();
-        $this->periodoEscolarCurso = new ArrayCollection();
-    }
-
-    public function getUsuario()
-    {
-        return $this->usuario;
-    }
-
-
-    public function addUsuario(Usuarios $usuario)
-    {
-        $usuario->addAlumno($this);
-        $this->usuario[] = $usuario;
-    }
-
-    public function removeUsuario($usuario)
-    {
-        //optionally add a check here to see that $group exists before removing it.
-        return $this->usuario->removeElement($usuario);
-    }
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Sexo", inversedBy="alumno", cascade={"persist"})
-     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
-     */
-
-
-    /**
-     * @ORM\OneToMany(targetEntity="PeriodoEscolarAlumno", mappedBy="alumno" , cascade={"persist"}, orphanRemoval=TRUE)
-     */
-
-    protected $periodoEscolarAlumno;
-
-    protected $periodoEscolarCurso;
-
-    /*------------------- gestion de grado------------------- */
-
-
-    public function getPeriodoEscolarCurso()
-    {
-        $periodoEscolarCurso = New ArrayCollection();
-        foreach($this->periodoEscolarAlumno as $pe_alumno){
-            $periodoEscolarCurso[] =$pe_alumno->getPeriodoEscolarCurso();
-        }
-        return $periodoEscolarCurso;
-    }
-
-    public function setPeriodoEscolarCurso($periodoEscolarCurso)
-    {
-        foreach($periodoEscolarCurso as $pe_curso){
-
-            $pe_alumno = New PeriodoEscolarAlumno();
-
-            $pe_alumno->setAlumno($this);
-            $pe_alumno->setPeriodoEscolarCurso($pe_curso);
-
-            $this->addPeriodoEscolarAlumno($pe_alumno);
-        }
-    }
-
-    public function getAlumno(){
-        return $this;
-    }
-
-    public function getPeriodoEscolarAlumno()
-    {
-        return $this->periodoEscolarAlumno->toArray();
-    }
-
-    public function addPeriodoEscolarAlumno(PeriodoEscolarAlumno $periodoEscolarAlumno)
-    {
-        $periodoEscolarAlumno->setAlumno($this);
-
-        $this->periodoEscolarAlumno[] = $periodoEscolarAlumno;
-    }
-
-    /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
-     * @var integer
-     *
-     * @Assert\Type(type="integer",message="el valor {{ value }} no es númerico.")
-     *
-     * @ORM\Column(name="cedula", type="integer", nullable=true)
      */
     private $cedula;
 
     /**
      * @var string
-     * @ORM\Column(name="cedula_estudiantil", type="string", nullable=true, length=20)
-     *
-     * @Assert\Length(min = 3, max = 20,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/^[0-9]+$/i", match=false,
-     * message="el valor {{ value }} no es alfanumérico.")
      */
     private $cedulaEstudiantil;
 
     /**
      * @var string
-     *
-     * @Assert\Regex(
-     * pattern="/[^a-zA-Z ]+$/i", match=false,
-     * message="el valor {{ value }} no es alfabético.")
-     * @Assert\Length(min = 3, max = 50,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     *
-     * @ORM\Column(name="primer_apellidos", type="string", length=30)
      */
     private $primerApellido;
 
     /**
      * @var string
-     *
-     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
-     * message="el valor {{ value }} no es alfabético.")
-     * @Assert\Length(min = 3, max = 50,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     *
-     * @ORM\Column(name="segundo_apellidos", type="string", length=30)
      */
-
-    private $segundoApellido;
-
-    /**
-     * @var string
-     *
-     * @Assert\Length(min = 3, max = 50,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
-     * message="el valor {{ value }} no es alfabético.")
-     *
-     * @ORM\Column(name="primer_nombre", type="string", length=30)
-     */
-
     private $primerNombre;
 
     /**
-     * @var string
-     *
-     * @Assert\Length(min = 3, max = 50,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\NotBlank()
-     * @Assert\Regex(pattern="/[^a-zA-Z ]+$/i", match=false,
-     * message="el valor {{ value }} no es alfabético.")
-     *
-     * @ORM\Column(name="segundo_nombre", type="string", length=30)
-     */
-
-    private $segundoNombre;
-
-    /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="fecha_nacimiento", type="date")
      */
     private $fechaNacimiento;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="lugar_nacimiento", type="string", length=60)
-     * @Assert\Length(min = 3, max = 60,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
-     * @Assert\Regex(pattern="/[^a-zA-Z0-9. ]+$/i", match=false,
-     * message="el valor {{ value }} no es alfabético.")
      */
     private $lugarNacimiento;
 
     /**
+     * @var boolean
+     */
+    private $activo;
+
+    /**
+     * @var string
+     */
+    private $segundoNombre;
+
+    /**
+     * @var string
+     */
+    private $segundoApellido;
+
+    /**
      * @var integer
-     * @ORM\Column(name="sexo", type="integer")
-     *
-     * @Assert\NotBlank()
+     */
+    private $id;
+
+    /**
+     * @var \RosaMolas\genericoBundle\Entity\Sexo
      */
     private $sexo;
 
     /**
-     * @var integer
-     * @ORM\Column(name="sexo", type="integer")
-     *
-     * @Assert\NotBlank()
+     * @var \RosaMolas\facturacionBundle\Entity\TipoFacturacion
      */
     private $tipoFacturacion;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $representante;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="activo", type="boolean")
+     * Constructor
      */
-    private $activo = true;
-
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        $this->representante = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usuario = new ArrayCollection();
+        $this->periodoEscolarCursoAlumno = new ArrayCollection();
+        //$this->periodoEscolarCurso = new ArrayCollection();
     }
 
     /**
@@ -317,29 +156,6 @@ class Alumnos
     }
 
     /**
-     * Set segundoApellido
-     *
-     * @param string $segundoApellido
-     * @return Alumnos
-     */
-    public function setSegundoApellido($segundoApellido)
-    {
-        $this->segundoApellido = $segundoApellido;
-
-        return $this;
-    }
-
-    /**
-     * Get segundoApellido
-     *
-     * @return string
-     */
-    public function getSegundoApellido()
-    {
-        return $this->segundoApellido;
-    }
-
-    /**
      * Set primerNombre
      *
      * @param string $primerNombre
@@ -355,34 +171,11 @@ class Alumnos
     /**
      * Get primerNombre
      *
-     * @return string
+     * @return string 
      */
     public function getPrimerNombre()
     {
         return $this->primerNombre;
-    }
-
-    /**
-     * Set segundoNombre
-     *
-     * @param string $segundoNombre
-     * @return Alumnos
-     */
-    public function setSegundoNombre($segundoNombre)
-    {
-        $this->segundoNombre = $segundoNombre;
-
-        return $this;
-    }
-
-    /**
-     * Get segundoNombre
-     *
-     * @return string 
-     */
-    public function getSegundoNombre()
-    {
-        return $this->segundoNombre;
     }
 
     /**
@@ -432,29 +225,6 @@ class Alumnos
     }
 
     /**
-     * Set sexo
-     *
-     * @param integer $sexo
-     * @return Alumnos
-     */
-    public function setSexo($sexo)
-    {
-        $this->sexo = $sexo;
-
-        return $this;
-    }
-
-    /**
-     * Get sexo
-     *
-     * @return integer 
-     */
-    public function getSexo()
-    {
-        return $this->sexo;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
@@ -472,19 +242,97 @@ class Alumnos
      *
      * @return boolean 
      */
-
     public function getActivo()
     {
         return $this->activo;
     }
 
     /**
-     * Set tipoFacturacion
+     * Set segundoNombre
      *
-     * @param integer $tipoFacturacion
+     * @param string $segundoNombre
      * @return Alumnos
      */
-    public function setTipoFacturacion($tipoFacturacion)
+    public function setSegundoNombre($segundoNombre)
+    {
+        $this->segundoNombre = $segundoNombre;
+
+        return $this;
+    }
+
+    /**
+     * Get segundoNombre
+     *
+     * @return string 
+     */
+    public function getSegundoNombre()
+    {
+        return $this->segundoNombre;
+    }
+
+    /**
+     * Set segundoApellido
+     *
+     * @param string $segundoApellido
+     * @return Alumnos
+     */
+    public function setSegundoApellido($segundoApellido)
+    {
+        $this->segundoApellido = $segundoApellido;
+
+        return $this;
+    }
+
+    /**
+     * Get segundoApellido
+     *
+     * @return string 
+     */
+    public function getSegundoApellido()
+    {
+        return $this->segundoApellido;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set sexo
+     *
+     * @param \RosaMolas\genericoBundle\Entity\Sexo $sexo
+     * @return Alumnos
+     */
+    public function setSexo(\RosaMolas\genericoBundle\Entity\Sexo $sexo = null)
+    {
+        $this->sexo = $sexo;
+
+        return $this;
+    }
+
+    /**
+     * Get sexo
+     *
+     * @return \RosaMolas\genericoBundle\Entity\Sexo
+     */
+    public function getSexo()
+    {
+        return $this->sexo;
+    }
+
+    /**
+     * Set tipoFacturacion
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoFacturacion $tipoFacturacion
+     * @return Alumnos
+     */
+    public function setTipoFacturacion(\RosaMolas\facturacionBundle\Entity\TipoFacturacion $tipoFacturacion = null)
     {
         $this->tipoFacturacion = $tipoFacturacion;
 
@@ -494,15 +342,86 @@ class Alumnos
     /**
      * Get tipoFacturacion
      *
-     * @return integer
+     * @return \RosaMolas\facturacionBundle\Entity\TipoFacturacion
      */
     public function getTipoFacturacion()
     {
         return $this->tipoFacturacion;
     }
 
-    public function __toString()
+    /**
+     * Add representante
+     *
+     * @param \RosaMolas\usuariosBundle\Entity\Usuarios $representante
+     * @return Alumnos
+     */
+    public function addRepresentante(\RosaMolas\usuariosBundle\Entity\Usuarios $representante)
     {
-        return $this->primerNombre.' '.$this->primerApellido;
+        $this->representante[] = $representante;
+
+        return $this;
     }
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
+     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
+     * inverseJoinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")}
+     * )
+     **/
+
+    protected $usuario;
+
+
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+
+    public function addUsuario(Usuarios $usuario)
+    {
+        $usuario->addAlumno($this);
+        $this->usuario[] = $usuario;
+    }
+
+    public function removeUsuario($usuario)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->usuario->removeElement($usuario);
+    }
+
+    /**
+     * Remove representante
+     *
+     * @param \RosaMolas\usuariosBundle\Entity\Usuarios $representante
+     */
+    public function removeRepresentante(\RosaMolas\usuariosBundle\Entity\Usuarios $representante)
+    {
+        $this->representante->removeElement($representante);
+    }
+
+    /**
+     * Get representante
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRepresentante()
+    {
+        return $this->representante;
+    }
+
+
+    public function getPeriodoEscolarCursoAlumno()
+    {
+        return $this->periodoEscolarCursoAlumno->toArray();
+    }
+
+    public function addPeriodoEscolarCursoAlumno(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno)
+    {
+        $periodoEscolarCursoAlumno->setAlumno($this);
+
+        $this->periodoEscolarCursoAlumno[] = $periodoEscolarCursoAlumno;
+    }
+
 }

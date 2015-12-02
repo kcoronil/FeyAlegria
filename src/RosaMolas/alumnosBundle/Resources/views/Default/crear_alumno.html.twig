@@ -32,6 +32,12 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            if($('#cont_curso').children().length<1) {
+                agregar_form($('#curso-add'));
+            }
+            $(document).on('click','#curso-add', function() {
+                agregar_form($(this));
+            });
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));
             });
@@ -60,8 +66,20 @@
                         {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.lugarNacimiento) }}
                         {{ form_row(form.sexo) }}
-                        {{ form_row(form.periodoEscolarCurso) }}
+                        {% if form.periodoEscolarCursoAlumno is defined %}
+                            <div class="row">
+                                <div id="cont_curso" class="col-sm-12" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
+                                    {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}
+                                        {{ form_widget(form_periodoEscolarCursoAlumno) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso">test</a>
+                            </div>
+                        {% endif %}
                         {% if form.usuario is defined %}
+
                             <div id="post_usuario" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar representante')|escape }}">
                                 {% for widget in form.usuario.children %}
                                     {{ _self.widget_prototype(widget, 'eliminar representante') }}

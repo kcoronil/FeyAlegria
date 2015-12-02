@@ -33,8 +33,8 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
-            ->add('periodoEscolarCurso','entity', array('required' => true,
-                'class' => 'inicialBundle:PeriodoEscolarCurso','empty_value' => 'Seleccione grado', 'multiple'=>true, 'expanded'=>false))
+            /*->add('periodoEscolarCurso','entity', array('required' => true,
+                'class' => 'inicialBundle:PeriodoEscolarCurso','empty_value' => 'Seleccione grado', 'multiple'=>true, 'expanded'=>false))*/
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
