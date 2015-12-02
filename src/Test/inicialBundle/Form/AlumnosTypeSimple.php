@@ -29,7 +29,7 @@ class AlumnosTypeSimple extends AbstractType
             ->add('cedulaEstudiantil')
             ->add('apellidos')
             ->add('nombres')
-            ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'y-M-d', 'attr'=>array('class'=>'datepick') ))
+            ->add('fechaNacimiento', 'date')
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'inicialBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))

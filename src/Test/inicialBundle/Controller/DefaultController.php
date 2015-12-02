@@ -134,6 +134,19 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('inicial_homepage'));
     }
 
+    public function estudianteAction(Request $request){
+        return $this->render('inicialBundle:Default:estudiante.html.twig');
+
+    }
+    public function representanteAction(Request $request){
+        return $this->render('inicialBundle:Default:representante.html.twig');
+
+    }
+    public function administradorAction(Request $request){
+        return $this->render('inicialBundle:Default:administrador.html.twig');
+
+    }    
+
     public function lista_usuarioAction(Request $request)
     {
         //hacer consulta simple a la bbdd

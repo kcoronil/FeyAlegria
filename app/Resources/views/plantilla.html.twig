@@ -25,7 +25,7 @@
             <!--Encabezado-->
             <div id="cabecera">
                 <div id="cabecera2">
-                    <img src= "{{ asset('public/images/logo-FyA.jpg') }}">
+                    <img src= "{{ asset('public/images/FyA.png') }}">
                 </div>
             </div>
             {% if app.session.get('autenticado') %}
@@ -59,10 +59,10 @@
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Estudiante</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_agregar_alumno') }}" >Agregar Estudiante</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_alumno_usuario') }}" >Agregar Estudiante - Representante</a></li>
-                                                    <li><a href="{{ path('inicial_lista_alumno') }}" >Consulta</a></li>
-                                                    <li><a href="{{ path('inicial_pdf_alumno') }}" target="_blank">Consulta PDF</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_alumno') }}" >· Agregar Estudiante</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_alumno_usuario') }}" >· Agregar Estudiante - Representante</a></li>
+                                                    <li><a href="{{ path('inicial_lista_alumno') }}" >· Consulta</a></li>
+                                                    <li><a href="{{ path('inicial_pdf_alumno') }}" target="_blank">· Consulta PDF</a></li>
                                                 </ul>
                                             </li>
                                             <!--<li class="dropdown-submenu">
@@ -77,8 +77,8 @@
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Representantes</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_lista_representante') }}" >Consulta</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_representante') }}" >Agregar</a></li>
+                                                    <li><a href="{{ path('inicial_lista_representante') }}" >· Consulta</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_representante') }}" >· Agregar</a></li>
                                                 </ul>
                                             </li>
                                             <!--
@@ -151,33 +151,33 @@
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Varios</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_agregar_tipo_contacto') }}">Tipos de Contacto</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_tipo_factura') }}">Tipos de Factura</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_banco') }}" >Bancos</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >Conceptos Factura</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_tipo_contacto') }}">· Tipos de Contacto</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_tipo_factura') }}">· Tipos de Factura</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_banco') }}" >· Bancos</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >· Conceptos Factura</a></li>
                                                 </ul>
                                             </li>
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuarios</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_agregar_tipo_usuario') }}">Tipos de Usuarios</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_rol') }}" >Roles</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_permiso') }}" >Permisos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_elemento') }}" >Elementos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_evento') }}" >Eventos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_perfil') }}">Agregar Perfil</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_usuario') }}">Agregar Usuario</a></li>
-                                                    <li><a href="{{ path('inicial_lista_usuario') }}" >Consultas</a></li>
-                                                    <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">Consultas PDF</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_tipo_usuario') }}">· Tipos de Usuarios</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_rol') }}" >· Roles</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_permiso') }}" >· Permisos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_elemento') }}" >· Elementos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_evento') }}" >· Eventos del Sistema</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_perfil') }}">· Agregar Perfil</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_usuario') }}">· Agregar Usuario</a></li>
+                                                    <li><a href="{{ path('inicial_lista_usuario') }}" >· Consultas</a></li>
+                                                    <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">· Consultas PDF</a></li>
                                                 </ul>
                                             </li>
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Periodo Escolar</a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_agregar_grado') }}" >Grado</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_curso') }}" >Cursos</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_seccion') }}" >Secciones</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_periodo') }}" >Periodo Escolar</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_grado') }}" >· Grado</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_curso') }}" >· Cursos</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_seccion') }}" >· Secciones</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_periodo') }}" >· Periodo Escolar</a></li>
                                                 </ul>
                                             </li>
                                         {% endif %}
@@ -189,8 +189,8 @@
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ app.session.get('nombres') }}<span class="caret"></span></a>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a href="#">Cambio Contraseña</a></li>
-                                        <li><a href="{{ path('inicial_logout') }}">Cerrar Sesión</a></li>
+                                        <li><a href="#">· Cambio Contraseña</a></li>
+                                        <li><a href="{{ path('inicial_logout') }}">· Cerrar Sesión</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -200,6 +200,7 @@
                     </div><!-- /.container-fluid -->
                 </nav>
             {%  endif %}
+            
             <div class="row">
                 <div class="col-sm-12">
                     {% block mensajes %}
@@ -215,20 +216,18 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-
-            </div>
         </div>
     </body>
     <footer>
         <div class="container" id="footer">
             <div class="footer text-center">
                 <div>
-                    <strong>Unidad Educativa Maria Rosa Molas</strong>
+                    <p><strong>Unidad Educativa Maria Rosa Molas</strong>
                     <br>
                     Unidad Educativa Maria Rosa Molas: Urbanizacion Simón Bolivar Frente al Bloque 20 Caracas - Venezuela :: Teléfonos: 0212-870-25-98 / 0212-873-62-50
-                    <br>
-                    <a href="mailto:mariamolasfya@hotmail.com">mariamolasfya@hotmail.com</a>
+                    </br>
+                    mariamolasfya@hotmail.com</p>
+                    </p>
                 </div>
             </div>
         </div>
