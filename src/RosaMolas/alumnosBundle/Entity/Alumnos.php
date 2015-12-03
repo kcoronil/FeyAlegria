@@ -422,7 +422,7 @@ class Alumnos
         return $this->periodoEscolarCursoAlumno->toArray();
     }
 
-    public function setCategory(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno = null)
+    public function setPeriodoEscolarCursoAlumno(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno = null)
     {
         $this->periodoEscolarCursoAlumno = $periodoEscolarCursoAlumno;
     }

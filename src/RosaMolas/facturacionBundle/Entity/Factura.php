@@ -28,7 +28,7 @@ class Factura
     private $id;
 
     /**
-     * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno
+     * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno
      */
     private $periodoEscolarAlumnos;
 

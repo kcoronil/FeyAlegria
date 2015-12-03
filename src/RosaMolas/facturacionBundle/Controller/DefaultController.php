@@ -2,6 +2,7 @@
 
 namespace RosaMolas\facturacionBundle\Controller;
 
+use RosaMolas\facturacionBundle\Entity\ConceptosFactura;
 use RosaMolas\facturacionBundle\Entity\TipoMontoConceptos;
 use RosaMolas\facturacionBundle\Entity\TipoMontos;
 use RosaMolas\facturacionBundle\Form\TipoMontoConceptosType;
@@ -16,6 +17,8 @@ class DefaultController extends Controller
 {
     public function crear_tipo_facturaAction(Request $request){
         $modelo = New TipoFactura();
+        $concepto = New ConceptosFactura();
+        $modelo->addConceptosFacturon($concepto);
         $form = new TipoFacturaType('Crear Tipo Factura');
         $objeto = 'TipoFactura';
         $clase = 'facturacionBundle:TipoFactura';

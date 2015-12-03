@@ -99,7 +99,7 @@ class TipoFactura
      * @param \RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura
      * @return TipoFactura
      */
-    public function addConceptosFactura(\RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura)
+    public function addConceptosFacturon(\RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura)
     {
         $this->conceptosFactura[] = $conceptosFactura;
 
@@ -111,7 +111,7 @@ class TipoFactura
      *
      * @param \RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura
      */
-    public function removeConceptosFactura(\RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura)
+    public function removeConceptosFacturon(\RosaMolas\facturacionBundle\Entity\ConceptosFactura $conceptosFactura)
     {
         $this->conceptosFactura->removeElement($conceptosFactura);
     }
@@ -124,5 +124,9 @@ class TipoFactura
     public function getConceptosFactura()
     {
         return $this->conceptosFactura;
+    }
+
+    public function __toString(){
+        return $this->nombre;
     }
 }

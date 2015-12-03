@@ -3,6 +3,7 @@
 namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ConceptosFactura
@@ -17,7 +18,7 @@ class ConceptosFactura
     /**
      * @var boolean
      */
-    private $activo;
+    private $activo = true;
 
     /**
      * @var integer
@@ -124,5 +125,20 @@ class ConceptosFactura
     public function getTipoFactura()
     {
         return $this->tipoFactura;
+    }
+
+    /**
+     * Set tipoFactura
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
+     * @return ConceptosFactura
+     */
+    public function setTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura = null)
+    {
+        $test_tipofact = New ArrayCollection();
+        $test_tipofact->add($tipoFactura);
+        $this->tipoFactura = $test_tipofact;
+
+        return $this;
     }
 }

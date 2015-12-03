@@ -5,6 +5,7 @@ namespace RosaMolas\facturacionBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -27,6 +28,11 @@ class ConceptosFacturaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('tipoFactura' ,'entity', array('label'=>'Tipo Factura', 'required' => true,'attr'=>array('class'=>'campo_unico'),
+                'class' => 'facturacionBundle:TipoFactura','empty_data' => 'hola', 'empty_value' => 'Seleccione Tipo Factura', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.activo=true');}))
             ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
             ->add('guardar', 'submit', array('label'=>'Guardar',
                 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
@@ -35,7 +41,6 @@ class ConceptosFacturaType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
         $view->vars['titulo'] = $this->titulo;
         if($this->tipo_panel){
             $view->vars['tipo_panel'] = $this->tipo_panel;
