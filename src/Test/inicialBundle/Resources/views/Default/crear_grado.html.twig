@@ -30,7 +30,7 @@
                         <tbody>
                         {% for dato in datos %}
                             <tr>
-                                <td>{{ dato.curso }} {{ dato.seccion }} {{ dato.periodo_escolar }}</td>
+                                <td>{{ dato.nombre }} {{ dato.seccion }} {{ dato.periodo_escolar }}</td>
                                 <td>
                                     <a href="{{ path(url_editar, { 'id': dato.0.id }) }}" class="btn btn-default btn-xs">Editar</a>
                                     <a href="{{ path(url_borrar, { 'id': dato.0.id }) }}" class="btn btn-default btn-xs">Borrar</a>

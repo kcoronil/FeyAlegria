@@ -39,8 +39,6 @@ class Curso
      */
     private $paso;
 
-
-
     /**
      * Set nombre
      *
@@ -50,7 +48,6 @@ class Curso
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
@@ -73,7 +70,6 @@ class Curso
     public function setActivo($activo)
     {
         $this->activo = $activo;
-
         return $this;
     }
 
@@ -106,7 +102,6 @@ class Curso
     public function setPaso($paso)
     {
         $this->paso = $paso;
-
         return $this;
     }
 
