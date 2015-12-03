@@ -136,4 +136,8 @@ class CursoSeccion
     {
         return $this->curso;
     }
+    public function __toString()
+    {
+        return $this->getCurso()->getNombre().$this->getSeccion()->getNombre();
+    }
 }

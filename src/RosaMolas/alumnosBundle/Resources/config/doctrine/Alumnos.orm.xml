@@ -21,6 +21,11 @@
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <field name="segundoNombre" type="string" column="segundo_nombre" length="50" nullable="true"/>
     <field name="segundoApellido" type="string" column="segundo_apellido" length="50" nullable="true"/>
+    <one-to-many field="periodoEscolarCursoAlumno" mapped-by="alumno" target-entity="PeriodoEscolarCursoAlumno">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="sexo" target-entity="RosaMolas\genericoBundle\Entity\Sexo">
       <join-columns>
         <join-column name="sexo_id" referenced-column-name="id"/>

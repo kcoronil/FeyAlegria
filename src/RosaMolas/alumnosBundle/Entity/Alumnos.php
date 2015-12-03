@@ -4,6 +4,8 @@ namespace RosaMolas\alumnosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use RosaMolas\usuariosBundle\Entity\Usuarios;
+use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 
 /**
  * Alumnos
@@ -76,11 +78,16 @@ class Alumnos
     private $representante;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $periodoEscolarCursoAlumno;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->representante = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->representante = new ArrayCollection();
         $this->usuario = new ArrayCollection();
         $this->periodoEscolarCursoAlumno = new ArrayCollection();
         //$this->periodoEscolarCurso = new ArrayCollection();
@@ -361,8 +368,6 @@ class Alumnos
 
         return $this;
     }
-
-
     /**
      * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
@@ -417,6 +422,18 @@ class Alumnos
         return $this->periodoEscolarCursoAlumno->toArray();
     }
 
+    public function setCategory(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno = null)
+    {
+        $this->periodoEscolarCursoAlumno = $periodoEscolarCursoAlumno;
+    }
+
+    /**
+     * Add periodoEscolarCursoAlumno
+     *
+     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno
+     * @return Alumnos
+     */
+
     public function addPeriodoEscolarCursoAlumno(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno)
     {
         $periodoEscolarCursoAlumno->setAlumno($this);
@@ -424,4 +441,13 @@ class Alumnos
         $this->periodoEscolarCursoAlumno[] = $periodoEscolarCursoAlumno;
     }
 
+    /**
+     * Remove representante
+     *
+     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno
+     */
+    public function removePeriodoEscolarCursoAlumno(PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno)
+    {
+        $this->periodoEscolarCursoAlumno->removeElement($periodoEscolarCursoAlumno);
+    }
 }

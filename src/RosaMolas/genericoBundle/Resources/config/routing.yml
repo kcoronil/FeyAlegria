@@ -5,3 +5,7 @@ generico_homepage:
 generico_inscripcion_completa:
     path:     /inscripcion
     defaults: { _controller: genericoBundle:Default:inscripcion_completa }
+
+generico_inscripcion_agregar_alumno:
+    path:     /inscripcion_alumno
+    defaults: { _controller: genericoBundle:Default:agregar_alumno_inscripcion }

@@ -102,14 +102,14 @@
                     </tbody>
                 </table>
             </div>
-            {% if datos.0.usuario is defined%}
+            {% if datos.0.representante is defined%}
                 <div class="row">
                     <div id="div_tbl_alumnos" class="col-sm-12">
                         <h4>Representanrtes Registrados</h4>
                         <table id="tbl_alumnos" class="table table-bordered table-hover table-responsive"  width="100%">
                             <thead>
                             <tr>
-                                {% for key, campo in datos.0.usuario.0 %}
+                                {% for key, campo in datos.0.representante.0 %}
                                     {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
                                     {% else %}
                                         {% if campo is iterable %}
@@ -125,7 +125,7 @@
                                 {% endfor %}
                             </tr>
                             <tr>
-                                {% for key, campo in datos.0.usuario.0 %}
+                                {% for key, campo in datos.0.representante.0 %}
                                     {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
                                     {% else %}
                                         {% if campo is iterable %}
@@ -142,7 +142,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for dato in datos.0.usuario %}
+                            {% for dato in datos.0.representante %}
                                 <tr>
                                     {% for  key, elemento in dato %}
                                         {% if  (key == 'id') or (key == 'activo') or ( '_id' in key ) %}

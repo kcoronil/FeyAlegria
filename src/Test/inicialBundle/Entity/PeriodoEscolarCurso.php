@@ -186,9 +186,6 @@ class PeriodoEscolarCursoAlumno
 
         return $this;
     }
-
-
-
     public function __toString()
     {
         return $this->cursoSeccion->getCurso()->getNombre().$this->cursoSeccion->getSeccion()->getNombre();

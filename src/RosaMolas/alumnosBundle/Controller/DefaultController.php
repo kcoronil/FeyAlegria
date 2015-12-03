@@ -3,6 +3,7 @@
 namespace RosaMolas\alumnosBundle\Controller;
 
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
+use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
 use RosaMolas\alumnosBundle\Form\PeriodoEscolarAlumnoType;
@@ -20,6 +21,13 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
+                $periodo_activo = $this->getDoctrine()
+                    ->getRepository('inicialBundle:PeriodoEscolar')
+                    ->findOneBy(array('activo'=>true));
+                foreach($p->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
+                    $periodo_alumno->setPeriodoEscolar($periodo_activo);
+                    $periodo_alumno->setActivo(true);
+                }
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
@@ -191,7 +199,7 @@ class DefaultController extends Controller
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.usuario', 'usuario')
+            ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
             ->orderBy('alumno.id', 'DESC')
@@ -246,7 +254,7 @@ class DefaultController extends Controller
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.usuario', 'usuario')
+            ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
             ->orderBy('alumno.id', 'DESC')
@@ -265,7 +273,7 @@ class DefaultController extends Controller
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->select('alumno', 'usuarios')
-            ->innerJoin('alumno.usuario', 'usuarios')
+            ->innerJoin('alumno.representante', 'usuarios')
             ->where('alumno.id = :id')
             ->andWhere('alumno.activo = true')
             ->setParameter('id', $id)

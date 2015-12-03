@@ -236,7 +236,7 @@ class DefaultController extends Controller
         $clase = 'facturacionBundle:ConceptosFactura';
         $titulo = 'Conceptos de Factura';
         $remover = null;
-        $url_redireccion = 'inicial_agregar_tipo_factura';
+        $url_redireccion = 'inicial_agregar_conceptos_factura';
         $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
         if(array_key_exists('resulado', $resultado)){
             return $this->redirect($this->generateUrl($resultado['url']));
@@ -675,11 +675,11 @@ class DefaultController extends Controller
         $formulario-> handleRequest($request);
         $query = $this->getDoctrine()->getRepository('inicialBundle:CursoSeccion')
             ->createQueryBuilder('grado')
-            ->select('grado', 'etapas', 'cursos', 'secciones')
+            ->select('grado', 'seccion_tbl.nombre as seccion', 'curso_tbl.nombre as curso', 'etapas_tbl.nombre as etapa')
             ->where('grado.activo = true')
-            ->innerJoin('inicialBundle:Etapa', 'etapas', 'WITH', 'grado.etapa = etapas.id')
-            ->innerJoin('inicialBundle:Curso', 'cursos', 'WITH', 'grado.curso = cursos.id')
-            ->innerJoin('inicialBundle:Seccion', 'secciones', 'WITH', 'grado.seccion = secciones.id')
+            ->innerJoin('inicialBundle:Seccion', 'seccion_tbl', 'WITH', 'grado.seccion = seccion_tbl.id')
+            ->innerJoin('inicialBundle:Curso', 'curso_tbl', 'WITH', 'grado.curso = curso_tbl.id')
+            ->innerJoin('inicialBundle:Etapa', 'etapas_tbl', 'WITH', 'grado.etapa = etapas_tbl.id')
             ->getQuery();
 
         $datos = $query->getArrayResult();
@@ -731,25 +731,27 @@ class DefaultController extends Controller
     public function borrar_gradoAction($id, Request $request)
     {
         $p = $this->getDoctrine()
-            ->getRepository('inicialBundle:PeriodoEscolarCurso')
+            ->getRepository('inicialBundle:CursoSeccion')
             ->find($id);
         if (!$p)
         {
             throw $this -> createNotFoundException('No existe concepto de Factura con este id: '.$id);
         }
-        $formulario = $this->createForm(new PeriodoEscolarCursoType('Borrar Grado'), $p);
+        $formulario = $this->createForm(new CursoSeccionType('Borrar Grado'), $p);
         $formulario -> remove('seccion');
         $formulario -> remove('curso');
-        $formulario -> remove('periodoEscolar');
+        $formulario -> remove('etapa');
         $formulario-> handleRequest($request);
 
-        $query = $this->getDoctrine()->getRepository('inicialBundle:PeriodoEscolarCurso')
+        $query = $this->getDoctrine()->getRepository('inicialBundle:CursoSeccion')
             ->createQueryBuilder('grado')
-            ->select('grado', 'seccion_tbl.nombre as seccion', 'curso_tbl.nombre as curso', 'periodo_tbl.nombre as periodo_escolar')
-            ->where('grado.activo = true')
+            ->select('grado', 'seccion_tbl.nombre as seccion', 'curso_tbl.nombre as curso', 'etapas_tbl.nombre as etapa')
+            ->where('grado.id = :id')
+            ->andwhere('grado.activo = true')
             ->innerJoin('inicialBundle:Seccion', 'seccion_tbl', 'WITH', 'grado.seccion = seccion_tbl.id')
             ->innerJoin('inicialBundle:Curso', 'curso_tbl', 'WITH', 'grado.curso = curso_tbl.id')
-            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodo_tbl', 'WITH', 'grado.periodoEscolar = periodo_tbl.id')
+            ->innerJoin('inicialBundle:Etapa', 'etapas_tbl', 'WITH', 'grado.etapa = etapas_tbl.id')
+            ->setParameter('id', $id)
             ->getQuery();
 
 

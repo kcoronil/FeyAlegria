@@ -5,6 +5,7 @@ namespace RosaMolas\alumnosBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 class PeriodoEscolarCursoAlumnoType extends AbstractType
 {
@@ -15,7 +16,11 @@ class PeriodoEscolarCursoAlumnoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cursoSeccion')
+            ->add('cursoSeccion','entity', array('label'=>'Grado', 'required' => true,
+                'class' => 'inicialBundle:CursoSeccion','empty_data' => 'Debe Crear Grados', 'empty_value' => 'Seleccione Grado', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.activo=true');}))
         ;
     }
     

@@ -112,7 +112,6 @@ class DefaultController extends Controller
                 }
             }
         }
-
         return $this->render('usuariosBundle:Default:'.$plantilla.'.html.twig', array('accion'=>$accion, 'datos'=>$datos));
     }
     public function crear_usuarioAction(Request $request)
