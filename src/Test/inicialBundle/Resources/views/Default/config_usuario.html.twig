@@ -1,0 +1,74 @@
+{% extends '::plantilla.html.twig' %}
+{% block content %}
+    <div class="col-sm-4 col-sm-offset-4">
+    {% if not app.session.get('autenticado') %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h2 class="panel-title">Ingreso al Sistema</h2>
+            </div>
+            <div class="panel-body">
+                <form class="form-signin" method="POST" action="{{path('inicial_homepage')}}">
+                    <div class="form-group">
+                        <label for="inputEmail" class="sr-only">Nombre de Usuario</label>
+                        <input type="text" id="usuario" class="form-control" name="usuario" placeholder="Nombre de Usuario" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class="sr-only">Clave</label>
+                        <input type="password" id="Password" class="form-control" name="password" placeholder="Clave" required>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-default" type="submit">Iniciar Sesion</button>
+                        <a class="btn btn-default" href="{{ path('inicial_solicitar_pass') }}">Recuperar Contraseña</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+      </div>
+    </div>
+      
+    {% if app.session.get('autenticado') %}
+      <h1 align="center">Configuracion de Usuarios</br><span class="glyphicon glyphicon-user gi-3x" aria-hidden="true"></span></h1>        
+        <div class="page-header"></div>
+            <div class="row" align="center">
+                <div class="col-xs-6 col-md-4"></div>
+                <div class="col-xs-6 col-md-4">
+                <a href="{{ path('inicial_agregar_rol') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><br />Roles</button></a>
+                </div>
+                <div class="col-xs-6 col-md-4"></div>
+            </div>
+            </br>
+            <div class="row" align="center">
+                <div class="col-xs-6 col-sm-3"></div>
+                <div class="col-xs-6 col-sm-3">
+                  <a href="{{ path('inicial_agregar_tipo_contacto') }}"><button type="button" class="tn btn-lg btn-primary"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><br />Tipos de Contacto</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-3">
+                  <a href="{{ path('inicial_agregar_tipo_usuario') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span><br />Tipos de Usuario</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-3"></div>
+            </div>
+            </br>
+            <div class="row" align="center">
+                <div class="col-xs-6 col-sm-3"></div>
+                <div class="col-xs-6 col-sm-3">
+                  <a href="{{ path('inicial_agregar_perfil') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Agregar Perfil</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-3" >
+                  <a href="{{ path('inicial_agregar_usuario') }}"><button type="button" class="tn btn-lg btn-primary"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><br />Agregar Usuario</button></a>
+                </div>
+            </div>
+            </br>
+            <div class="row" align="center">
+                <div class="col-xs-6 col-sm-3"></div>                
+                <div class="col-xs-6 col-sm-3" align="right">
+                  <a href="{{ path('inicial_lista_usuario') }}"><button type="button" class="tn btn-lg btn-warning"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><br />Consulta</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-3" align="left">
+                  <a href="{{ path('inicial_pdf_usuario') }}" target="_blank"><button type="button" class="tn btn-lg btn-warning"><span class="glyphicon glyphicon-book" aria-hidden="true" ></span><br />Consultas en PDF</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-3"></div>
+            </div>
+                <a href="{{ path('inicial_administrador') }}"><h1><span class="glyphicon glyphicon-arrow-left gi-3x" aria-hidden="true"></a>           
+    {% endif %}
+{% endblock %}

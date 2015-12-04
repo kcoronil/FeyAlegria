@@ -6,6 +6,19 @@ inicial_homepage:
     path:     /inicio
     defaults: { _controller: inicialBundle:Default:index }
 
+inicial_estudiante:
+    path:     /estudiante
+    defaults: { _controller: inicialBundle:Default:estudiante }
+
+inicial_representante:
+    path:     /representante
+    defaults: { _controller: inicialBundle:Default:representante }
+
+inicial_administrador:
+    path:     /editor
+    defaults: { _controller: inicialBundle:Default:administrador }
+
+
 #--------------------- mantenimiento -------------------------
 inicial_agregar_roles:
     path:     /crear_rol
