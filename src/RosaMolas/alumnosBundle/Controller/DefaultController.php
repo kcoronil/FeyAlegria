@@ -184,11 +184,6 @@ class DefaultController extends Controller
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
     }
 
-    public function crear_periodo_alumnoAction(Request $request){
-        $modelo = New PeriodoEscolarAlumno();
-        $form = new PeriodoEscolarAlumnoType('Crear Estudiante');
-        return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura',  'mantenimiento', 'true');
-    }
 
     public function lista_alumno_pdfAction()
     {
@@ -346,7 +341,4 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>'Borrar Estudiante', 'atajo'=>$atajo));
     }
-
-
-
 }

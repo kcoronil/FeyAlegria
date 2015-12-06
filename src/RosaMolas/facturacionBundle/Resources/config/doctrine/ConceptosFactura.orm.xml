@@ -9,6 +9,11 @@
     </id>
     <field name="nombre" type="string" column="nombre" length="30" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <one-to-many field="tipoMontoConceptos" mapped-by="conceptosFactura" target-entity="TipoMontoConceptos">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <many-to-many field="tipoFactura" target-entity="TipoFactura" mapped-by="conceptosFactura"/>
   </entity>
 </doctrine-mapping>

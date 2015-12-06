@@ -28,6 +28,9 @@ class ConceptosFacturaColectionType extends AbstractType
     {
         $builder
             ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
+            //->add('tipoMontoConceptos',  new TipoMontoConceptosCollectionType('Crear Monto Concepto de Factura'), array('label'=>false, 'by_reference' => false ))
+            ->add('tipoMontoConceptos', 'collection', array('type'=>new TipoMontoConceptosCollectionType('Crear Concepto de Factura'), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true, 'error_bubbling'=>false))
         ;
     }
 

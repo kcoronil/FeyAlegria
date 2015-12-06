@@ -31,11 +31,17 @@ class ConceptosFactura
     private $tipoFactura;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $tipoMontoConceptos;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tipoFactura = new ArrayCollection();
+        $this->tipoMontoConceptos = new ArrayCollection();
     }
 
     /**
@@ -140,5 +146,38 @@ class ConceptosFactura
         $this->tipoFactura = $test_tipofact;
 
         return $this;
+    }
+
+    public function getTipoMontoConceptos()
+    {
+        return $this->tipoMontoConceptos;
+    }
+
+    public function setTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos = null)
+    {
+        $this->tipoMontoConceptos[] = $tipoMontoConceptos;
+    }
+
+    /**
+     * Add periodoEscolarCursoAlumno
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
+     * @return ConceptosFactura
+     */
+
+    public function addTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos)
+    {
+        $tipoMontoConceptos->setConceptosFactura($this);
+        $this->tipoMontoConceptos[] = $tipoMontoConceptos;
+    }
+
+    /**
+     * Remove tipoMontoConceptos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
+     */
+    public function removePeriodoEscolarCursoAlumno(TipoMontoConceptos $tipoMontoConceptos)
+    {
+        $this->tipoMontoConceptos->removeElement($tipoMontoConceptos);
     }
 }

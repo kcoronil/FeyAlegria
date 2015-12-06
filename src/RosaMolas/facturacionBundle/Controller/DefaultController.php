@@ -1,7 +1,5 @@
 <?php
-
 namespace RosaMolas\facturacionBundle\Controller;
-
 use RosaMolas\facturacionBundle\Entity\ConceptosFactura;
 use RosaMolas\facturacionBundle\Entity\TipoMontoConceptos;
 use RosaMolas\facturacionBundle\Entity\TipoMontos;
@@ -12,13 +10,81 @@ use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\facturacionBundle\Form\TipoFacturaType;
 
-
 class DefaultController extends Controller
 {
+    public function tipo_facturaAction(request $request){
+        $p = New TipoFactura();
+        $q =  New ConceptosFactura();
+        $r= New TipoMontoConceptos();
+        $q->getTipoMontoConceptos()->add($r);
+        $p->getConceptosFactura()->add($q);
+
+        $formulario = $this->createForm(new TipoFacturaType('Crear Tipo Factura'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+
+                foreach($p->getConceptosFactura() as $concepto_factura){
+                    foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
+                        $tipo_monto_con->setConceptosFactura($concepto_factura);
+                    }
+                    $concepto_factura->setActivo(true);
+                }
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Tipo Factura creada con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+                if ($formulario->get('guardar_crear')->isClicked()){
+                    return $this->redirect($this->generateUrl('inicial_agregar_tfactura'));
+                }
+            }
+        }
+        return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Crear Tipo Factura',));
+    }
+    public function editar_tfacturaAction($id, request $request){
+        $p = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->find($id);
+        $formulario = $this->createForm(new TipoFacturaType('editar Tipo Factura'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+
+                foreach($p->getConceptosFactura() as $concepto_factura){
+                    foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
+                        $tipo_monto_con->setConceptosFactura($concepto_factura);
+                    }
+                    $concepto_factura->setActivo(true);
+                }
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Tipo Factura creada con éxito'
+                );
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+                if ($formulario->get('guardar_crear')->isClicked()){
+                    return $this->redirect($this->generateUrl('inicial_agregar_tfactura'));
+                }
+            }
+        }
+        return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Crear Tipo Factura',));
+    }
     public function crear_tipo_facturaAction(Request $request){
         $modelo = New TipoFactura();
-        $concepto = New ConceptosFactura();
-        $modelo->addConceptosFacturon($concepto);
         $form = new TipoFacturaType('Crear Tipo Factura');
         $objeto = 'TipoFactura';
         $clase = 'facturacionBundle:TipoFactura';
@@ -35,7 +101,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
-
     public function editar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Editar Tipo Factura');
         $clase = 'facturacionBundle:TipoFactura';
@@ -61,7 +126,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
-
     public function crear_tipo_montoAction(Request $request){
         $modelo = New TipoMontos();
         $form = new TipoMontosType('Crear Montos');
@@ -91,7 +155,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
-
     public function borrar_tipo_montoAction($id, Request $request){
         $form = new TipoMontosType('Borrar Montos');
         $objeto = 'TipoMontos';
@@ -105,7 +168,6 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
-
     public function crear_tipo_monto_conceptosAction(Request $request){
         $modelo = New TipoMontoConceptos();
         $form = new TipoMontoConceptosType('Crear Montos');
