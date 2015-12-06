@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Seccion
@@ -15,6 +16,12 @@ class Seccion
 
     /**
      * @var string
+     * @Assert\Length(min = 1, max = 40,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\NotBlank()
+     * @Assert\Regex(pattern="/^[a-zA-Z\d]+$/", match=false,
+     * message="el valor {{ value }} no es alfabético.")
      */
     private $nombre;
 

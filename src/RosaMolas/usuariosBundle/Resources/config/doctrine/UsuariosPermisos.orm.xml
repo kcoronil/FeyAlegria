@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="RosaMolas\usuariosBundle\Entity\UsuariosPermisos" table="usuarios_permisos">
+    <indexes>
+      <index name="usuarios_permisos_permiso_id" columns="permiso_id"/>
+      <index name="usuarios_permisos_usuario_id" columns="usuario_id"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="usuarios_permisos_usuario_id_permiso_id_key" columns="usuario_id,permiso_id"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-one field="usuario" target-entity="Usuarios">
+      <join-columns>
+        <join-column name="usuario_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="permiso" target-entity="Permisos">
+      <join-columns>
+        <join-column name="permiso_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

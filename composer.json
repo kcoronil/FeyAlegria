@@ -21,7 +21,8 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "sensio/generator-bundle": "~2.3",
         "incenteev/composer-parameter-handler": "~2.0",
-        "tfox/mpdf-port-bundle": "1.2.*"
+        "tfox/mpdf-port-bundle": "1.2.*",
+        "ircmaxell/password-compat": "^1.0"
     },
     "scripts": {
         "post-install-cmd": [

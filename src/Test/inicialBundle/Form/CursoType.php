@@ -28,6 +28,7 @@ class CursoType extends AbstractType
     {
         $builder
             ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
+            ->add('paso' ,'text',  array('attr'=>array('class'=>'campo_unico')))
             ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }

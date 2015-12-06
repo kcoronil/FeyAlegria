@@ -3,26 +3,20 @@
   <entity name="Test\inicialBundle\Entity\PeriodoEscolarCurso" table="periodo_escolar_curso">
     <indexes>
       <index name="periodo_escolar_curso_periodo_escolar_id" columns="periodo_escolar_id"/>
-      <index name="periodo_escolar_curso_curso_id" columns="curso_id"/>
-      <index name="periodo_escolar_curso_seccion_id" columns="seccion_id"/>
+      <index name="IDX_C4393F31ED868272" columns="curso_seccion_id"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-one field="seccion" target-entity="Seccion">
+    <many-to-one field="cursoSeccion" target-entity="CursoSeccion">
       <join-columns>
-        <join-column name="seccion_id" referenced-column-name="id"/>
+        <join-column name="curso_seccion_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="periodoEscolar" target-entity="PeriodoEscolar">
       <join-columns>
         <join-column name="periodo_escolar_id" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
-    <many-to-one field="curso" target-entity="Curso">
-      <join-columns>
-        <join-column name="curso_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

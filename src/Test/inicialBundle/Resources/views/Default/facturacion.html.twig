@@ -1,0 +1,48 @@
+{% extends '::plantilla.html.twig' %}
+{% block content %}
+    <div class="col-sm-4 col-sm-offset-4">
+    {% if not app.session.get('autenticado') %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h2 class="panel-title">Ingreso al Sistema</h2>
+            </div>
+            <div class="panel-body">
+                <form class="form-signin" method="POST" action="{{path('inicial_homepage')}}">
+                    <div class="form-group">
+                        <label for="inputEmail" class="sr-only">Nombre de Usuario</label>
+                        <input type="text" id="usuario" class="form-control" name="usuario" placeholder="Nombre de Usuario" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class="sr-only">Clave</label>
+                        <input type="password" id="Password" class="form-control" name="password" placeholder="Clave" required>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-default" type="submit">Iniciar Sesion</button>
+                        <a class="btn btn-default" href="{{ path('inicial_solicitar_pass') }}">Recuperar Contraseña</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+      </div>
+    </div>
+      
+    {% if app.session.get('autenticado') %}
+      <h1 align="center">Facturación </br><span class="glyphicon glyphicon-list-alt gi-3x" aria-hidden="true"></span></h1>        
+        <div class="page-header"></div>
+            <div class="row">
+                <div class="col-xs-6 col-sm-4" align="right">
+                  <a href="{{ path('inicial_agregar_alumno') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span><br />Tipos de Factura</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-4" align="center">
+                  <a href="{{ path('inicial_agregar_alumno_usuario') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-btc" aria-hidden="true"></span><br />Bancos</button></a>
+                </div>
+                <div class="col-xs-6 col-sm-4" >
+                  <a href="{{ path('inicial_lista_alumno') }}"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span><br />Conceptos Factura</button></a>
+                </div>
+            </div>
+                <a href="{{ path('inicial_administrador') }}"><h1><span class="glyphicon glyphicon-arrow-left gi-3x" aria-hidden="true"></a>
+              
+             
+    {% endif %}
+{% endblock %}

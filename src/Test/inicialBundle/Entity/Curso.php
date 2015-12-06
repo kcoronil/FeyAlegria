@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Curso
@@ -15,6 +16,11 @@ class Curso
 
     /**
      * @var string
+     * @Assert\Length(min = 3, max = 40,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Regex(pattern="/^[a-z\-0-9 ]$/i",htmlPattern = "^[a-zA-Z0-9]*$", match=false,
+     * message="el valor {{ value }} no es alfanumérico.")
      */
     private $nombre;
 
@@ -28,6 +34,10 @@ class Curso
      */
     private $id;
 
+    /**
+     * @var integer
+     */
+    private $paso;
 
     /**
      * Set nombre
@@ -38,7 +48,6 @@ class Curso
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
@@ -61,7 +70,6 @@ class Curso
     public function setActivo($activo)
     {
         $this->activo = $activo;
-
         return $this;
     }
 
@@ -84,6 +92,29 @@ class Curso
     {
         return $this->id;
     }
+
+    /**
+     * Set paso
+     *
+     * @param integer $paso
+     * @return Curso
+     */
+    public function setPaso($paso)
+    {
+        $this->paso = $paso;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getPaso()
+    {
+        return $this->paso;
+    }
+
     public function __toString()
     {
         return $this->nombre;

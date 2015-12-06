@@ -1,0 +1,9 @@
+services:
+#    alumnos.example:
+#        class: RosaMolas\alumnosBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  alumnos_funciones_genericas:
+    class: RosaMolas\alumnosBundle\Service\AlumnosFuncionesGenericas
+    arguments:
+      container: "@service_container"

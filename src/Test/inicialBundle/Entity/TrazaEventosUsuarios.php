@@ -3,6 +3,7 @@
 namespace Test\inicialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * TrazaEventosUsuarios
@@ -48,6 +49,23 @@ class TrazaEventosUsuarios
      * @ORM\Column(name="id_objeto", type="integer")
      */
     private $idObjeto;
+
+    /**
+     * @var string
+     * @Assert\Length(min = 5, max = 200,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Type(type="alnum",message="el valor {{ value }} no es alfanumérico.")
+     * @Assert\NotBlank()
+     */
+    private $detalles;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha", type="datetimetz", nullable=true)
+     */
+    private $fecha;
 
 
     /**
@@ -150,5 +168,52 @@ class TrazaEventosUsuarios
     public function getidObjeto()
     {
         return $this->idObjeto;
+    }
+
+
+    /**
+     * Set detalles
+     *
+     * @param string $detalles
+     * @return TrazaEventosUsuarios
+     */
+    public function setDetalles($detalles)
+    {
+        $this->detalles = $detalles;
+
+        return $this;
+    }
+
+    /**
+     * Get detalles
+     *
+     * @return string
+     */
+    public function getDetalles()
+    {
+        return $this->detalles;
+    }
+
+    /**
+     * Set fecha
+     *
+     * @param \DateTime $fecha
+     * @return TrazaEventosUsuarios
+     */
+    public function setFecha($fecha)
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    /**
+     * Get fecha
+     *
+     * @return \DateTime
+     */
+    public function getFecha()
+    {
+        return $this->fecha;
     }
 }

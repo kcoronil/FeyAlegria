@@ -19,6 +19,10 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
             new Test\inicialBundle\inicialBundle(),
+            new RosaMolas\alumnosBundle\alumnosBundle(),
+            new RosaMolas\genericoBundle\genericoBundle(),
+            new RosaMolas\usuariosBundle\usuariosBundle(),
+            new RosaMolas\facturacionBundle\facturacionBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

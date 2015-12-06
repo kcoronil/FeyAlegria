@@ -1,0 +1,249 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+        <div data-content="{{ name }}" class="test_attr">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                    <h4>Nuevo Estudiante</h4>
+                </div>
+                <div class="col-sm-1 text-left">
+                    <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+                </div>
+            </div>
+            <div class="row">
+                {{ form_widget(form) }}
+            </div>
+        </div>
+{% endmacro %}
+
+{% block extra_head %}
+    <style>
+        .form-inline .form-control{
+            max-width: 100%;
+        }
+        .form-inline .filter_select  select{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            {% if accion == 'Crear Representante' %}
+                if($('#cont_contacto').children().length<1) {
+                    agregar_form($('#contacto-add'));
+                }
+                if($('#cont_curso').children().length<1) {
+                    agregar_form($('#curso-add'));
+                }
+            {% endif %}
+            $(document).on('click','.btn-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','#contacto-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','.btn-remove', function() {
+                borrar_form($(this));
+                renombrar_forms($(this).attr('data-target'));
+            });
+            var datatable_usuarios = $('#tbl_usuarios').dataTable({
+                "dom": 'rtip',
+                "bInfo": true,
+                "bLengthChange": false,
+                "bPaginate": true,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after"
+            });
+
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-12">
+                    {% if accion == 'Crear Representante' %}
+                    {{ form_start(form) }}
+
+                        {% if form.tipoUsuario is defined %}
+                            {{ form_row(form.tipoUsuario) }}
+                        {% endif %}
+                        {% if form.principal is defined %}
+                            <label class="control-label required">Representante Principal</label>
+                            {{ form_row(form.principal) }}
+                        {% endif %}
+                        {{ form_row(form.cedula) }}
+                        {{ form_row(form.apellidos) }}
+                        {{ form_row(form.nombres) }}
+                        {{ form_row(form.fechaNacimiento) }}
+                        {{ form_row(form.sexo) }}
+                        {{ form_row(form.direccion) }}
+                        {% if form.representanteContacto is defined %}
+                            <div class="row">
+                            <div id="cont_contacto" class="col-sm-12" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
+                                {% for form_contacto in form.representanteContacto %}
+                                    {{ form_widget(form_contacto) }}
+                                {% endfor %}
+                            </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <a id="contacto-add" data-target="cont_contacto" title="agregar contacto"><img style="width: 40px;border-radius: 10px;" src="{{ asset('public/images/phone_book_add.png') }}"></a>
+                            </div>
+                        {% endif %}
+                        {% if form.alumno is defined %}
+                            <div id="post_alumno" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.alumno, 'eliminar alumno')|escape }}">
+                                {% for widget in form.alumno.children %}
+                                    {{ _self.widget_prototype(widget, 'remover alumno') }}
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-12 text-center ">
+                                <a class="btn-add btn btn-default" data-target="post_alumno">Agregar Estudiante</a>
+                            </div>
+                        {% endif %}
+                        <div class="col-sm-12 text-center">
+                            {{ form_row(form.guardar) }}
+                            {% if form.guardar_crear is defined %}
+                                {{ form_row(form.guardar_crear) }}
+                            {% endif %}
+                        </div>
+                    {{ form_end(form) }}
+                    {% else %}
+                        {{ form_start(form) }}
+                            {{ form_row(form.usuario) }}
+                            {{ form_row(form.cedula) }}
+                            {{ form_row(form.cedulaEstudiantil) }}
+                            {{ form_row(form.primerApellido) }}
+                            {{ form_row(form.segundoApellido) }}
+                            {{ form_row(form.primerNombre) }}
+                            {{ form_row(form.segundoNombre) }}
+                            {{ form_row(form.fechaNacimiento) }}
+                            {{ form_row(form.lugarNacimiento) }}
+                            {{ form_row(form.sexo) }}
+                            {% if form.periodoEscolarCursoAlumno is defined %}
+                                <div id="cont_curso" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
+                                    {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}
+                                        {{ form_widget(form_periodoEscolarCursoAlumno) }}
+                                    {% endfor %}
+                                </div>
+                                    <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
+                            {% endif %}
+                            <div class="col-sm-12 text-center ">
+                                <br>
+                                {{ form_row(form.guardar) }}
+                                {{ form_row(form.guardar_crear) }}
+                            </div>
+                        {{ form_end(form) }}
+                    {% endif %}
+                    {% if app.session.get('representante_inscripcion') %}
+                        <table class="table table-bordered table-responsive table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center">Representante</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>nombre:</th>
+                                    <td>{{ app.session.get('representante_inscripcion').nombres }} {{ app.session.get('representante_inscripcion').apellidos }}</td>
+                                    <th>cedula:</th>
+                                    <td>{{ app.session.get('representante_inscripcion').cedula}}</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    {% endif %}
+                    {% if app.session.get('alumnos_inscripcion') %}
+                        <table class="table table-bordered table-responsive table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center">Estudiantes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in app.session.get('alumnos_inscripcion') %}
+                                    <tr>
+                                        <th>nombre:</th>
+                                        <td>{{ estudiante.primerNombre }} estudiante.primerApellido }}</td>
+                                        <th>Grado:</th>
+                                        <td>estudiante.periodoEscolarCurso}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        {% if accion == 'Seleccione Representante' %}
+            <h2 class="text-center">{{ accion|title }}</h2>
+            <div id="div_tbl_usuarios">
+                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive"  width="100%">
+                    <thead>
+                        <tr>
+                            {% for campo in lista_representante.0|keys %}
+                                {% if campo == 'id' %}
+                                {% else %}
+                                    <th>{{ campo }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for campo in lista_representante.0|keys %}
+                                {% if campo == 'id' %}
+                                {% else %}
+                                    <th>{{ campo }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dato in lista_representante %}
+                            <tr>
+                            {% for  key, elemento in dato %}
+                                {% if  key != 'id' %}
+                                    <td>
+                                    {% if elemento.timestamp is defined %}
+                                        {{ elemento|date('d/m/Y') }}
+                                    {% elseif key == 'cedula' %}
+                                        <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': accion  }) }}">{{ elemento }}</a>
+                                    {% else %}
+                                        {{ elemento }}
+                                    {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+     </div>
+    </div>
+{% endblock %}

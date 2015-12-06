@@ -1,0 +1,9 @@
+services:
+#    generico.example:
+#        class: RosaMolas\genericoBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  funciones_genericas:
+    class: RosaMolas\genericoBundle\Service\FuncionesGenericas
+    arguments:
+      container: "@service_container"

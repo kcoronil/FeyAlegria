@@ -28,23 +28,17 @@ class PeriodoEscolarCursoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('seccion', 'entity', array('required' => true,'attr'=>array('class'=>'campo_unico'),
-                'class' => 'inicialBundle:Seccion','empty_value' => 'Seleccione Seccion', 'multiple'=>false,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.activo=true');},))
-
             ->add('periodoEscolar', 'entity', array('required' => true, 'attr'=>array('class'=>'campo_unico'),
                 'class' => 'inicialBundle:PeriodoEscolar','empty_value' => 'Seleccione Periodo', 'multiple'=>false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');},))
 
-            ->add('curso', 'entity', array('required' => true, 'attr'=>array('class'=>'campo_unico'),
-                'class' => 'inicialBundle:Curso','empty_value' => 'Seleccione Curso', 'multiple'=>false,
+            ->add('cursoSeccion', 'entity', array('required' => true, 'attr'=>array('class'=>'campo_unico'),
+                'class' => 'inicialBundle:CursoSeccion','empty_value' => 'Seleccione Curso', 'multiple'=>false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
-                        ->where('u.activo=true')->andWhere('u.id!=5');},))
+                        ->where('u.activo=true');},))
             ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
 
