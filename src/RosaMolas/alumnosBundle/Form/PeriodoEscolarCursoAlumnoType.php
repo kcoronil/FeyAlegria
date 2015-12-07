@@ -17,7 +17,7 @@ class PeriodoEscolarCursoAlumnoType extends AbstractType
     {
         $builder
             ->add('cursoSeccion','entity', array('label'=>'Grado', 'required' => true,
-                'class' => 'inicialBundle:CursoSeccion','empty_data' => 'Debe Crear Grados', 'empty_value' => 'Seleccione Grado', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'class' => 'inicialBundle:CursoSeccion','empty_data' => 'Debe Crear Grados', 'empty_value' => 'Seleccione Grado', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');}))

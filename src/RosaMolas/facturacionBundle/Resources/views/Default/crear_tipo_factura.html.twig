@@ -15,7 +15,7 @@
 
     <div data-content="{{ name }}" class="test_attr">
         <div class="row">
-            <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+            <div class="col-sm-8 col-sm-offset-1 text-center panel-heading">
                 <h4>Nuevo Concepto Factura</h4>
             </div>
             <div class="col-sm-1 text-left">
@@ -23,7 +23,14 @@
             </div>
         </div>
         <div class="row">
-            {{ form_widget(form) }}
+            {{ form_widget(form.nombre) }}
+        </div>
+        <div class="row">
+            <div id="cont_montos-{{ name }}" class="col-sm-12" data-prototype="{{form_widget(form.tipoMontoConceptos.vars.prototype)|e }}">
+                {% for form_tipoMontoConceptos in form.tipoMontoConceptos %}
+                    {{ form_widget(form_tipoMontoConceptos) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endmacro %}
@@ -32,13 +39,13 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            if($('#cont_conceptos').children().length<1) {
-                agregar_form($('.btn-add'));
+            if($('#cont_conceptos').children().length<1){
+                agregar_form_anidados($('.btn-add'));
             }
-            $(document).on('click','.btn-add', function() {
-                agregar_form($(this));
+            $(document).on('click','.btn-add', function(){
+                agregar_form_anidados($(this));
             });
-            $(document).on('click','.btn-remove', function() {
+            $(document).on('click','.btn-remove', function(){
                 borrar_form($(this));
                 renombrar_forms($(this).attr('data-target'));
             });
@@ -63,7 +70,7 @@
                             </div>
 
                             <div class="col-sm-12 text-center ">
-                                <a class="btn-add btn btn-default" data-target="cont_conceptos">Agregar Concepto</a>
+                                <a class="btn-add btn btn-default" id="cont_montos" data-target="cont_conceptos">Agregar Concepto</a>
                             </div>
                         {% endif %}
                         <div class="col-sm-12 text-center ">

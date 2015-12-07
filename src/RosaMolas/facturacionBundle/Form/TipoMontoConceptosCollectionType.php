@@ -29,7 +29,7 @@ class TipoMontoConceptosCollectionType extends AbstractType
     {
         $builder
             ->add('tipoMonto','entity', array('attr'=>array('class'=>'campo_unico'), 'label'=>'Tipo de Monto', 'required' => true,
-                'class' => 'facturacionBundle:TipoMontos','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'class' => 'facturacionBundle:TipoMontos',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');}))

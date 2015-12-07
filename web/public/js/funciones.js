@@ -25,6 +25,29 @@ function agregar_form(boton){
     });
     return false;
 }
+function agregar_form_anidados(boton){
+    var collectionHolder = $('#' + boton.attr('data-target'));
+    var prototype = collectionHolder.attr('data-prototype');
+    var form = prototype.replace(/__name__/g, collectionHolder.children().length);
+    collectionHolder.append(form);
+
+    var collectionHolder2 = $('#' + boton.attr('id') +'-'+ (collectionHolder.children().length-1));
+
+    var prototype2 = collectionHolder2.attr('data-prototype');
+    var form2 = prototype2.replace(/__name__/g, collectionHolder2.children().length);
+    collectionHolder2.append(form2);
+
+    $('.fecha_nacimiento').not('.hasDatePicker').datepicker({
+        format: "dd-mm-yyyy",
+        startView: 2,
+        language: "es",
+        endDate: '+0d'
+    });
+    $('.fecha_nacimiento').on('change', function(){
+        $('.datepicker').hide();
+    });
+    return false;
+}
 
 // funcion para actualizar nombres de campos de formularios despues de eliminar formularios
 function renombrar_forms(div_formularios){

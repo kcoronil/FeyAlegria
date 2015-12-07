@@ -1,5 +1,6 @@
 <?php
 namespace Test\inicialBundle\Controller;
+use RosaMolas\facturacionBundle\Entity\TipoFacturacion;
 use RosaMolas\facturacionBundle\Form\ConceptosFacturaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;

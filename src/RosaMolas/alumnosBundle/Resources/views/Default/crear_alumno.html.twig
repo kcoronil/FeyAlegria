@@ -78,6 +78,7 @@
                                 <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso">test</a>
                             </div>
                         {% endif %}
+                        {{ form_row(form.tipoFacturacion) }}
                         {% if form.usuario is defined %}
 
                             <div id="post_usuario" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.usuario, 'eliminar representante')|escape }}">

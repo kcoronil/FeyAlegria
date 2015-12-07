@@ -117,6 +117,13 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
+                $periodo_activo = $this->getDoctrine()
+                    ->getRepository('inicialBundle:PeriodoEscolar')
+                    ->findOneBy(array('activo'=>true));
+                foreach($p->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
+                    $periodo_alumno->setPeriodoEscolar($periodo_activo);
+                    $periodo_alumno->setActivo(true);
+                }
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
                 $this->get('funciones_genericas')->registro_traza_usuario('alumnosBundle:'.$objeto, 'modificacion', $p );
@@ -288,7 +295,7 @@ class DefaultController extends Controller
     public function borrar_alumnoAction($id, Request $request)
     {
         $alumno = $this->getDoctrine()
-            ->getRepository('inicialBundle:Alumnos')
+            ->getRepository('alumnosBundle:Alumnos')
             ->find($id);
         if (!$alumno)
         {
@@ -300,12 +307,14 @@ class DefaultController extends Controller
         $formulario -> remove('cedula');
         $formulario -> remove('primerNombre');
         $formulario -> remove('segundoNombre');
-        $formulario -> remove('primerNombre');
+        $formulario -> remove('primerApellido');
         $formulario -> remove('segundoApellido');
         $formulario -> remove('fechaNacimiento');
         $formulario -> remove('lugarNacimiento');
         $formulario -> remove('sexo');
         $formulario -> remove('activo');
+        $formulario -> remove('periodoEscolarCursoAlumno');
+        $formulario -> remove('tipoFacturacion');
         $formulario -> remove('guardar_crear');
         $formulario-> handleRequest($request);
 

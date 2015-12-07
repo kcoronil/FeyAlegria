@@ -3,7 +3,6 @@
 namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Factura
@@ -12,8 +11,6 @@ class Factura
 {
     /**
      * @var string
-     *
-     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
      */
     private $monto;
 
@@ -23,6 +20,16 @@ class Factura
     private $activo;
 
     /**
+     * @var \DateTime
+     */
+    private $fecha;
+
+    /**
+     * @var boolean
+     */
+    private $pagada;
+
+    /**
      * @var integer
      */
     private $id;
@@ -30,7 +37,7 @@ class Factura
     /**
      * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno
      */
-    private $periodoEscolarAlumnos;
+    private $periodoEscolarCursoAlumnos;
 
     /**
      * @var \RosaMolas\facturacionBundle\Entity\TipoFactura
@@ -85,6 +92,52 @@ class Factura
     }
 
     /**
+     * Set fecha
+     *
+     * @param \DateTime $fecha
+     * @return Factura
+     */
+    public function setFecha($fecha)
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    /**
+     * Get fecha
+     *
+     * @return \DateTime 
+     */
+    public function getFecha()
+    {
+        return $this->fecha;
+    }
+
+    /**
+     * Set pagada
+     *
+     * @param boolean $pagada
+     * @return Factura
+     */
+    public function setPagada($pagada)
+    {
+        $this->pagada = $pagada;
+
+        return $this;
+    }
+
+    /**
+     * Get pagada
+     *
+     * @return boolean 
+     */
+    public function getPagada()
+    {
+        return $this->pagada;
+    }
+
+    /**
      * Get id
      *
      * @return integer 
@@ -95,32 +148,32 @@ class Factura
     }
 
     /**
-     * Set periodoEscolarAlumnos
+     * Set periodoEscolarCursoAlumnos
      *
-     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno $periodoEscolarAlumnos
+     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumnos
      * @return Factura
      */
-    public function setPeriodoEscolarAlumnos(\RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno $periodoEscolarAlumnos = null)
+    public function setPeriodoEscolarCursoAlumnos(\RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumnos = null)
     {
-        $this->periodoEscolarAlumnos = $periodoEscolarAlumnos;
+        $this->periodoEscolarCursoAlumnos = $periodoEscolarCursoAlumnos;
 
         return $this;
     }
 
     /**
-     * Get periodoEscolarAlumnos
+     * Get periodoEscolarCursoAlumnos
      *
-     * @return \RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno
+     * @return \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno 
      */
-    public function getPeriodoEscolarAlumnos()
+    public function getPeriodoEscolarCursoAlumnos()
     {
-        return $this->periodoEscolarAlumnos;
+        return $this->periodoEscolarCursoAlumnos;
     }
 
     /**
      * Set tipoFactura
      *
-     * @param \RosaMolas\facturacionBundle\Entity/TipoFactura $tipoFactura
+     * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
      * @return Factura
      */
     public function setTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura = null)
@@ -133,7 +186,7 @@ class Factura
     /**
      * Get tipoFactura
      *
-     * @return \RosaMolas\facturacionBundle\Entity\TipoFactura
+     * @return \RosaMolas\facturacionBundle\Entity\TipoFactura 
      */
     public function getTipoFactura()
     {

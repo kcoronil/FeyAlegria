@@ -1,8 +1,11 @@
 <?php
 namespace RosaMolas\facturacionBundle\Controller;
 use RosaMolas\facturacionBundle\Entity\ConceptosFactura;
+use RosaMolas\facturacionBundle\Entity\Factura;
+use RosaMolas\facturacionBundle\Entity\TipoFacturacion;
 use RosaMolas\facturacionBundle\Entity\TipoMontoConceptos;
 use RosaMolas\facturacionBundle\Entity\TipoMontos;
+use RosaMolas\facturacionBundle\Form\TipoFacturacionType;
 use RosaMolas\facturacionBundle\Form\TipoMontoConceptosType;
 use RosaMolas\facturacionBundle\Form\TipoMontosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -12,13 +15,23 @@ use RosaMolas\facturacionBundle\Form\TipoFacturaType;
 
 class DefaultController extends Controller
 {
+    public function generar_facturas($tipo_factura){
+        $alumnos_activos = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+        ->findBy(array('activo'=>true), array('cursoSeccion'=>'ASC'));
+        foreach($alumnos_activos as $alumnos_act){
+            $nueva_fact = New Factura();
+            $nueva_fact->setActivo(true);
+            $nueva_fact->setPeriodoEscolarAlumnos($alumnos_act);
+            $nueva_fact->setTipoFactura($tipo_factura);
+            $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+            $nueva_fact->setPagada(false);
+
+
+        }
+
+    }
     public function tipo_facturaAction(request $request){
         $p = New TipoFactura();
-        $q =  New ConceptosFactura();
-        $r= New TipoMontoConceptos();
-        $q->getTipoMontoConceptos()->add($r);
-        $p->getConceptosFactura()->add($q);
-
         $formulario = $this->createForm(new TipoFacturaType('Crear Tipo Factura'), $p);
         $formulario-> handleRequest($request);
 
@@ -197,4 +210,47 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
+    public function crear_tipo_facturacionAction(Request $request){
+        $modelo = New TipoFacturacion();
+        $form = new TipoFacturacionType('Crear Tipo de Facturación');
+        $objeto = 'TipoFacturacion';
+        $clase = 'facturacionBundle:TipoFacturacion';
+        $titulo = 'Tipo de Facturación';
+        $datos = 'true';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_facturacion';
+        $url_editar = 'inicial_editar_tipo_facturacion';
+        $url_borrar = 'inicial_borrar_tipo_facturacion';
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+    }
+    public function editar_tipo_facturacionAction($id, Request $request){
+        $form = new TipoFacturacionType('Editar Tipo de Facturación');
+        $clase = 'facturacionBundle:TipoFacturacion';
+        $titulo = 'Tipo de Facturación';
+        $url_redireccion = 'inicial_agregar_tipo_facturacion';
+        $remover = null;
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+    }
+    public function borrar_tipo_facturacionAction($id, Request $request){
+        $form = new TipoFacturacionType('Borrar Tipo Facturación');
+        $objeto = 'TipoFacturacion';
+        $clase = 'facturacionBundle:TipoFacturacion';
+        $titulo = 'Tipo de Facturación';
+        $remover = null;
+        $url_redireccion = 'inicial_agregar_tipo_facturacion';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
+    }
+
 }
