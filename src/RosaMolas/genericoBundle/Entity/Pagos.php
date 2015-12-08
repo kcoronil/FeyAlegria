@@ -58,6 +58,10 @@ class Pagos
      */
     private $banco;
 
+    public function __construct()
+    {
+        $this->fechaRegistro = new \DateTime();
+    }
 
     /**
      * Set fechaRegistro

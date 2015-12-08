@@ -24,6 +24,12 @@ security:
             entity: { class: usuariosBundle:PerfilUsuario, property: nombreUsuario }
 
     firewalls:
+        main:
+            anonymous: ~
+            form_login:
+                login_path: /login
+                check_path: /login_check
+
         #dev:
             #pattern:  ^/(_(profiler|wdt)|css|images|js)/
             #security: false

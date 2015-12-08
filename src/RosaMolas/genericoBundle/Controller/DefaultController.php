@@ -25,17 +25,13 @@ class DefaultController extends Controller
         $estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
         $p = new Pagos();
         $p->setFactura($factura);
+        $p->setFechaRegistro(new \DateTime("now"));
         $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
         $formulario-> handleRequest($request);
 
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
-                print_r(new \DateTime(date('Y-m-d H:i:s')));
-
-                $p->setFechaRegistro(new \DateTime(date('Y-m-d H:i:s')));
-                print_r($p->getFechaRegistro());
-                exit;
                 $p->getFactura()->setPagada(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);

@@ -42,7 +42,7 @@ class AlumnosTypeSimple extends AbstractType
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('tipoFacturacion','entity', array('required' => true,
-                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion' , 'empty_value' => 'Seleccione Tipo Facturación', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');}))
