@@ -26,7 +26,8 @@ class Pagos
      * @Assert\Length(min = 20, max = 20,
      * minMessage = "Este campo debe tener {{ limit }} carácteres",
      * maxMessage = "Este campo debe tener {{ limit }} carácteres")
-     * @Assert\Type(type="numeric",message="el valor {{ value }} no es númerico.")
+     * @Assert\Type(type="digit",message="el valor {{ value }} no es númerico.")
+     * @Assert\NotBlank()
      *
      */
     private $numeroDeposito;

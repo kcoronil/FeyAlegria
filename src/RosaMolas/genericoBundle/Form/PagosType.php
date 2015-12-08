@@ -27,11 +27,11 @@ class PagosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fechaDeposito')
+            ->add('fechaDeposito','date', array('widget'=>'single_text', 'format'=>'d-M-y', 'attr'=>array('class'=>'datepick') ))
             ->add('numeroDeposito')
             ->add('monto')
-            ->add('fechaRegistro')
             ->add('banco')
+            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

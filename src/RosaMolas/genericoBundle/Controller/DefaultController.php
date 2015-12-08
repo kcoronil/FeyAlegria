@@ -22,6 +22,7 @@ class DefaultController extends Controller
         $factura = $this->getDoctrine()
             ->getRepository('facturacionBundle:Factura')
             ->find($id);
+        $estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
         $p = new Pagos();
         $p->setFactura($factura);
         $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
@@ -30,6 +31,12 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
+                print_r(new \DateTime(date('Y-m-d H:i:s')));
+
+                $p->setFechaRegistro(new \DateTime(date('Y-m-d H:i:s')));
+                print_r($p->getFechaRegistro());
+                exit;
+                $p->getFactura()->setPagada(true);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
@@ -37,16 +44,16 @@ class DefaultController extends Controller
                     'success', 'Pago creado con éxito'
                 );
 
-                if ($formulario->get('guardar')->isClicked()) {
+                if ($formulario->get('guardar')->isClicked()){
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
-                if ($formulario->get('guardar_crear')->isClicked()) {
+                if ($formulario->get('guardar_crear')->isClicked()){
                     return $this->redirect($this->generateUrl('generico_agregar_pago'));
                 }
             }
         }
         return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('form'=>$formulario->createView(),
-            'accion'=>'Agregar Pago'));
+            'accion'=>'Agregar Pago', 'factura'=>$factura, 'estudiante'=>$estudiante));
     }
 
     public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)

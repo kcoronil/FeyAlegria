@@ -90,3 +90,14 @@ $(function () {
         $('.datepicker').hide();
     });
 });
+
+$(function () {
+    $(".datepick").datepicker({
+        format: "dd-mm-yyyy",
+        language: "es",
+        endDate: '+0d'
+    });
+    $('.datepick').on('change', function(){
+        $('.datepicker').hide();
+    });
+});

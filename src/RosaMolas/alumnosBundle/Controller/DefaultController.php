@@ -263,7 +263,6 @@ class DefaultController extends Controller
             ->getQuery();
 
         $datos = $query->getArrayResult();
-        print_r($datos);
 
         return $this->render('alumnosBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }

@@ -28,11 +28,11 @@ class DefaultController extends Controller
             $tipo_factura=$formulario["tipoFactura"]->getData();
             $alumnos_activos = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
                 ->findBy(array('activo' => true), array('cursoSeccion' => 'ASC'));
-            $p = $this->getDoctrine()
+            /*$p = $this->getDoctrine()
                 ->getRepository('facturacionBundle:TipoFactura')
                 ->find($tipo_factura->getId());
 
-            /*$hasTipoMonto = function($tipoMonto) {
+            $hasTipoMonto = function($tipoMonto) {
                 return function(TipoMontoConceptos $tipoMontoConceptos) use ($tipoMonto) {
                     return null !== $tipoMontoConceptos->getTipoMonto($tipoMonto);
                 };
@@ -89,20 +89,28 @@ class DefaultController extends Controller
             ->setParameter('id',$id)
             ->getQuery();
         $datos = $query->getArrayResult();
-
-        $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
-            ->createQueryBuilder('factura')
-            ->select('factura.fecha', 'factura.monto', 'factura.id')
-            ->where('factura.periodoEscolarCursoAlumnos = :periodo_alumno')
-            ->andwhere('factura.pagada = false')
-            ->andwhere('factura.activo = true')
-            ->setParameter('periodo_alumno',$datos[1]['periodo_estudiante']['id'])
-            ->getQuery();
-        $facturas = $query_factura->getArrayResult();
-
-
         print_r($datos);
-        return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('accion'=>'Listado de Facturas Pendientes', 'datos'=>$datos, 'facturas'=>$facturas));
+
+
+        if(!array_key_exists('1', $datos)){
+            $this->get('session')->getFlashBag()->add(
+                'warning', 'El estudiante no esta asociado a ninguna seccion'
+            );
+            return $this->redirect($this->generateUrl('inicial_lista_alumno'));
+        }
+        else {
+            $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
+                ->createQueryBuilder('factura')
+                ->select('factura.fecha', 'factura.monto', 'factura.id')
+                ->where('factura.periodoEscolarCursoAlumnos = :periodo_alumno')
+                ->andwhere('factura.pagada = false')
+                ->andwhere('factura.activo = true')
+                ->setParameter('periodo_alumno', $datos[1]['periodo_estudiante']['id'])
+                ->getQuery();
+            $facturas = $query_factura->getArrayResult();
+
+            return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('accion' => 'Listado de Facturas Pendientes', 'datos' => $datos, 'facturas' => $facturas));
+        }
     }
 
     public function tipo_facturaAction(request $request){
