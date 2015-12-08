@@ -5,9 +5,21 @@ namespace RosaMolas\genericoBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class PagosType extends AbstractType
 {
+    public function __construct ($titulo, $tipo_panel = null)
+    {
+        $this->titulo = $titulo;
+        if($tipo_panel){
+            $this->tipo_panel = $tipo_panel;
+        }
+        else{
+            $this->tipo_panel = null;
+        }
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -19,12 +31,16 @@ class PagosType extends AbstractType
             ->add('numeroDeposito')
             ->add('monto')
             ->add('fechaRegistro')
-            ->add('activo')
             ->add('banco')
-            ->add('factura')
         ;
     }
-    
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['titulo'] = $this->titulo;
+        if($this->tipo_panel){
+            $view->vars['tipo_panel'] = $this->tipo_panel;
+        }
+    }
     /**
      * @param OptionsResolverInterface $resolver
      */

@@ -11,5 +11,5 @@ generico_inscripcion_agregar_alumno:
     defaults: { _controller: genericoBundle:Default:agregar_alumno_inscripcion }
 
 generico_agregar_pago:
-    path:     /agregar_pago
+    path:     /agregar_pago/{id}
     defaults: { _controller: genericoBundle:Default:agregar_pago }

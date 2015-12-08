@@ -17,10 +17,14 @@ class DefaultController extends Controller
     {
         return $this->render('genericoBundle:Default:index.html.twig', array('name' => $name));
     }
-    public function agregar_pagoAction(request $request)
+    public function agregar_pagoAction($id, request $request)
     {
+        $factura = $this->getDoctrine()
+            ->getRepository('facturacionBundle:Factura')
+            ->find($id);
         $p = new Pagos();
-        $formulario = $this->createForm(new PagosType(), $p);
+        $p->setFactura($factura);
+        $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
         $formulario-> handleRequest($request);
 
         if($request->getMethod()=='POST') {

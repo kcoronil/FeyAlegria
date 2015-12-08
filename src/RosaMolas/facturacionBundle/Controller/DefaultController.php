@@ -32,15 +32,15 @@ class DefaultController extends Controller
                 ->getRepository('facturacionBundle:TipoFactura')
                 ->find($tipo_factura->getId());
 
-            $hasTipoMonto = function($tipoMonto) {
+            /*$hasTipoMonto = function($tipoMonto) {
                 return function(TipoMontoConceptos $tipoMontoConceptos) use ($tipoMonto) {
                     return null !== $tipoMontoConceptos->getTipoMonto($tipoMonto);
                 };
             };
 
             $criteria = Criteria::create()
-                ->where(Criteria::expr()->eq("id", "1"))
-            ;
+                ->where(Criteria::expr()->eq("id", "1"));*/
+
             foreach ($alumnos_activos as $alumnos_act) {
                 $nueva_fact = New Factura();
                 $monto_factura = 0;
@@ -77,18 +77,32 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno', 'periodo_alumno', 'periodo_curso', 'factura')
+            ->select('alumno as estudiante', 'periodo_alumno as periodo_estudiante', 'cursos as curso', 'secciones as seccion',
+                'periodos as periodo')
             ->where('alumno.id = :id')
             ->andwhere('alumno.activo = true')
             ->innerJoin('alumnosBundle:PeriodoEscolarCursoAlumno', 'periodo_alumno', 'WITH', 'alumno.id = periodo_alumno.alumno')
+            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodos', 'WITH', 'periodo_alumno.periodoEscolar = periodos.id')
             ->innerJoin('inicialBundle:CursoSeccion', 'periodo_curso', 'WITH', 'periodo_alumno.cursoSeccion = periodo_curso.id')
-            ->innerJoin('facturacionBundle:Factura', 'factura', 'WITH', 'factura.id = factura.id')
+            ->innerJoin('inicialBundle:Curso', 'cursos', 'WITH', 'periodo_curso.curso = cursos.id')
+            ->innerJoin('inicialBundle:Seccion', 'secciones', 'WITH', 'periodo_curso.seccion = secciones.id')
             ->setParameter('id',$id)
             ->getQuery();
         $datos = $query->getArrayResult();
 
+        $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
+            ->createQueryBuilder('factura')
+            ->select('factura.fecha', 'factura.monto', 'factura.id')
+            ->where('factura.periodoEscolarCursoAlumnos = :periodo_alumno')
+            ->andwhere('factura.pagada = false')
+            ->andwhere('factura.activo = true')
+            ->setParameter('periodo_alumno',$datos[1]['periodo_estudiante']['id'])
+            ->getQuery();
+        $facturas = $query_factura->getArrayResult();
+
+
         print_r($datos);
-        exit;
+        return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('accion'=>'Listado de Facturas Pendientes', 'datos'=>$datos, 'facturas'=>$facturas));
     }
 
     public function tipo_facturaAction(request $request){
