@@ -1,0 +1,21 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% block extra_head %}
+{% endblock %}
+{% block enlace_atajo %}
+    <!--<li><a href="{#{ path('inicial_lista_alumno') }#}">Consultar Estudiantes</a></li>-->
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-6 col-sm-offset-3">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

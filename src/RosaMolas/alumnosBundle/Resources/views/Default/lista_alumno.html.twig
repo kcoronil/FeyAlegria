@@ -11,6 +11,9 @@
         .form-inline .filter_select  select{
             width: 100%;
         }
+        #tbl_alumnos{
+            width: 100%;
+        }
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -65,6 +68,7 @@
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
+                        <th>operaciones</th>
                     </tr>
                     <tr>
                         {% for key, campo in datos.0 %}
@@ -81,37 +85,42 @@
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
+                        <th>operaciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for dato in datos %}
                         <tr>
-                        {% for  key, elemento in dato %}
-                            {% if  (key == 'id') or ( '_id' in key ) %}
+                            {% for  key, elemento in dato %}
+                                {% if  (key == 'id') or ( '_id' in key ) %}
 
-                            {% else %}
-                                {% if elemento.timestamp is defined %}
-                                <td>{{ elemento|date('d/m/Y') }}</td>
-                                {% elseif (key == 'cedula') or ('cedula' in key) %}
-                                    <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id }) }}">{{ elemento }}</a></td>
                                 {% else %}
-                                    {% if elemento is iterable %}
-                                        {% for k, item in elemento.0 %}
-                                            {% if  (k != 'id' ) or ('_id' not in key) %}
-                                                {% if item.timestamp is defined %}
-                                                    <td>{{ item|date('d/m/Y') }}</td>
-                                                {% else %}
-                                                    <td>{{ item }}</td>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endfor %}
+                                    {% if elemento.timestamp is defined %}
+                                    <td>{{ elemento|date('d/m/Y') }}</td>
+                                    {% elseif (key == 'cedula') or ('cedula' in key) %}
+                                        <td><a href="{{ path('inicial_detalle_alumno', { 'id': dato.id }) }}">{{ elemento }}</a></td>
                                     {% else %}
-                                        <td>{{ elemento }}</td>
+                                        {% if elemento is iterable %}
+                                            {% for k, item in elemento.0 %}
+                                                {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                    {% if item.timestamp is defined %}
+                                                        <td>{{ item|date('d/m/Y') }}</td>
+                                                    {% else %}
+                                                        <td>{{ item }}</td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <td>{{ elemento }}</td>
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
-
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                            <th>
+                                <a href="{{ path('inicial_lista_facturas', { 'id': dato.id }) }}" class="btn btn-default btn-xs">pagos</a>
+                                <a href="{{ path('inicial_editar_alumno', { 'id': dato.id }) }}" class="btn btn-default btn-xs">Editar</a>
+                                <a href="{{ path('inicial_borrar_alumno', { 'id': dato.id }) }}" class="btn btn-danger btn-xs">Borrar</a>
+                            </th>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -16,12 +16,12 @@
     <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
     <field name="fechaRegistro" type="datetimetz" column="fecha_registro" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-one field="banco" target-entity="Bancos">
+    <many-to-one field="banco" target-entity="RosaMolas\genericoBundle\Entity\Bancos">
       <join-columns>
         <join-column name="banco_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="factura" target-entity="Factura">
+    <many-to-one field="factura" target-entity="RosaMolas\facturacionBundle\Entity\Factura">
       <join-columns>
         <join-column name="factura_id" referenced-column-name="id"/>
       </join-columns>

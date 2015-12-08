@@ -2,6 +2,8 @@
 
 namespace RosaMolas\genericoBundle\Controller;
 
+use RosaMolas\genericoBundle\Entity\Pagos;
+use RosaMolas\genericoBundle\Form\PagosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Test\inicialBundle\Entity\TrazaEventosUsuarios;
@@ -15,6 +17,34 @@ class DefaultController extends Controller
     {
         return $this->render('genericoBundle:Default:index.html.twig', array('name' => $name));
     }
+    public function agregar_pagoAction(request $request)
+    {
+        $p = new Pagos();
+        $formulario = $this->createForm(new PagosType(), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Pago creado con éxito'
+                );
+
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+                if ($formulario->get('guardar_crear')->isClicked()) {
+                    return $this->redirect($this->generateUrl('generico_agregar_pago'));
+                }
+            }
+        }
+        return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Agregar Pago'));
+    }
+
     public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
     {
         $p = $modelo;

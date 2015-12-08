@@ -48,7 +48,7 @@ class Pagos
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Factura
+     * @var \RosaMolas\facturacionBundle\Entity\Factura
      */
     private $factura;
 
@@ -188,10 +188,10 @@ class Pagos
     /**
      * Set factura
      *
-     * @param \Test\inicialBundle\Entity\Factura $factura
+     * @param \RosaMolas\facturacionBundle\Entity\Factura $factura
      * @return Pagos
      */
-    public function setFactura(\Test\inicialBundle\Entity\Factura $factura = null)
+    public function setFactura(\RosaMolas\facturacionBundle\Entity\Factura $factura = null)
     {
         $this->factura = $factura;
 
@@ -201,7 +201,7 @@ class Pagos
     /**
      * Get factura
      *
-     * @return \Test\inicialBundle\Entity\Factura 
+     * @return \RosaMolas\facturacionBundle\Entity\Factura
      */
     public function getFactura()
     {

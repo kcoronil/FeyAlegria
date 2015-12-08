@@ -1,0 +1,68 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+
+    <div data-content="{{ name }}" class="test_attr">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-1 text-center panel-heading">
+                <h4>Nuevo Concepto Factura</h4>
+            </div>
+            <div class="col-sm-1 text-left">
+                <a class="btn-remove btn btn-danger btn-xs" data-target="cont_conceptos" data-related="{{ name }}">{{ remove_text }}</a>
+            </div>
+        </div>
+        <div class="row">
+            {{ form_widget(form.nombre) }}
+        </div>
+        <div class="row">
+            <div id="cont_montos-{{ name }}" class="col-sm-12" data-prototype="{{form_widget(form.tipoMontoConceptos.vars.prototype)|e }}">
+                {% for form_tipoMontoConceptos in form.tipoMontoConceptos %}
+                    {{ form_widget(form_tipoMontoConceptos) }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block extra_head %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if($('#cont_conceptos').children().length<1){
+                agregar_form_anidados($('.btn-add'));
+            }
+            $(document).on('click','.btn-add', function(){
+                agregar_form_anidados($(this));
+            });
+            $(document).on('click','.btn-remove', function(){
+                borrar_form($(this));
+                renombrar_forms($(this).attr('data-target'));
+            });
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+    <!--<li><a href="{#{ path('inicial_lista_alumno') }#}">Consultar Estudiantes</a></li>-->
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-6 col-sm-offset-3">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -5,10 +5,12 @@ namespace RosaMolas\facturacionBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Validator\Constraints\Null;
 
-class TipoFacturacionType extends AbstractType
+class FacturaType extends AbstractType
 {
     public function __construct ($titulo, $tipo_panel = null)
     {
@@ -27,8 +29,12 @@ class TipoFacturacionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre','text',  array('attr'=>array('class'=>'campo_unico')))
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
+            ->add('tipoFactura','entity', array('attr'=>array('class'=>'campo_unico'), 'label'=>'Tipo de Factura', 'required' => true,
+                'class' => 'facturacionBundle:TipoFactura',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.activo=true');}))
+            ->add('guardar', 'submit', array('label'=>'Enviar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
         ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -45,7 +51,7 @@ class TipoFacturacionType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RosaMolas\facturacionBundle\Entity\TipoFacturacion'
+            'data_class' => Null
         ));
     }
 
@@ -54,6 +60,6 @@ class TipoFacturacionType extends AbstractType
      */
     public function getName()
     {
-        return 'rosamolas_facturacionbundle_tipofacturacion';
+        return 'rosamolas_facturacionbundle_factura';
     }
 }

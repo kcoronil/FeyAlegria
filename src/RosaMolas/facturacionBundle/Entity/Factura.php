@@ -35,6 +35,11 @@ class Factura
     private $id;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $detalleFactura;
+
+    /**
      * @var \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno
      */
     private $periodoEscolarCursoAlumnos;
@@ -44,6 +49,13 @@ class Factura
      */
     private $tipoFactura;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->detalleFactura = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Set monto
@@ -145,6 +157,39 @@ class Factura
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Add detalleFactura
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\DetalleFactura $detalleFactura
+     * @return Factura
+     */
+    public function addDetalleFactura(\RosaMolas\facturacionBundle\Entity\DetalleFactura $detalleFactura)
+    {
+        $this->detalleFactura[] = $detalleFactura;
+
+        return $this;
+    }
+
+    /**
+     * Remove detalleFactura
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\DetalleFactura $detalleFactura
+     */
+    public function removeDetalleFactura(\RosaMolas\facturacionBundle\Entity\DetalleFactura $detalleFactura)
+    {
+        $this->detalleFactura->removeElement($detalleFactura);
+    }
+
+    /**
+     * Get detalleFactura
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDetalleFactura()
+    {
+        return $this->detalleFactura;
     }
 
     /**

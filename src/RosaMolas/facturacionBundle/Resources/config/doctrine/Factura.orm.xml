@@ -12,6 +12,12 @@
   <field name="activo" type="boolean" column="activo" nullable="false"/>
   <field name="fecha" type="datetimetz" column="fecha" nullable="false"/>
   <field name="pagada" type="boolean" column="pagada" nullable="true"/>
+  <one-to-many field="detalleFactura" mapped-by="factura" target-entity="DetalleFactura">
+    <cascade>
+      <cascade-persist/>
+    </cascade>
+  </one-to-many>
+
   <many-to-one field="periodoEscolarCursoAlumnos" target-entity="RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno">
     <join-columns>
       <join-column name="periodo_escolar_curso_alumnos_id" referenced-column-name="id"/>

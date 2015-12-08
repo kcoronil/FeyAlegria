@@ -1,10 +1,13 @@
 <?php
 namespace RosaMolas\facturacionBundle\Controller;
+use RosaMolas\alumnosBundle\Entity\Alumnos;
 use RosaMolas\facturacionBundle\Entity\ConceptosFactura;
+use RosaMolas\facturacionBundle\Entity\DetalleFactura;
 use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\facturacionBundle\Entity\TipoFacturacion;
 use RosaMolas\facturacionBundle\Entity\TipoMontoConceptos;
 use RosaMolas\facturacionBundle\Entity\TipoMontos;
+use RosaMolas\facturacionBundle\Form\FacturaType;
 use RosaMolas\facturacionBundle\Form\TipoFacturacionType;
 use RosaMolas\facturacionBundle\Form\TipoMontoConceptosType;
 use RosaMolas\facturacionBundle\Form\TipoMontosType;
@@ -12,24 +15,82 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\facturacionBundle\Form\TipoFacturaType;
+use Doctrine\Common\Collections\Criteria;
 
 class DefaultController extends Controller
 {
-    public function generar_facturas($tipo_factura){
-        $alumnos_activos = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
-        ->findBy(array('activo'=>true), array('cursoSeccion'=>'ASC'));
-        foreach($alumnos_activos as $alumnos_act){
-            $nueva_fact = New Factura();
-            $nueva_fact->setActivo(true);
-            $nueva_fact->setPeriodoEscolarAlumnos($alumnos_act);
-            $nueva_fact->setTipoFactura($tipo_factura);
-            $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
-            $nueva_fact->setPagada(false);
+    public function generar_facturasAction(request $request){
 
+        $formulario = $this->createForm(new FacturaType('Selecionar Tipo Factura'));
+        $formulario->handleRequest($request);
+        if($request->getMethod()=='POST'){
 
+            $tipo_factura=$formulario["tipoFactura"]->getData();
+            $alumnos_activos = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('activo' => true), array('cursoSeccion' => 'ASC'));
+            $p = $this->getDoctrine()
+                ->getRepository('facturacionBundle:TipoFactura')
+                ->find($tipo_factura->getId());
+
+            $hasTipoMonto = function($tipoMonto) {
+                return function(TipoMontoConceptos $tipoMontoConceptos) use ($tipoMonto) {
+                    return null !== $tipoMontoConceptos->getTipoMonto($tipoMonto);
+                };
+            };
+
+            $criteria = Criteria::create()
+                ->where(Criteria::expr()->eq("id", "1"))
+            ;
+            foreach ($alumnos_activos as $alumnos_act) {
+                $nueva_fact = New Factura();
+                $monto_factura = 0;
+                $nueva_fact->setActivo(true);
+                $nueva_fact->setPeriodoEscolarCursoAlumnos($alumnos_act);
+                $nueva_fact->setTipoFactura($tipo_factura);
+                $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+                $nueva_fact->setPagada(false);
+                foreach($nueva_fact->getTipoFactura()->getConceptosFactura() as $concepto_tipo){
+                    $nueva_fact_detalle = New DetalleFactura();
+                    $nueva_fact_detalle->setActivo(true);
+                    $nueva_fact_detalle->setConcepto($concepto_tipo);
+                    $nueva_fact_detalle->setFactura($nueva_fact);
+                    //$a = new ConceptosFactura();
+                    //print_r($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+                    //$a->getTipoMontoConceptos()->filter($hasTipoMonto('regular'));
+                    $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+                    $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
+                    $nueva_fact->addDetalleFactura($nueva_fact_detalle);
+                }
+                $nueva_fact->setMonto($monto_factura);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($nueva_fact);
+                $em->flush();
+            }
+            $this->get('session')->getFlashBag()->add(
+                'success', 'Facturación procesada con éxito');
+            return $this->redirect($this->generateUrl('inicial_homepage'));
         }
-
+        return $this->render('facturacionBundle:Default:crear_factura.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Crear Factura',));
     }
+    public function lista_facturasAction($id, request $request){
+
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno', 'periodo_alumno', 'periodo_curso', 'factura')
+            ->where('alumno.id = :id')
+            ->andwhere('alumno.activo = true')
+            ->innerJoin('alumnosBundle:PeriodoEscolarCursoAlumno', 'periodo_alumno', 'WITH', 'alumno.id = periodo_alumno.alumno')
+            ->innerJoin('inicialBundle:CursoSeccion', 'periodo_curso', 'WITH', 'periodo_alumno.cursoSeccion = periodo_curso.id')
+            ->innerJoin('facturacionBundle:Factura', 'factura', 'WITH', 'factura.id = factura.id')
+            ->setParameter('id',$id)
+            ->getQuery();
+        $datos = $query->getArrayResult();
+
+        print_r($datos);
+        exit;
+    }
+
     public function tipo_facturaAction(request $request){
         $p = New TipoFactura();
         $formulario = $this->createForm(new TipoFacturaType('Crear Tipo Factura'), $p);
@@ -49,8 +110,8 @@ class DefaultController extends Controller
                 $em->persist($p);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Tipo Factura creada con éxito'
-                );
+                    'success', 'Tipo Factura creada con éxito');
+
                 if ($formulario->get('guardar')->isClicked()) {
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
