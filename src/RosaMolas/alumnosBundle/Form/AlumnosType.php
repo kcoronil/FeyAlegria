@@ -36,6 +36,11 @@ class AlumnosType extends AbstractType
             ->add('periodoEscolarCursoAlumno', 'collection', array('type'=>new PeriodoEscolarCursoAlumnoType('Seleccionar Curso'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
+            ->add('tipoFacturacion','entity', array('required' => true,
+                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'empty_value' => 'Seleccione Tipo Facturación', 'multiple'=>false, 'expanded'=>false, 'by_reference' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.activo=true');}))
         ;
     }
 

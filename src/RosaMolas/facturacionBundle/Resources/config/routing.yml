@@ -49,3 +49,23 @@ inicial_editar_tfactura:
 inicial_borrar_tfactura:
     path:     /borrar_tfactura/{id}
     defaults: { _controller: facturacionBundle:Default:borrar_tfactura }
+
+inicial_agregar_tipo_facturacion:
+    path:     /crear_tipo_facturacion
+    defaults: { _controller: facturacionBundle:Default:crear_tipo_facturacion }
+
+inicial_editar_tipo_facturacion:
+    path:     /editar_tipo_facturacion/{id}
+    defaults: { _controller: facturacionBundle:Default:editar_tipo_facturacion }
+
+inicial_borrar_tipo_facturacion:
+    path:     /borrar_tipo_facturacion/{id}
+    defaults: { _controller: facturacionBundle:Default:borrar_tipo_facturacion }
+
+inicial_proceso_facturacion:
+    path:     /proceso_facturacion
+    defaults: { _controller: facturacionBundle:Default:generar_facturas }
+
+inicial_lista_facturas:
+    path:     /lista_facturas/{id}
+    defaults: { _controller: facturacionBundle:Default:lista_facturas}

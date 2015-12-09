@@ -1,0 +1,177 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% block extra_head %}
+    <style>
+        .form-inline .form-control{
+            max-width: 100%;
+        }
+        .form-inline .filter_select  select{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var datatable_alumnos = $('#tbl_factura').dataTable({
+                "dom": 'rtip',
+                "bInfo": true,
+                "bLengthChange": false,
+                "bPaginate": true,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            }).columnFilter({
+                sPlaceHolder: "head:after"
+            });
+            /*$('#buscar_datatable').keyup(function(){
+             datatable_documentos.fnFilter($(this).val());
+             } );*/
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+    <!--<li><a href="{#{ path('inicial_lista_alumno') }#}">Consultar Estudiantes</a></li>-->
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {% if form is defined %}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-6 col-sm-offset-3">
+                    {{ form(form) }}
+                </div>
+            </div>
+        {% endif %}
+        <h2 class="clase">{{ accion }}</h2>
+        {% if datos is not defined %}
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <p>No existe Estudiante con ese ID</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-sm-6 col-sm-offset-3">
+                <table class="table-bordered table-hover table-responsive" width="100%">
+                    <tbody>
+                    <tr>
+                        <th colspan="2" class="text-center">Datos del Estudiante</th>
+                    </tr>
+                    <tr>
+                        <th>Cedula: </th><td>{{ datos.0.estudiante.cedula }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cedula Estudiantil: </th><td>{{ datos.0.estudiante.cedulaEstudiantil }}</td>
+                    </tr>
+                    <tr>
+                        <th>Apellidos: </th><td>{{ datos.0.estudiante.primerApellido }} {{ datos.0.estudiante.segundoApellido }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombres: </th><td>{{ datos.0.estudiante.primerNombre }} {{ datos.0.estudiante.segundoNombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Nacimiento: </th><td>{{ datos.0.estudiante.fechaNacimiento|date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lugar de Nacimiento: </th><td>{{ datos.0.estudiante.lugarNacimiento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Grado: </th><td>{{ datos.3.curso.nombre}} "{{ datos.4.seccion.nombre}}"</td>
+                    </tr>
+                    <tr>
+                        <th>Año Escolar: </th><td>{{ datos.2.periodo.nombre}}</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            {% if facturas is defined%}
+                <div class="row">
+                    <div id="div_tbl_factura" class="col-sm-12">
+                        <h4>Representanrtes Registrados</h4>
+                        <table id="tbl_factura" class="table table-bordered table-hover table-responsive"  width="100%">
+                            <thead>
+                            <tr>
+                                {% for key, campo in facturas.0 %}
+                                    {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
+                                    {% else %}
+                                        {% if campo is iterable %}
+                                            {% for k, c  in campo %}
+                                                {% if k != 'id' %}
+                                                    <th>{{ k }}</th>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <th>{{ key }}</th>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                <th>operaciones</th>
+                            </tr>
+                            <tr>
+                                {% for key, campo in facturas.0 %}
+                                    {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
+                                    {% else %}
+                                        {% if campo is iterable %}
+                                            {% for k, c  in campo %}
+                                                {% if k != 'id' %}
+                                                    <th>{{ k }}</th>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <th>{{ key }}</th>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                <th>operaciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for dato in facturas %}
+                                <tr>
+                                    {% for  key, elemento in dato %}
+                                        {% if  (key == 'id') or (key == 'activo') or ( '_id' in key ) %}
+                                        {% else %}
+                                            {% if elemento.timestamp is defined %}
+                                                <td>{{ elemento|date('d/m/Y') }}</td>
+                                            {% elseif (key == 'cedula') or ('cedula' in key) %}
+                                                <td><a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': 'representantes' }) }}">{{ elemento }}</a></td>
+                                            {% else %}
+                                                {% if elemento is iterable %}
+                                                    {% for k, item in elemento.0 %}
+                                                        {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                            {% if item.timestamp is defined %}
+                                                                <td>{{ item|date('d/m/Y') }}</td>
+                                                            {% else %}
+                                                                <td>{{ item }}</td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <td>{{ elemento }}</td>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <th>
+                                        <a href="{{ path('generico_agregar_pago', { 'id': dato.id }) }}" class="btn btn-default btn-xs">Agregar Pago</a>
+                                    </th>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

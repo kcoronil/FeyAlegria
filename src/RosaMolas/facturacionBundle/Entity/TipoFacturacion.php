@@ -15,6 +15,11 @@ class TipoFacturacion
     private $nombre;
 
     /**
+     * @var boolean
+     */
+    private $activo = true;
+
+    /**
      * @var integer
      */
     private $id;
@@ -44,6 +49,29 @@ class TipoFacturacion
     }
 
     /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return Factura
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
+    }
+
+    /**
      * Get id
      *
      * @return integer 
@@ -51,5 +79,9 @@ class TipoFacturacion
     public function getId()
     {
         return $this->id;
+    }
+    public function __toString()
+    {
+        return $this->nombre;
     }
 }

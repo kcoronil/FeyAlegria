@@ -33,7 +33,7 @@ class ConceptosFactura
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $tipoMontoConceptos;
+    public $tipoMontoConceptos;
 
     /**
      * Constructor
@@ -153,13 +153,13 @@ class ConceptosFactura
         return $this->tipoMontoConceptos;
     }
 
-    public function setTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos = null)
+    /*public function setTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos = null)
     {
         $this->tipoMontoConceptos[] = $tipoMontoConceptos;
-    }
+    }*/
 
     /**
-     * Add periodoEscolarCursoAlumno
+     * Add tipoMontoConceptos
      *
      * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
      * @return ConceptosFactura

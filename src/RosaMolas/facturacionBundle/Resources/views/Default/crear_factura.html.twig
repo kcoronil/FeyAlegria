@@ -60,24 +60,7 @@
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-6 col-sm-offset-3">
-                    {{ form_start(form) }}
-                        {{ form_row(form.nombre) }}
-                        {% if form.conceptosFactura is defined %}
-                            <div id="cont_conceptos" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.conceptosFactura, 'eliminar concepto')|escape }}">
-                                {% for widget in form.conceptosFactura.children %}
-                                    {{ _self.widget_prototype(widget, 'eliminar concepto') }}
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-sm-12 text-center ">
-                                <a class="btn-add btn btn-default" id="cont_montos" data-target="cont_conceptos">Agregar Concepto</a>
-                            </div>
-                        {% endif %}
-                        <div class="col-sm-12 text-center ">
-                            <br>
-                            {{ form_row(form.guardar) }}
-                        </div>
-                    {{ form_end(form) }}
+                    {{ form(form) }}
                 </div>
             </div>
         {% endif %}

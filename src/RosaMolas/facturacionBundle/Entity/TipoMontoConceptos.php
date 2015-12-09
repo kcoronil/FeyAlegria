@@ -72,7 +72,6 @@ class TipoMontoConceptos
     public function setTipoMonto(\RosaMolas\facturacionBundle\Entity\TipoMontos $tipoMonto = null)
     {
         $this->tipoMonto = $tipoMonto;
-
         return $this;
     }
 
