@@ -28,16 +28,17 @@
         <br>
         <div class="text-left">
             <p>&nbsp;&nbsp;&nbsp;&nbsp;La suscrita Directora de la Unidad Educativa Fe y Alegria <strong>"Maria Rosa Molas"</strong>
-                Hace constar por medio de la presente que el Escolar <strong>NOMBRE DE ALUMNO</strong> de
-                <strong>00</strong> años de edad cursa en este plantel el <strong>GRADO</strong> de la rama de
-                <strong>EDUCACION ETAPA</strong> durante el Año Escolar PERIODO</p>
+                Hace constar por medio de la presente que el Escolar <strong>{{ datos.0.estudiante.primerNombre|upper }} {{ datos.0.estudiante.primerApellido|upper }}</strong> de
+                <strong>{{ edad }}</strong> años de edad cursa en este plantel el <strong>{{ datos.3.curso.nombre}} "{{ datos.4.seccion.nombre}}</strong> de la rama de
+                <strong>EDUCACION {{ datos.5.etapa.nombre|upper }}</strong> durante el Año Escolar {{ datos.2.periodo.nombre|upper }}</p>
             <br>
             <br>
             <br>
             <br>
             <div class="text-left">
                 <br>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;Constancia que se expide a peticion de la parte interesada en Caracas a los XX dias del mes de <strong>XXX</strong> de <strong>XXX</strong></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;Constancia que se expide a peticion de la parte interesada en Caracas a los <strong>{{ fecha|date('d')}}</strong> dias del mes de
+                    <strong>{{ fecha|date('F')}}</strong> de <strong>{{ fecha|date('Y')}}</strong></p>
             </div>
             <div class="text-center">
             <br>

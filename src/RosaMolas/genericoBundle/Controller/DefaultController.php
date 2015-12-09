@@ -2,20 +2,140 @@
 
 namespace RosaMolas\genericoBundle\Controller;
 
+use RosaMolas\facturacionBundle\Entity\DetalleFactura;
+use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Form\PagosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Test\inicialBundle\Entity\TrazaEventosUsuarios;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
-use RosaMolas\usuariosBundle\Form\UsuariosType;
-use RosaMolas\usuariosBundle\Form\UsuariosTypeSimple;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name)
+    public function indexAction(Request $request)
     {
-        return $this->render('genericoBundle:Default:index.html.twig', array('name' => $name));
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->leftJoin('alumno.representante', 'usuario')
+            ->where('usuario.activo = true')
+            ->where('usuario.principal = true')
+            ->andwhere('alumno.activo = true')
+            ->orderBy('alumno.id', 'DESC')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
+
+        print_r($html);
+        exit;
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+            )
+        );
+    }
+    public function constancia_inscripcionAction($id, Request $request)
+    {
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno as estudiante', 'periodo_alumno as periodo_estudiante', 'cursos as curso', 'secciones as seccion',
+                'periodos as periodo', 'etapas as etapa')
+            ->where('alumno.id = :id')
+            ->andwhere('alumno.activo = true')
+            ->innerJoin('alumnosBundle:PeriodoEscolarCursoAlumno', 'periodo_alumno', 'WITH', 'alumno.id = periodo_alumno.alumno')
+            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodos', 'WITH', 'periodo_alumno.periodoEscolar = periodos.id')
+            ->innerJoin('inicialBundle:CursoSeccion', 'periodo_curso', 'WITH', 'periodo_alumno.cursoSeccion = periodo_curso.id')
+            ->innerJoin('inicialBundle:Curso', 'cursos', 'WITH', 'periodo_curso.curso = cursos.id')
+            ->innerJoin('inicialBundle:Seccion', 'secciones', 'WITH', 'periodo_curso.seccion = secciones.id')
+            ->innerJoin('inicialBundle:Etapa', 'etapas', 'WITH', 'periodo_curso.etapa = etapas.id')
+
+            ->setParameter('id',$id)
+            ->getQuery();
+        $datos = $query->getArrayResult();
+
+        $fecha_nacimiento = $datos[0]['estudiante']['fechaNacimiento'];
+        $fecha_actual = new \DateTime("now");
+        $fecha_actual->getTimezone();
+        $diff = $fecha_actual->diff($fecha_nacimiento);
+        $edad = $diff->y;
+
+        $html = $this->renderView('genericoBundle:Default:constancia_inscripcion.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos, 'edad'=>$edad, 'fecha'=>$fecha_actual));
+
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+            )
+        );
+    }
+    public function constancia_estudiosAction($id, Request $request)
+    {
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno as estudiante', 'periodo_alumno as periodo_estudiante', 'cursos as curso', 'secciones as seccion',
+                'periodos as periodo', 'etapas as etapa')
+            ->where('alumno.id = :id')
+            ->andwhere('alumno.activo = true')
+            ->innerJoin('alumnosBundle:PeriodoEscolarCursoAlumno', 'periodo_alumno', 'WITH', 'alumno.id = periodo_alumno.alumno')
+            ->innerJoin('inicialBundle:PeriodoEscolar', 'periodos', 'WITH', 'periodo_alumno.periodoEscolar = periodos.id')
+            ->innerJoin('inicialBundle:CursoSeccion', 'periodo_curso', 'WITH', 'periodo_alumno.cursoSeccion = periodo_curso.id')
+            ->innerJoin('inicialBundle:Curso', 'cursos', 'WITH', 'periodo_curso.curso = cursos.id')
+            ->innerJoin('inicialBundle:Seccion', 'secciones', 'WITH', 'periodo_curso.seccion = secciones.id')
+            ->innerJoin('inicialBundle:Etapa', 'etapas', 'WITH', 'periodo_curso.etapa = etapas.id')
+
+            ->setParameter('id',$id)
+            ->getQuery();
+        $datos = $query->getArrayResult();
+
+        $fecha_nacimiento = $datos[0]['estudiante']['fechaNacimiento'];
+        $fecha_actual = new \DateTime("now");
+        $fecha_actual->getTimezone();
+        $diff = $fecha_actual->diff($fecha_nacimiento);
+        $edad = $diff->y;
+
+        $html = $this->renderView('genericoBundle:Default:constancia_estudios.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos, 'edad'=>$edad, 'fecha'=>$fecha_actual));
+
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+            )
+        );
+    }
+    public function lista_alumnoAction(Request $request)
+    {
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->leftJoin('alumno.representante', 'usuario')
+            ->where('usuario.activo = true')
+            ->where('usuario.principal = true')
+            ->andwhere('alumno.activo = true')
+            ->orderBy('alumno.id', 'DESC')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+        $html = $this->renderView('genericoBundle:Default:listado_alumnos.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
+
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+            )
+        );
     }
     public function agregar_pagoAction($id, request $request)
     {
@@ -180,9 +300,11 @@ class DefaultController extends Controller
 
     public function inscripcion_completaAction(Request $request)
     {
+        $tipo_factura = $this->getDoctrine()->getRepository('FacturacionBundle:Factura')
+            ->find(1);
         $session = $this->getRequest()->getSession();
         if (!$session->get('representante_inscripcion')) {
-            $remover = array('guardar_crear');
+            $remover = array('guardar_crear', 'omitir');
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
 
             if (array_key_exists('representante', $resultado)) {
@@ -202,6 +324,27 @@ class DefaultController extends Controller
                     array_push($array_alumnos, $resultado['alumnos']);
                     $session->set("alumnos_inscripcion",$array_alumnos);
 
+                    $nueva_fact = New Factura();
+                    $monto_factura = 0;
+                    $nueva_fact->setActivo(true);
+                    $nueva_fact->setPeriodoEscolarCursoAlumnos($resultado['alumnos']);
+                    $nueva_fact->setTipoFactura($tipo_factura);
+                    $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+                    $nueva_fact->setPagada(false);
+                    foreach($nueva_fact->getTipoFactura()->getConceptosFactura() as $concepto_tipo){
+                        $nueva_fact_detalle = New DetalleFactura();
+                        $nueva_fact_detalle->setActivo(true);
+                        $nueva_fact_detalle->setConcepto($concepto_tipo);
+                        $nueva_fact_detalle->setFactura($nueva_fact);
+                        $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+                        $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
+                        $nueva_fact->addDetalleFactura($nueva_fact_detalle);
+                    }
+                    $nueva_fact->setMonto($monto_factura);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($nueva_fact);
+                    $em->flush();
+
                     if(array_key_exists('alumnos_finalizado', $resultado)){
                         $session->set("alumnos_finalizado", true);
                         return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
@@ -215,19 +358,21 @@ class DefaultController extends Controller
                 if (!$session->get('representantes_adic_finalizado')) {
                     $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
                     if (array_key_exists('representante', $resultado)) {
-                        if(!$session->get('representantes_adic_inscripcion')){
-                            $session->set("representantes_adic_inscripcion", array());
+                        if($resultado['representante']!='') {
+                            if (!$session->get('representantes_adic_inscripcion')) {
+                                $session->set("representantes_adic_inscripcion", array());
+                            }
+                            $array_representantes_adic = $session->get('alumnos_inscripcion');
+                            array_push($array_representantes_adic, $resultado['representante']);
+                            $session->set("representantes_adic_inscripcion", $array_representantes_adic);
                         }
-                        $array_representantes_adic = $session->get('alumnos_inscripcion');
-                        array_push($array_representantes_adic, $resultado['representante']);
-                        $session->set("representantes_adic_inscripcion",$array_representantes_adic);
-
                         if(array_key_exists('representantes_finalizado', $resultado)){
                             $session->set("representantes_adic_finalizado", true);
                             return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+
                         }
-                        else{
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    else{
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                         }
                     }
                 }
@@ -237,6 +382,8 @@ class DefaultController extends Controller
                     $session->remove('alumnos_finalizado');
                     $session->remove('representantes_adic_inscripcion');
                     $session->remove('representantes_adic_finalizado');
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Inscripción realizada con éxito');
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
             }

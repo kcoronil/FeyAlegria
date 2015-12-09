@@ -42,6 +42,8 @@
                 if($('#cont_contacto').children().length<1) {
                     agregar_form($('#contacto-add'));
                 }
+            {% endif %}
+            {% if accion == 'Crear Estudiante' %}
                 if($('#cont_curso').children().length<1) {
                     agregar_form($('#curso-add'));
                 }
@@ -127,15 +129,19 @@
                             </div>
                         {% endif %}
                         <div class="col-sm-12 text-center">
-                            {{ form_row(form.guardar) }}
                             {% if form.guardar_crear is defined %}
                                 {{ form_row(form.guardar_crear) }}
                             {% endif %}
+                            {{ form_row(form.guardar) }}
+                            {% if form.omitir is defined %}
+                                {{ form_row(form.omitir) }}
+                            {% endif %}
+
+
                         </div>
                     {{ form_end(form) }}
                     {% else %}
                         {{ form_start(form) }}
-                            {{ form_row(form.usuario) }}
                             {{ form_row(form.cedula) }}
                             {{ form_row(form.cedulaEstudiantil) }}
                             {{ form_row(form.primerApellido) }}
@@ -189,9 +195,7 @@
                                 {% for estudiante in app.session.get('alumnos_inscripcion') %}
                                     <tr>
                                         <th>nombre:</th>
-                                        <td>{{ estudiante.primerNombre }} estudiante.primerApellido }}</td>
-                                        <th>Grado:</th>
-                                        <td>estudiante.periodoEscolarCurso}}</td>
+                                        <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

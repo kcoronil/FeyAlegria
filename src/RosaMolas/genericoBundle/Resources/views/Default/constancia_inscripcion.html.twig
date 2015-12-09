@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="container">
-    <div style= "border: solid 1px ">
+    <div>
         <div id="cabecera">
             <div id="cabecera2">
                 <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
@@ -21,40 +21,32 @@
         <br>
         <div class="text-right">Rif.J00133027-5</div>
         <br>
+        <div class="text-center"><h4>CONSTANCIA DE INSCRIPCIÓN</h4></div>
         <br>
-        <div class="text-center"><h4>CONSTANCIA DE ESTUDIO</h4></div>
-        <br>
-        <br>
-        <br>
-        <div class="text-left">
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;La suscrita Directora de la Unidad Educativa Fe y Alegria <strong>"Maria Rosa Molas"</strong>
-                Hace constar por medio de la presente que el Escolar <strong>NOMBRE DE ALUMNO</strong> de
-                <strong>00</strong> años de edad cursa en este plantel el <strong>GRADO</strong> de la rama de
-                <strong>EDUCACION ETAPA</strong> durante el Año Escolar PERIODO</p>
+        <div class="text-center">
+            <p>La suscrita Directora de la Unidad Educativa Fe y Alegria <strong>"Maria Rosa Molas"</strong></p>
+            <p><strong>Código DEA : PD05220105</strong></p>
+            <p>Hace constar por medio de la presente que el (la) alumno (a)</p>
             <br>
-            <br>
-            <br>
+            <h3><strong>{{ datos.0.estudiante.primerNombre|upper }} {{ datos.0.estudiante.primerApellido|upper }}</strong></h3>
+            <p>DE <strong>{{ edad }}</strong> años de edad</p>
             <br>
             <div class="text-left">
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;Ha sido <strong>Inscrito (a) </strong>en este Plantel para cursar el <strong>{{ datos.3.curso.nombre}} en la SECCION "{{ datos.4.seccion.nombre}}"</strong> de <strong>Educación {{ datos.5.etapa.nombre|upper }}</strong> para el año escolar <strong>{{ datos.2.periodo.nombre|upper }}</strong></p>
                 <br>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;Constancia que se expide a peticion de la parte interesada en Caracas a los XX dias del mes de <strong>XXX</strong> de <strong>XXX</strong></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;Constancia que se expide a petición de la parte interesada en Caracas a los <strong>{{ fecha|date('d')}}</strong> dias del mes de <strong>{{ fecha|date('F')}}</strong> de <strong>{{ fecha|date('Y')}}</strong></p>
             </div>
-            <div class="text-center">
-            <br>
-            <br>
             <br>
             <p>Atentamente,</p>
             <br>
             <br>
-
-                <p>Lic Alejandra R de Osorio</p>
-                <p>Directora</p>
-            </div>
+            <p>Lic Alejandra R de Osorio</p>
+            <p>Directora</p>
             <br>
             <br>
-            <div class="text-center">
+            <br>
+            <br>
             <p> Urbanizacion Simón Bolivar Frente al Bloque 20 Caracas - Venezuela :: Teléfonos: 0212-870-25-98 / 0212-873-62-50 Email: mariamolasfya@hotmail.com mariamolasfya@gmail.com</p>
-            </div>
         </div>
     </div>
 </div>

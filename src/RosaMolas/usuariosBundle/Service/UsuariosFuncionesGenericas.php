@@ -43,6 +43,9 @@ class UsuariosFuncionesGenericas extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
+                if ($formulario->get('omitir')->isClicked()) {
+                    return array('representante'=>'', 'representantes_finalizado'=>true);
+                }
                 if($alumnos){
                     foreach($alumnos as $alumno) {
                         $alumno_query = $this->getDoctrine()

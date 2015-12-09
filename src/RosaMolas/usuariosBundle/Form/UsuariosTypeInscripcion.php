@@ -39,8 +39,10 @@ class UsuariosTypeInscripcion extends AbstractType
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('activo', 'checkbox', array('required'=>false))
-            ->add('guardar', 'submit', array('label'=>'Continuar', 'attr'=>array('class'=>'data-first-button btn-default')))
-            ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Agregar Otro', 'class'=>'data-last-button btn-default')))
+            ->add('guardar_crear', 'submit', array('label'=>'Agregar Otro', 'attr'=>array('class'=>'data-first-button btn-default')))
+            ->add('guardar', 'submit', array('label'=>'Continuar', 'attr'=>array('class'=>'btn-default')))
+            ->add('omitir', 'submit', array('validation_groups' => false,'label'=>'Omitir', 'attr'=>array('onclick'=>'for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)', 'class'=>'data-last-button btn-default')))
+
         ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

@@ -1,6 +1,5 @@
 <?php
 namespace Test\inicialBundle\Controller;
-use RosaMolas\facturacionBundle\Entity\TipoFacturacion;
 use RosaMolas\facturacionBundle\Form\ConceptosFacturaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,23 +9,18 @@ use RosaMolas\genericoBundle\Entity\Elementos;
 use RosaMolas\genericoBundle\Entity\Eventos;
 use Test\inicialBundle\Entity\CursoSeccion;
 use Test\inicialBundle\Entity\Etapa;
-use Test\inicialBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\usuariosBundle\Entity\Permisos;
-use RosaMolas\usuariosBundle\Entity\RepresentanteContacto;
 use Test\inicialBundle\Entity\Seccion;
 use RosaMolas\usuariosBundle\Entity\TipoContacto;
 use RosaMolas\usuariosBundle\Entity\TipoUsuario;
 use RosaMolas\genericoBundle\Form\BancosType;
 use Test\inicialBundle\Entity\PeriodoEscolar;
-use Test\inicialBundle\Entity\TrazaEventosUsuarios;
 use Test\inicialBundle\Form\CursoSeccionType;
 use Test\inicialBundle\Form\ElementosType;
 use Test\inicialBundle\Form\EtapaType;
 use Test\inicialBundle\Form\EventosType;
-use Test\inicialBundle\Form\PeriodoEscolarCursoType;
 use Test\inicialBundle\Form\PeriodoEscolarType;
 use RosaMolas\usuariosBundle\Form\PermisosType;
-use RosaMolas\usuariosBundle\Form\RepresentanteContactoType;
 use Test\inicialBundle\Form\SeccionType;
 use RosaMolas\usuariosBundle\Form\TipoContactoType;
 use RosaMolas\usuariosBundle\Form\TipoUsuarioType;
@@ -36,9 +30,21 @@ use RosaMolas\usuariosBundle\Entity\PerfilUsuario;
 use RosaMolas\usuariosBundle\Form\PerfilUsuarioType;
 use Test\inicialBundle\Entity\Curso;
 use Test\inicialBundle\Form\CursoType;
-use Test\inicialBundle\Form\TrazaEventosUsuariosType;
+
 class DefaultController extends Controller
 {
+    public function estudianteAction(Request $request){
+        return $this->render('inicialBundle:Default:estudiante.html.twig');
+
+    }
+    public function representanteAction(Request $request){
+        return $this->render('inicialBundle:Default:representante.html.twig');
+
+    }
+    public function administradorAction(Request $request){
+        return $this->render('inicialBundle:Default:administrador.html.twig');
+
+    }
     public function indexAction(request $request)
     {
         $session = $this->getRequest()->getSession();

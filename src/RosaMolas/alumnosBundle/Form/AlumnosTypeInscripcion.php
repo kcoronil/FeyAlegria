@@ -24,7 +24,7 @@ class AlumnosTypeInscripcion extends AbstractType
     {
         $builder
             ->add('usuario','entity', array('label'=>'Representante', 'required' => true,
-                'class' => 'inicialBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false))
+                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false))
             ->add('cedula')
             ->add('cedulaEstudiantil')
             ->add('primerApellido')
@@ -38,7 +38,7 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('periodoEscolarCursoAlumno', 'collection', array('type'=>new PeriodoEscolarCursoAlumnoType('Seleccionar Curso'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
-            ->add('tipoFacturacion','entity', array('required' => true,
+            ->add('tipoFacturacion','entity', array('required' => true,'attr'=>array('style'=>"display: none"), 'label'=>false,
                 'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')

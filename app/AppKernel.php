@@ -18,6 +18,8 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
             new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
+            new Ob\HighchartsBundle\ObHighchartsBundle(),
+            new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new Test\inicialBundle\inicialBundle(),
             new RosaMolas\alumnosBundle\alumnosBundle(),
             new RosaMolas\genericoBundle\genericoBundle(),

@@ -31,7 +31,13 @@ class AlumnosFuncionesGenericas extends Controller
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
                 $p->setActivo(true);
-                /**/
+                $periodo_activo = $this->getDoctrine()
+                    ->getRepository('inicialBundle:PeriodoEscolar')
+                    ->findOneBy(array('activo'=>true));
+                foreach($p->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
+                    $periodo_alumno->setPeriodoEscolar($periodo_activo);
+                    $periodo_alumno->setActivo(true);
+                }
                 if($usuario){
                     $usuario_query = $this->getDoctrine()
                         ->getRepository('usuariosBundle:Usuarios')

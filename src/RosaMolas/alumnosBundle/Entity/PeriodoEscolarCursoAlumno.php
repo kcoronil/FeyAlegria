@@ -137,4 +137,8 @@ class PeriodoEscolarCursoAlumno
     {
         return $this->alumno;
     }
+    public function __toString()
+    {
+        return $this->getCursoSeccion()->getCurso()->getNombre().$this->getCursoSeccion()->getSeccion()->getNombre();
+    }
 }

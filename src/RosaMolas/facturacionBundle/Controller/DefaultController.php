@@ -28,18 +28,6 @@ class DefaultController extends Controller
             $tipo_factura=$formulario["tipoFactura"]->getData();
             $alumnos_activos = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
                 ->findBy(array('activo' => true), array('cursoSeccion' => 'ASC'));
-            /*$p = $this->getDoctrine()
-                ->getRepository('facturacionBundle:TipoFactura')
-                ->find($tipo_factura->getId());
-
-            $hasTipoMonto = function($tipoMonto) {
-                return function(TipoMontoConceptos $tipoMontoConceptos) use ($tipoMonto) {
-                    return null !== $tipoMontoConceptos->getTipoMonto($tipoMonto);
-                };
-            };
-
-            $criteria = Criteria::create()
-                ->where(Criteria::expr()->eq("id", "1"));*/
 
             foreach ($alumnos_activos as $alumnos_act) {
                 $nueva_fact = New Factura();
@@ -54,9 +42,6 @@ class DefaultController extends Controller
                     $nueva_fact_detalle->setActivo(true);
                     $nueva_fact_detalle->setConcepto($concepto_tipo);
                     $nueva_fact_detalle->setFactura($nueva_fact);
-                    //$a = new ConceptosFactura();
-                    //print_r($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
-                    //$a->getTipoMontoConceptos()->filter($hasTipoMonto('regular'));
                     $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
                     $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
                     $nueva_fact->addDetalleFactura($nueva_fact_detalle);
@@ -89,7 +74,6 @@ class DefaultController extends Controller
             ->setParameter('id',$id)
             ->getQuery();
         $datos = $query->getArrayResult();
-        print_r($datos);
 
 
         if(!array_key_exists('1', $datos)){

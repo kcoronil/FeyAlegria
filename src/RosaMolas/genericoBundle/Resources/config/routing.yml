@@ -1,6 +1,14 @@
 generico_homepage:
-    path:     /hello/{name}
+    path:     /test_pdf
     defaults: { _controller: genericoBundle:Default:index }
+
+generico_constancia_inscripcion:
+    path:     /constancia_inscripcion/{id}
+    defaults: { _controller: genericoBundle:Default:constancia_inscripcion }
+
+generico_constancia_estudios:
+    path:     /constancia_estudios/{id}
+    defaults: { _controller: genericoBundle:Default:constancia_estudios }
 
 generico_inscripcion_completa:
     path:     /inscripcion

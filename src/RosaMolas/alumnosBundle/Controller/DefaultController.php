@@ -2,7 +2,7 @@
 
 namespace RosaMolas\alumnosBundle\Controller;
 
-use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
+
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
@@ -258,6 +258,7 @@ class DefaultController extends Controller
             ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
             ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
+            ->where('usuario.principal = true')
             ->andwhere('alumno.activo = true')
             ->orderBy('alumno.id', 'DESC')
             ->getQuery();
