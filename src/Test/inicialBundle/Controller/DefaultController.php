@@ -736,4 +736,17 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>'Borrar Grado', 'atajo'=>$atajo));
     }
+    public function estudianteAction(Request $request){
+        return $this->render('inicialBundle:Default:estudiante.html.twig');
+
+    }
+    public function representanteAction(Request $request){
+        return $this->render('inicialBundle:Default:representante.html.twig');
+
+    }
+    public function administradorAction(Request $request){
+        return $this->render('inicialBundle:Default:administrador.html.twig');
+
+    }    
+
 }
