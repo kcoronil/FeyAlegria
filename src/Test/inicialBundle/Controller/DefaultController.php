@@ -33,18 +33,6 @@ use Test\inicialBundle\Form\CursoType;
 
 class DefaultController extends Controller
 {
-    public function estudianteAction(Request $request){
-        return $this->render('inicialBundle:Default:estudiante.html.twig');
-
-    }
-    public function representanteAction(Request $request){
-        return $this->render('inicialBundle:Default:representante.html.twig');
-
-    }
-    public function administradorAction(Request $request){
-        return $this->render('inicialBundle:Default:administrador.html.twig');
-
-    }
     public function indexAction(request $request)
     {
         $session = $this->getRequest()->getSession();

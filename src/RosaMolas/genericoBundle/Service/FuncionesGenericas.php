@@ -262,4 +262,21 @@ class FuncionesGenericas extends Controller
         $this->get('mailer')->send($mensaje_email);
         return true;
     }
+    public function emitir_recibo($id, $request){
+        $facturas = $this->getDoctrine()
+            ->getRepository('facturacionBundle:Factura')
+            ->find($id);
+
+        $pago = $this->getDoctrine()
+            ->getRepository('genericoBundle:Pagos')
+            ->findOneBy(array('factura'=>$id));
+
+        $fecha_actual = new \DateTime("now");
+        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
+        print_r($html);
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+    }
 }

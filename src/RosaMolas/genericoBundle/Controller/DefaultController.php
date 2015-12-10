@@ -398,6 +398,7 @@ class DefaultController extends Controller
                         }
                         $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
                         if (array_key_exists('pago', $resultado)) {
+
                             foreach($session->get('facturas') as $fact){
                                 if($fact->getId()==$resultado['factura']->getId()){
                                     $fact->setPagada(true);
