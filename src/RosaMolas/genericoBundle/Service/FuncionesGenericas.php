@@ -2,6 +2,10 @@
 
 namespace RosaMolas\genericoBundle\Service;
 
+use RosaMolas\facturacionBundle\Entity\DetalleFactura;
+use RosaMolas\facturacionBundle\Entity\Factura;
+use RosaMolas\genericoBundle\Entity\Pagos;
+use RosaMolas\genericoBundle\Form\PagosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Test\inicialBundle\Entity\TrazaEventosUsuarios;
@@ -186,5 +190,64 @@ class FuncionesGenericas extends Controller
         $manager->flush();
 
         return array('resultado' => true);
+    }
+    public function crear_factura($periodo_alumnos, $tipo_factura)
+    {
+        $nueva_fact = New Factura();
+        $monto_factura = 0;
+        $nueva_fact->setActivo(true);
+        $nueva_fact->setPeriodoEscolarCursoAlumnos($periodo_alumnos);
+        $nueva_fact->setTipoFactura($tipo_factura);
+        $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
+        $nueva_fact->setPagada(false);
+        foreach ($nueva_fact->getTipoFactura()->getConceptosFactura() as $concepto_tipo) {
+            $nueva_fact_detalle = New DetalleFactura();
+            $nueva_fact_detalle->setActivo(true);
+            $nueva_fact_detalle->setConcepto($concepto_tipo);
+            $nueva_fact_detalle->setFactura($nueva_fact);
+            $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+            $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
+            $nueva_fact->addDetalleFactura($nueva_fact_detalle);
+
+        }
+        $nueva_fact->setMonto($monto_factura);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($nueva_fact);
+        $em->flush();
+        return array('factura'=>$nueva_fact);
+    }
+    public function agregar_pago_generico($id, $request)
+    {
+        $factura = $this->getDoctrine()
+            ->getRepository('facturacionBundle:Factura')
+            ->find($id);
+        $estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
+        $p = new Pagos();
+        $p->setFactura($factura);
+        $p->setFechaRegistro(new \DateTime("now"));
+        $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+                $p->getFactura()->setPagada(true);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Pago creado con éxito'
+                );
+
+                if ($formulario->get('guardar')->isClicked()){
+                    return array('pago'=>$p,'factura'=>$p->getFactura());
+                }
+                /*if ($formulario->get('guardar_crear')->isClicked()){
+                    return $this->redirect($this->generateUrl('generico_agregar_pago'));
+                }*/
+            }
+        }
+        return array('form'=>$formulario->createView(), 'accion'=>'Agregar Pago', 'factura'=>$factura,
+            'estudiante'=>$estudiante);
     }
 }

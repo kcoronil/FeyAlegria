@@ -1,5 +1,5 @@
 generico_homepage:
-    path:     /test_pdf
+    path:     /test_pdf/{id}
     defaults: { _controller: genericoBundle:Default:index }
 
 generico_constancia_inscripcion:

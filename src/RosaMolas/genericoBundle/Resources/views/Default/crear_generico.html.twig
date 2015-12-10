@@ -140,7 +140,8 @@
 
                         </div>
                     {{ form_end(form) }}
-                    {% else %}
+                    {% endif %}
+                    {% if accion == 'Crear Estudiante' %}
                         {{ form_start(form) }}
                             {{ form_row(form.cedula) }}
                             {{ form_row(form.cedulaEstudiantil) }}
@@ -165,6 +166,25 @@
                                 {{ form_row(form.guardar_crear) }}
                             </div>
                         {{ form_end(form) }}
+                    {% endif %}
+                    {% if accion == 'Agregar Pago' %}
+                        {{ form(form) }}
+                        <table class="table table-bordered table-hover table-responsive">
+                            <tr>
+                                <th colspan="2" class="text-center">Datos de la Factura</th>
+                            </tr>
+                            <tr>
+                                <td>Estudiante: {{ estudiante.primerNombre }} {{ estudiante.primerApellido }} </td>
+                                <td>{{ estudiante.cedula }}</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2" class="text-center">Factura: </th>
+                            </tr>
+                            <tr>
+                                <td>{{ factura.fecha|date('d/m/Y')}}</td>
+                                <td>{{ factura.monto }}</td>
+                            </tr>
+                        </table>
                     {% endif %}
                     {% if app.session.get('representante_inscripcion') %}
                         <table class="table table-bordered table-responsive table-hover">

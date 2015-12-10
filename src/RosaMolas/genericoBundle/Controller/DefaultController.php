@@ -2,43 +2,31 @@
 
 namespace RosaMolas\genericoBundle\Controller;
 
+use RosaMolas\alumnosBundle\Entity\Alumnos;
+use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\facturacionBundle\Entity\DetalleFactura;
 use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Form\PagosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use RosaMolas\usuariosBundle\Entity\Usuarios;
 use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-    public function indexAction(Request $request)
+    public function indexAction($id, Request $request)
     {
-        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
-            ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.representante', 'usuario')
-            ->where('usuario.activo = true')
-            ->where('usuario.principal = true')
-            ->andwhere('alumno.activo = true')
-            ->orderBy('alumno.id', 'DESC')
-            ->getQuery();
+        $facturas = $this->getDoctrine()
+            ->getRepository('facturacionBundle:Factura')
+            ->find($id);
 
-        $datos = $query->getArrayResult();
-
-        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
-
+        $fecha_actual = new \DateTime("now");
+        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas));
         print_r($html);
-        exit;
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
-            array(
-                'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'attachment; filename="file.pdf"'
-            )
-        );
+            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
     }
     public function constancia_inscripcionAction($id, Request $request)
     {
@@ -300,11 +288,9 @@ class DefaultController extends Controller
 
     public function inscripcion_completaAction(Request $request)
     {
-        $tipo_factura = $this->getDoctrine()->getRepository('FacturacionBundle:Factura')
-            ->find(1);
         $session = $this->getRequest()->getSession();
         if (!$session->get('representante_inscripcion')) {
-            $remover = array('guardar_crear', 'omitir');
+            $remover = array('guardar_crear');
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
 
             if (array_key_exists('representante', $resultado)) {
@@ -320,30 +306,19 @@ class DefaultController extends Controller
                     if(!$session->get('alumnos_inscripcion')){
                         $session->set("alumnos_inscripcion", array());
                     }
+
                     $array_alumnos = $session->get('alumnos_inscripcion');
                     array_push($array_alumnos, $resultado['alumnos']);
                     $session->set("alumnos_inscripcion",$array_alumnos);
 
-                    $nueva_fact = New Factura();
-                    $monto_factura = 0;
-                    $nueva_fact->setActivo(true);
-                    $nueva_fact->setPeriodoEscolarCursoAlumnos($resultado['alumnos']);
-                    $nueva_fact->setTipoFactura($tipo_factura);
-                    $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
-                    $nueva_fact->setPagada(false);
-                    foreach($nueva_fact->getTipoFactura()->getConceptosFactura() as $concepto_tipo){
-                        $nueva_fact_detalle = New DetalleFactura();
-                        $nueva_fact_detalle->setActivo(true);
-                        $nueva_fact_detalle->setConcepto($concepto_tipo);
-                        $nueva_fact_detalle->setFactura($nueva_fact);
-                        $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
-                        $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
-                        $nueva_fact->addDetalleFactura($nueva_fact_detalle);
+                    $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
+                    $fact = $this->get('funciones_genericas')->crear_factura($resultado['alumnos']->getPeriodoEscolarCursoAlumno()[0], $tipo_factura);
+                    if(!$session->get('facturas')){
+                        $session->set("facturas", array());
                     }
-                    $nueva_fact->setMonto($monto_factura);
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($nueva_fact);
-                    $em->flush();
+                    $array_facturas = $session->get('facturas');
+                    array_push($array_facturas, $fact['factura']);
+                    $session->set("facturas",$array_facturas);
 
                     if(array_key_exists('alumnos_finalizado', $resultado)){
                         $session->set("alumnos_finalizado", true);
@@ -377,14 +352,44 @@ class DefaultController extends Controller
                     }
                 }
                 else{
-                    $session->remove('representante_inscripcion');
-                    $session->remove('alumnos_inscripcion');
-                    $session->remove('alumnos_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_finalizado');
-                    $this->get('session')->getFlashBag()->add(
-                        'success', 'Inscripción realizada con éxito');
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
+
+                    if (!$session->get('pagos_finalizado')) {
+                        $cant = 0;
+                        foreach($session->get('facturas') as $facturas){
+
+                            if($facturas->getPagada() == false){
+                                $factura_form =$facturas;
+                                break;
+                            }
+                            else
+                            {
+                               $cant=$cant+1;
+                            }
+                        }
+                        if (sizeof($session->get('facturas')) == $cant) {
+                            $session->set("pagos_finalizado", true);
+                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        }
+                        $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
+                        if (array_key_exists('pago', $resultado)) {
+                            foreach($session->get('facturas') as $fact){
+                                if($fact->getId()==$resultado['factura']->getId()){
+                                    $fact->setPagada(true);
+                                }
+                            }
+                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        }
+                    }
+                    else{
+                        $session->remove('representante_inscripcion');
+                        $session->remove('alumnos_inscripcion');
+                        $session->remove('alumnos_finalizado');
+                        $session->remove('representantes_adic_inscripcion');
+                        $session->remove('representantes_adic_finalizado');
+                        $this->get('session')->getFlashBag()->add(
+                            'success', 'Inscripción realizada con éxito');
+                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                    }
                 }
             }
         }

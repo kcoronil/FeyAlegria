@@ -11,52 +11,58 @@
     {% block extra_head %} {% endblock %}
 </head>
 <body>
-<div class="container">
-    <div style= "border: solid 1px ">
-        <div id="cabecera">
-            <div id="cabecera2">
-                <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
-            </div>
-        </div>
-        <br>
-        <div class="text-right">Rif.J00133027-5</div>
-        <br>
-        <br>
-        <div class="text-center"><h4>CONSTANCIA DE ESTUDIO</h4></div>
-        <br>
-        <br>
-        <br>
-        <div class="text-left">
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;La suscrita Directora de la Unidad Educativa Fe y Alegria <strong>"Maria Rosa Molas"</strong>
-                Hace constar por medio de la presente que el Escolar <strong>NOMBRE DE ALUMNO</strong> de
-                <strong>00</strong> años de edad cursa en este plantel el <strong>GRADO</strong> de la rama de
-                <strong>EDUCACION ETAPA</strong> durante el Año Escolar PERIODO</p>
+    <div class="container">
+        <div>
+            <table class="table">
+                <tr>
+                    <td>
+                        <div id="cabecera">
+                            <div id="cabecera2">
+                                <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>FECHA DE INSCRIPCION:</td><td>(FECHA)</td>
+                </tr>
+            </table>
+            <br>
+            <div class="text-center"><h4>RECIBO DE {{ facturas.tipoFactura.nombre|upper }} AÑO {{ facturas.periodoEscolarCursoAlumnos.periodoEscolar.nombre}}</h4></div>
             <br>
             <br>
+            <table class="table table-bordered">
+                <tr>
+                    <td>Alumno:</td>
+                    <td>
+                        <h3 class="text-center"><strong>{{ facturas.periodoEscolarCursoAlumnos.alumno.primerNombre|upper }} {{ facturas.periodoEscolarCursoAlumnos.alumno.primerApellido|upper }}</strong></h3>
+                    </td>
+                    <td>GRADO: </td>
+                    <td>{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.curso.nombre}}{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.seccion.nombre}}</td>
+                </tr>
+            </table>
+            <table class="table table-bordered">
+                <tr>
+                    <td>DESCRIPCION DEL PAGO</td>
+                    <td>MONTO</td>
+                </tr>
+                {% for concepto in facturas.tipoFactura.conceptosFactura %}
+                <tr>
+                    <td>{{ concepto.nombre }}</td>
+                    <td>{{ concepto.tipoMontoConceptos.0.monto}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br>
+            <table class="table table-bordered">
+                <tr>
+                    <td>BANCO: ((baNCO))</td>
+                    <td>No DEPOSITO ((DEPOSITO))</td>
+                    <td>TOTAL DEPOSITO: {{ facturas.monto }}</td>
+                </tr>
+            </table>
             <br>
             <br>
-            <div class="text-left">
-                <br>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;Constancia que se expide a peticion de la parte interesada en Caracas a los XX dias del mes de <strong>XXX</strong> de <strong>XXX</strong></p>
-            </div>
-            <div class="text-center">
-            <br>
-            <br>
-            <br>
-            <p>Atentamente,</p>
-            <br>
-            <br>
-
-                <p>Lic Alejandra R de Osorio</p>
-                <p>Directora</p>
-            </div>
-            <br>
-            <br>
-            <div class="text-center">
-            <p> Urbanizacion Simón Bolivar Frente al Bloque 20 Caracas - Venezuela :: Teléfonos: 0212-870-25-98 / 0212-873-62-50 Email: mariamolasfya@hotmail.com mariamolasfya@gmail.com</p>
-            </div>
+            <div>FIRMA Y SELLO</div>
         </div>
     </div>
-</div>
 </body>
 </html>
