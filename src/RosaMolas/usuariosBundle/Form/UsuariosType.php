@@ -39,6 +39,7 @@ class UsuariosType extends AbstractType
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('direccion')
+            ->add('email')
             ->add('activo', 'checkbox', array('required'=>false))
             ->add('alumno', 'collection', array('type'=>new AlumnosType("Crear Alumno"), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,

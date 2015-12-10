@@ -94,6 +94,7 @@ class UsuariosFuncionesGenericas extends Controller
             $formulario = $this->createForm(new UsuariosType('Crear Usuario'), $p);
             $formulario -> remove('alumno');
             $formulario -> remove('principal');
+            $formulario -> remove('email');
             $formulario -> remove('representanteContacto');
             $elemento = 'Usuario';
         }

@@ -16,12 +16,48 @@ class DefaultController extends Controller
 {
     public function indexAction($id, Request $request)
     {
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->createQueryBuilder('periodo_alumno')
+            ->select('periodo_alumno', 'alumnos')
+            ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('alumnos.representante', 'representantes')
+            ->Join('representantes.representanteContacto', 'contactos')
+            ->where('periodo_alumno.cursoSeccion = :id')
+            ->andwhere('periodo_alumno.activo = true')
+            ->andwhere('alumnos.activo = true')
+            ->andwhere('representantes.activo = true')
+            ->orderBy('alumnos.id', 'DESC')
+            ->setParameter('id',$id)
+            ->getQuery();
+
+        $datos = $query->getResult();
+
+
+        $fecha_actual = new \DateTime("now");
+        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
+        print_r($datos[0]->getAlumno()->getEdad().'<br>');
+        print_r($id.'<br>');
+        print_r($datos[0]->getAlumno()->getRepresentante()->first()->getRepresentanteContacto()->first()->getContacto());
+        print_r($html);
+        exit;
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+    }
+
+    public function recibo_pagoAction($id, Request $request)
+    {
         $facturas = $this->getDoctrine()
             ->getRepository('facturacionBundle:Factura')
             ->find($id);
 
+        $pago = $this->getDoctrine()
+            ->getRepository('genericoBundle:Pagos')
+            ->findOneBy(array('factura'=>$id));
+
         $fecha_actual = new \DateTime("now");
-        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas));
+        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
         print_r($html);
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
@@ -42,9 +78,9 @@ class DefaultController extends Controller
             ->innerJoin('inicialBundle:Curso', 'cursos', 'WITH', 'periodo_curso.curso = cursos.id')
             ->innerJoin('inicialBundle:Seccion', 'secciones', 'WITH', 'periodo_curso.seccion = secciones.id')
             ->innerJoin('inicialBundle:Etapa', 'etapas', 'WITH', 'periodo_curso.etapa = etapas.id')
-
             ->setParameter('id',$id)
             ->getQuery();
+
         $datos = $query->getArrayResult();
 
         $fecha_nacimiento = $datos[0]['estudiante']['fechaNacimiento'];
@@ -354,21 +390,11 @@ class DefaultController extends Controller
                 else{
 
                     if (!$session->get('pagos_finalizado')) {
-                        $cant = 0;
                         foreach($session->get('facturas') as $facturas){
-
                             if($facturas->getPagada() == false){
                                 $factura_form =$facturas;
                                 break;
                             }
-                            else
-                            {
-                               $cant=$cant+1;
-                            }
-                        }
-                        if (sizeof($session->get('facturas')) == $cant) {
-                            $session->set("pagos_finalizado", true);
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                         }
                         $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
                         if (array_key_exists('pago', $resultado)) {
@@ -377,10 +403,23 @@ class DefaultController extends Controller
                                     $fact->setPagada(true);
                                 }
                             }
+                            if(!$session->get('pagos')){
+                                $session->set("pagos", array());
+                            }
+                            $array_pagos = $session->get('pagos');
+                            array_push($array_pagos, $resultado['pago']);
+                            $session->set("pagos",$array_pagos);
+                            if (sizeof($session->get('facturas')) == sizeof($session->get('pagos'))) {
+                                $session->set("pagos_finalizado", true);
+                                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                            }
                             return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                         }
                     }
                     else{
+
+                        print_r($session->get('representante_inscripcion')->getEmail().'<br>');
+                        $mail =$this->get('funciones_genericas')->email_inscripcion($session->get('representante_inscripcion'), $session->get('alumnos_inscripcion'));
                         $session->remove('representante_inscripcion');
                         $session->remove('alumnos_inscripcion');
                         $session->remove('alumnos_finalizado');
@@ -463,11 +502,15 @@ class DefaultController extends Controller
                     }
                 }
                 else{
+                    $representante =
                     $session->remove('representante_inscripcion');
                     $session->remove('alumnos_inscripcion');
                     $session->remove('alumnos_finalizado');
                     $session->remove('representantes_adic_inscripcion');
                     $session->remove('representantes_adic_finalizado');
+
+                    //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
+
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
             }

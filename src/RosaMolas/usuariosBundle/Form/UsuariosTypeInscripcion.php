@@ -35,6 +35,7 @@ class UsuariosTypeInscripcion extends AbstractType
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('direccion')
+            ->add('email')
             ->add('representanteContacto', 'collection', array('type'=>new RepresentanteContactoType("Crear Contacto"), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))

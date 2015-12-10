@@ -133,6 +133,7 @@ class DefaultController extends Controller
             $formulario -> remove('alumno');
             $formulario -> remove('principal');
             $formulario -> remove('representanteContacto');
+            $formulario -> remove('email');
             $elemento = 'Usuario';
         }
         $formulario -> remove('activo');
@@ -178,6 +179,7 @@ class DefaultController extends Controller
         $formulario -> remove('apellidos');
         $formulario -> remove('fechaNacimiento');
         $formulario -> remove('direccion');
+        $formulario -> remove('email');
         $formulario -> remove('sexo');
         $formulario -> remove('activo');
         $formulario -> remove('guardar_crear');
@@ -230,7 +232,7 @@ class DefaultController extends Controller
         $url_redireccion = 'inicial_lista_usuario';
         $plantilla = 'usuariosBundle:Default:crear_usuario';
         $remover = null;
-        $remover =['representanteContacto', 'principal'];
+        $remover =['representanteContacto', 'principal', 'email'];
         return $this->forward('funciones_genericas:editar_generico', array('id'=>$id, 'request'=>$request, 'formulario_base'=>$form, 'objeto'=>$objeto, 'clase'=>$clase, 'titulo' => $titulo, 'url_redireccion'=> $url_redireccion, 'plantilla'=>$plantilla, 'remover' => $remover));
     }
     public function lista_usuario_pdfAction(Request $request)

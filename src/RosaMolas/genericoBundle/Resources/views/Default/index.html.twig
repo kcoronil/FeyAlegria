@@ -8,60 +8,62 @@
     <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/datepicker3.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/estilos_proyecto.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/dataTables.bootstrap.css')}}">
-    {% block extra_head %} {% endblock %}
+    <style>
+
+    </style>
 </head>
 <body>
     <div class="container">
         <div>
-            <table class="table">
-                <tr>
-                    <td>
-                        <div id="cabecera">
-                            <div id="cabecera2">
-                                <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
-                            </div>
-                        </div>
-                    </td>
-                    <td>FECHA DE INSCRIPCION:</td><td>(FECHA)</td>
-                </tr>
-            </table>
-            <br>
-            <div class="text-center"><h4>RECIBO DE {{ facturas.tipoFactura.nombre|upper }} AÑO {{ facturas.periodoEscolarCursoAlumnos.periodoEscolar.nombre}}</h4></div>
-            <br>
-            <br>
-            <table class="table table-bordered">
-                <tr>
-                    <td>Alumno:</td>
-                    <td>
-                        <h3 class="text-center"><strong>{{ facturas.periodoEscolarCursoAlumnos.alumno.primerNombre|upper }} {{ facturas.periodoEscolarCursoAlumnos.alumno.primerApellido|upper }}</strong></h3>
-                    </td>
-                    <td>GRADO: </td>
-                    <td>{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.curso.nombre}}{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.seccion.nombre}}</td>
-                </tr>
-            </table>
-            <table class="table table-bordered">
-                <tr>
-                    <td>DESCRIPCION DEL PAGO</td>
-                    <td>MONTO</td>
-                </tr>
-                {% for concepto in facturas.tipoFactura.conceptosFactura %}
-                <tr>
-                    <td>{{ concepto.nombre }}</td>
-                    <td>{{ concepto.tipoMontoConceptos.0.monto}}</td>
-                </tr>
+
+            <div id="cabecera">
+                <div id="cabecera2">
+                    <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
+                </div>
+            </div>
+
+            <div class="text-center"><h4>{{ accion|upper }}</h4></div>
+            <table>
+                {% for dato in datos %}
+                    <tr>
+                        <td colspan="3"><strong>{{ dato.alumno.primerApellido }} {{ dato.alumno.primerNombre }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Fecha de Nacimiento: {{ dato.alumno.fechaNacimiento|date('d/m/Y') }}</td><td>Edad: {{ dato.alumno.edad }}</td>
+                    </tr>
+                    {% for representante in dato.alumno.representante %}
+                        {% if representante.principal %}
+                            <tr>
+                                <td colspan="3">{{ representante.direccion }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ representante.nombres }} {{ representante.apellidos }}</td><td>Cedula: {{ representante.cedula }}</td>
+                                <td>Contacto:
+                                {% for contacto in representante.representanteContacto %}
+                                    {{ contacto.contacto }}
+                                {% endfor %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for representante in dato.alumno.representante %}
+                        {% if not representante.principal %}
+                            <tr>
+                                <td colspan="3">{{ representante.direccion }}</td>
+                            </tr>
+                            <tr style="border-bottom: solid 2px #000">
+                                <td>{{ representante.nombres }} {{ representante.apellidos }}</td><td>Cedula: {{ representante.cedula }}</td>
+                                <td>Contacto:
+                                    {% for contacto in representante.representanteContacto %}
+                                        {{ contacto.contacto }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
             </table>
-            <br>
-            <table class="table table-bordered">
-                <tr>
-                    <td>BANCO: ((baNCO))</td>
-                    <td>No DEPOSITO ((DEPOSITO))</td>
-                    <td>TOTAL DEPOSITO: {{ facturas.monto }}</td>
-                </tr>
-            </table>
-            <br>
-            <br>
-            <div>FIRMA Y SELLO</div>
+
         </div>
     </div>
 </body>

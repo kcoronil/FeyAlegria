@@ -1,0 +1,68 @@
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/fe-y-alegria_fav.png') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/bootstrap.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/datepicker3.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/estilos_proyecto.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/dataTables.bootstrap.css')}}">
+    {% block extra_head %} {% endblock %}
+</head>
+<body>
+    <div class="container">
+        <div>
+            <table class="table">
+                <tr>
+                    <td>
+                        <div id="cabecera">
+                            <div id="cabecera2">
+                                <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
+                            </div>
+                        </div>
+                    </td>
+                    <td>FECHA DE INSCRIPCION:</td><td>{{ pago.fechaDeposito|date('d/m/y') }}</td>
+                </tr>
+            </table>
+            <br>
+            <div class="text-center"><h4>RECIBO DE {{ facturas.tipoFactura.nombre|upper }} AÑO {{ facturas.periodoEscolarCursoAlumnos.periodoEscolar.nombre}}</h4></div>
+            <br>
+            <br>
+            <table class="table table-bordered">
+                <tr>
+                    <td>Alumno:</td>
+                    <td>
+                        <h3 class="text-center"><strong>{{ facturas.periodoEscolarCursoAlumnos.alumno.primerNombre|upper }} {{ facturas.periodoEscolarCursoAlumnos.alumno.primerApellido|upper }}</strong></h3>
+                    </td>
+                    <td>GRADO: </td>
+                    <td>{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.curso.nombre}}{{ facturas.periodoEscolarCursoAlumnos.cursoSeccion.seccion.nombre}}</td>
+                </tr>
+            </table>
+            <table class="table table-bordered">
+                <tr>
+                    <td>DESCRIPCION DEL PAGO</td>
+                    <td>MONTO</td>
+                </tr>
+                {% for concepto in facturas.tipoFactura.conceptosFactura %}
+                <tr>
+                    <td>{{ concepto.nombre }}</td>
+                    <td>{{ concepto.tipoMontoConceptos.0.monto}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br>
+            <table class="table table-bordered">
+                <tr>
+                    <td>BANCO: {{ pago.banco.nombre }}</td>
+                    <td>No DEPOSITO {{ pago.numeroDeposito }}</td>
+                    <td>TOTAL DEPOSITO: {{ pago.monto }}</td>
+                </tr>
+            </table>
+            <br>
+            <br>
+            <div>FIRMA Y SELLO</div>
+        </div>
+    </div>
+</body>
+</html>

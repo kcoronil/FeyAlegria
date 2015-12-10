@@ -1,0 +1,41 @@
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/fe-y-alegria_fav.png') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/bootstrap.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/datepicker3.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/estilos_proyecto.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/css/dataTables.bootstrap.css')}}">
+</head>
+<body>
+    <div class="container">
+        <div>
+
+            <div id="cabecera">
+                <div id="cabecera2">
+                    <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
+                </div>
+            </div>
+
+            <div class="text-center"><h4>NOTIFICACION DE INSCRIPCION</h4></div>
+            <br>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;La Unidad Educativa Fe y Alegría <strong>"María Rosa Molas"</strong>
+                hace de su conocimiento por medio del presente que el proceso de inscripción de los Escolares:</p>
+            <br>
+            <table class="table table-bordered table-hover table-responsive">
+                {% for estudiante in estudiantes %}
+                    <tr>
+                        <td>Estudiante: {{  estudiante.primerNombre }} {{ estudiante.primerApellido }} </td>
+                        <td>{{ estudiante.cedula }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <p>Se realizo de manera exitosa </p>
+
+        </div>
+    </div>
+</body>
+</html>

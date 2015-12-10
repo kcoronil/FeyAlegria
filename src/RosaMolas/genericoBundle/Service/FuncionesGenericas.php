@@ -250,4 +250,16 @@ class FuncionesGenericas extends Controller
         return array('form'=>$formulario->createView(), 'accion'=>'Agregar Pago', 'factura'=>$factura,
             'estudiante'=>$estudiante);
     }
+    public function email_inscripcion($representante, $estudiantes)
+    {
+        $fecha_actual = new \DateTime("now");
+        $html = $this->renderView('genericoBundle:Default:email_inscripcion.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'representante' => $representante, 'estudiantes'=>$estudiantes));
+        $mensaje_email = \Swift_Message::newInstance()
+            ->setSubject('Inscripcion Colegio Fe y Alegria')
+            ->setFrom('ed.acevedo.programacion@gmail.com')
+            ->setTo($representante->getEmail())
+            ->setBody($html, 'text/html');
+        $this->get('mailer')->send($mensaje_email);
+        return true;
+    }
 }

@@ -441,6 +441,15 @@ class Alumnos
         $this->periodoEscolarCursoAlumno[] = $periodoEscolarCursoAlumno;
     }
 
+
+    public function getEdad()
+    {
+        $fecha_actual = new \DateTime("now");
+        $diff = $fecha_actual->diff($this->fechaNacimiento);
+        $edad = $diff->y;
+        return $edad;
+    }
+
     /**
      * Remove representante
      *

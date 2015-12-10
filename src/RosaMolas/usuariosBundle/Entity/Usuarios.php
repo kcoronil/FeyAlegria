@@ -179,6 +179,16 @@ class Usuarios
     private $tipoUsuario;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=256)
+     * @Assert\Email(
+     * message = "El correo '{{ value }}' no es un correo valido.",
+     * checkMX = true)
+     */
+    private $email;
+
+    /**
      * Get id
      *
      * @return integer
@@ -400,5 +410,29 @@ class Usuarios
     public function __toString()
     {
         return $this->nombres;
+    }
+
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Usuarios
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

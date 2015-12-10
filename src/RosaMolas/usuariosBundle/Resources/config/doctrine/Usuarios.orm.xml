@@ -16,6 +16,7 @@
         <field name="nombres" type="string" column="nombres" length="30" nullable="false"/>
         <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="false"/>
         <field name="direccion" type="text" column="direccion" nullable="false"/>
+        <field name="email" type="string" column="email" length="256" nullable="true"/>
         <field name="principal" type="boolean" column="principal" nullable="false"/>
         <field name="activo" type="boolean" column="activo" nullable="false"/>
         <one-to-many field="representanteContacto" mapped-by="representante" target-entity="RepresentanteContacto">
