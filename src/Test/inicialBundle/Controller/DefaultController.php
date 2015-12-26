@@ -742,6 +742,21 @@ class DefaultController extends Controller
     public function administradorAction(Request $request){
         return $this->render('inicialBundle:Default:administrador.html.twig');
 
-    }    
+    }
+    public function config_usuariosAction(Request $request){
+        return $this->render('inicialBundle:Default:config_usuario.html.twig');
 
+    }
+    public function config_facturacionAction(Request $request){
+        return $this->render('inicialBundle:Default:facturacion.html.twig');
+
+    }
+    public function config_sistemaAction(Request $request){
+        return $this->render('inicialBundle:Default:config_sistema.html.twig');
+
+    }
+    public function config_periodosAction(Request $request){
+        return $this->render('inicialBundle:Default:periodos_escolares.html.twig');
+
+    }
 }

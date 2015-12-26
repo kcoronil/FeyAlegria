@@ -18,6 +18,21 @@ inicial_administrador:
     path:     /editor
     defaults: { _controller: inicialBundle:Default:administrador }
 
+inicial_config_usuarios:
+    path:     /config_usuarios
+    defaults: { _controller: inicialBundle:Default:config_usuarios }
+
+inicial_config_facturacion:
+    path:     /config_facturacion
+    defaults: { _controller: inicialBundle:Default:config_facturacion }
+
+inicial_config_sistemas:
+    path:     /config_sistemas
+    defaults: { _controller: inicialBundle:Default:config_sistema }
+
+inicial_config_periodos:
+    path:     /config_periodos
+    defaults: { _controller: inicialBundle:Default:config_periodos }
 
 #--------------------- mantenimiento -------------------------
 inicial_agregar_roles:
