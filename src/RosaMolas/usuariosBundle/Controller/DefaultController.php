@@ -383,7 +383,7 @@ class DefaultController extends Controller
 
                         if ($formulario->isValid()) {
                             $desact_pass = $this->getDoctrine()->getEntityManager();
-                            $test_desact = $desact_pass->getRepository('usu ariosBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
+                            $test_desact = $desact_pass->getRepository('usuariosBundle:Passwords')->findOneBy(array('perfil'=>$perfil, 'activo'=>true));
                             $test_desact->setActivo(false);
                             $desact_pass->flush();
 

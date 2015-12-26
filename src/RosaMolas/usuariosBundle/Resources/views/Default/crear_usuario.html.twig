@@ -70,6 +70,7 @@
                         {{ form_row(form.fechaNacimiento) }}
                         {{ form_row(form.sexo) }}
                         {{ form_row(form.direccion) }}
+                        {{ form_row(form.email) }}
                         {% if form.representanteContacto is defined %}
                             <div class="row">
                             <div id="cont_contacto" class="col-sm-12" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
