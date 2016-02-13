@@ -35,7 +35,7 @@ class DefaultController extends Controller
 
         $fecha_actual = new \DateTime("now");
         $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
-
+        $mpdfService = $this->get('tfox.mpdfport');
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
@@ -63,6 +63,10 @@ class DefaultController extends Controller
 
         $fecha_actual = new \DateTime("now");
         $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
+
+        $mpdfService = $this->get('tfox.mpdfport');
+        $clase_mpdf = $mpdfService->getMpdf();
+
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
