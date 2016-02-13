@@ -144,6 +144,45 @@
                                     </ul>
                                 </li>
                                 <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Reportes<span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                        {% if  (app.session.get('id_tipo_usuario')== 1) %}
+                                            <li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Varios</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{{ path('generico_homepage', { 'id': 2 }) }}">· Desarrollo</a></li>
+                                                    <li><a href="{{ path('generico_listado_alumnos_contactos', { 'id': 2 }) }}">· Alumnos contactos</a></li>
+                                                    <li><a href="{{ path('generico_constancia_inscripcion', { 'id': 155 }) }}">· constancia Inscripcion</a></li>
+                                                    <li><a href="{{ path('generico_constancia_estudios', { 'id': 155 }) }}">· Constancia Estudios</a></li>
+                                                </ul>
+                                            </li>
+                                            <!--<li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuarios</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{##}{ path('inicial_agregar_tipo_usuario') }}">· Tipos de Usuarios</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_roles') }}" >· Roles</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_permisos') }}" >· Permisos del Sistema</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_elementos') }}" >· Elementos del Sistema</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_eventos') }}" >· Eventos del Sistema</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_perfil') }}">· Agregar Perfil</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_usuario') }}">· Agregar Usuario</a></li>
+                                                    <li><a href="{##}{ path('inicial_lista_usuario') }}" >· Consultas</a></li>
+                                                    <li><a href="{##}{ path('inicial_pdf_usuario') }}" target="_blank">· Consultas PDF</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Periodo Escolar</a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="{##}{ path('inicial_agregar_grado') }}" >· Grado</a></li>
+                                                    <li><a href="{##} path('inicial_agregar_curso') }}" >· Cursos</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_seccion') }}" >· Secciones</a></li>
+                                                    <li><a href="{##}{ path('inicial_agregar_periodo') }}" >· Periodo Escolar</a></li>
+                                                </ul>
+                                            </li>-->
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mantenimiento<span class="caret"></span></a>
                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                         {% if  (app.session.get('id_tipo_usuario')== 1) %}

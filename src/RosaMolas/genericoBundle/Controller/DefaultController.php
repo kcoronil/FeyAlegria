@@ -35,11 +35,34 @@ class DefaultController extends Controller
 
         $fecha_actual = new \DateTime("now");
         $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
-        print_r($datos[0]->getAlumno()->getEdad().'<br>');
-        print_r($id.'<br>');
-        print_r($datos[0]->getAlumno()->getRepresentante()->first()->getRepresentanteContacto()->first()->getContacto());
-        print_r($html);
-        exit;
+
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+    }
+
+    public function listado_alumnos_contactosAction($id, Request $request)
+    {
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->createQueryBuilder('periodo_alumno')
+            ->select('periodo_alumno', 'alumnos')
+            ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('alumnos.representante', 'representantes')
+            ->Join('representantes.representanteContacto', 'contactos')
+            ->where('periodo_alumno.cursoSeccion = :id')
+            ->andwhere('periodo_alumno.activo = true')
+            ->andwhere('alumnos.activo = true')
+            ->andwhere('representantes.activo = true')
+            ->orderBy('alumnos.id', 'DESC')
+            ->setParameter('id',$id)
+            ->getQuery();
+
+        $datos = $query->getResult();
+
+
+        $fecha_actual = new \DateTime("now");
+        $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,

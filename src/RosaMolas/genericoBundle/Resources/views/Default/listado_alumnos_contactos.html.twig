@@ -32,10 +32,13 @@
                     <tr>
                         <td colspan="2">Fecha de Nacimiento: {{ dato.alumno.fechaNacimiento|date('d/m/Y') }}</td><td>Edad: {{ dato.alumno.edad }}</td>
                     </tr>
+                    <tr>
+                        <td colspan="3" class="text-center">Representantes</td>
+                    </tr>
                     {% for representante in dato.alumno.representante %}
                         {% if representante.principal %}
                             <tr>
-                                <td>{{ representante.nombres }} {{ representante.apellidos }}</td><td>Cedula: {{ representante.cedula }}</td>
+                                <td><strong>{{ representante.nombres }} {{ representante.apellidos }}</strong></td><td>Cedula: {{ representante.cedula }}</td>
                                 <td>Contacto:
                                 {% for contacto in representante.representanteContacto %}
                                     {{ contacto.contacto }}
@@ -50,9 +53,6 @@
                     {% for representante in dato.alumno.representante %}
                         {% if not representante.principal %}
                             <tr>
-                                <td colspan="3">{{ representante.direccion }}</td>
-                            </tr>
-                            <tr style="border-bottom: solid 2px #000">
                                 <td>{{ representante.nombres }} {{ representante.apellidos }}</td><td>Cedula: {{ representante.cedula }}</td>
                                 <td>Contacto:
                                     {% for contacto in representante.representanteContacto %}

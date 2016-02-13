@@ -2,6 +2,10 @@ generico_homepage:
     path:     /test_pdf/{id}
     defaults: { _controller: genericoBundle:Default:index }
 
+generico_listado_alumnos_contactos:
+    path:     /listado_alumnos_contactos/{id}
+    defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos }
+
 generico_constancia_inscripcion:
     path:     /constancia_inscripcion/{id}
     defaults: { _controller: genericoBundle:Default:constancia_inscripcion }
