@@ -214,7 +214,21 @@ class DefaultController extends Controller
         $atajo = 'inicial_agregar_banco';
         return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(), 'datos'=>$datos, 'accion'=>'Borrar Usuario'));
     }
+
     public function editar_representanteAction($id, Request $request){
+        $form = New UsuariosTypeSimple('Editar Banco');
+        $clase = 'usuariosBundle:Usuarios';
+        $titulo = 'Representante';
+        $url_redireccion = 'inicial_lista_representante';
+        $remover =['tipoUsuario', 'principal'];
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('usuariosBundle:Default:crear_usuario.html.twig', $resultado);
+    }
+
+    public function editar_representante2Action($id, Request $request){
         $form = new UsuariosTypeSimple('Editar Representante');
         $objeto = 'Usuarios';
         $clase = 'usuariosBundle:Usuarios';

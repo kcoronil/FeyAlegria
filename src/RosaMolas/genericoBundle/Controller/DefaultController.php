@@ -462,9 +462,18 @@ class DefaultController extends Controller
         }
         return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
     }
-    public function agregar_alumno_inscripcionAction(Request $request)
+    public function agregar_alumno_inscripcionAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
+        if($id_rep){
+            $p = $this->getDoctrine()
+                ->getRepository('usuariosBundle:Usuarios')
+                ->find($id_rep);
+            $session->set("representante_inscripcion", $p);
+        }
+        foreach($session->get("representante_inscripcion")->getAlumno() as $alumno){
+            echo $alumno->getPrimerNombre();
+        }
         if (!$session->get('representante_inscripcion')) {
             /*$remover = array('guardar_crear');
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');

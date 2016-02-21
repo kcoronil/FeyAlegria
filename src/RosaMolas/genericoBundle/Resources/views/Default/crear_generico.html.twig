@@ -58,6 +58,15 @@
                 borrar_form($(this));
                 renombrar_forms($(this).attr('data-target'));
             });
+            $(document).on('click','.enlace_inscripcion', function(event) {
+                var apellido = $(this).closest('td').next('td').text().trim();
+                var nombre = $(this).closest('td').next('td').next('td').text().trim();
+                if (confirm('Representante: '+nombre+' '+apellido+'\nEsta seguro?')){
+                }
+                else{
+                    event.preventDefault();
+                }
+            });
             var datatable_usuarios = $('#tbl_usuarios').dataTable({
                 "dom": 'rtip',
                 "bInfo": true,
@@ -256,7 +265,7 @@
                                     {% if elemento.timestamp is defined %}
                                         {{ elemento|date('d/m/Y') }}
                                     {% elseif key == 'cedula' %}
-                                        <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': accion  }) }}">{{ elemento }}</a>
+                                        <a href="{{ path('generico_inscripcion_agregar_alumno', { 'id_rep': dato.id }) }}" class="enlace_inscripcion">{{ elemento }}</a>
                                     {% else %}
                                         {{ elemento }}
                                     {% endif %}
