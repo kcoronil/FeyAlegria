@@ -471,9 +471,9 @@ class DefaultController extends Controller
                 ->find($id_rep);
             $session->set("representante_inscripcion", $p);
         }
-        foreach($session->get("representante_inscripcion")->getAlumno() as $alumno){
+        /*foreach($session->get("representante_inscripcion")->getAlumno() as $alumno){
             echo $alumno->getPrimerNombre();
-        }
+        }*/
         if (!$session->get('representante_inscripcion')) {
             /*$remover = array('guardar_crear');
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
