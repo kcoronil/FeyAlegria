@@ -99,6 +99,9 @@
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
+                    {% if accion == 'Agregar Representante a alumnno' %}
+                        {{ form(form.0) }}
+                    {% endif %}
                     {% if accion == 'Crear Representante' %}
                     {{ form_start(form) }}
 

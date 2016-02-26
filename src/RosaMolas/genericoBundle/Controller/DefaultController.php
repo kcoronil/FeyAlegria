@@ -5,6 +5,7 @@ namespace RosaMolas\genericoBundle\Controller;
 use RosaMolas\alumnosBundle\Entity\Alumnos;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\facturacionBundle\Entity\DetalleFactura;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
 use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Form\PagosType;
@@ -415,8 +416,9 @@ class DefaultController extends Controller
                     }
                 }
                 else{
-
                     if (!$session->get('pagos_finalizado')) {
+                        print_r($session->get('facturas'));
+                        print_r('hola');
                         foreach($session->get('facturas') as $facturas){
                             if($facturas->getPagada() == false){
                                 $factura_form =$facturas;
@@ -471,13 +473,7 @@ class DefaultController extends Controller
                 ->find($id_rep);
             $session->set("representante_inscripcion", $p);
         }
-        /*foreach($session->get("representante_inscripcion")->getAlumno() as $alumno){
-            echo $alumno->getPrimerNombre();
-        }*/
         if (!$session->get('representante_inscripcion')) {
-            /*$remover = array('guardar_crear');
-            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
-            */
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
                 ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
@@ -487,7 +483,6 @@ class DefaultController extends Controller
                 ->orderBy('usuario.id', 'DESC')
                 ->getQuery();
             $datos = $query->getArrayResult();
-
             $elemento = 'Seleccione Representante';
 
             return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
@@ -511,44 +506,68 @@ class DefaultController extends Controller
 
                     if(array_key_exists('alumnos_finalizado', $resultado)){
                         $session->set("alumnos_finalizado", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
                     }
                     else{
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
                     }
                 }
             }
             else{
-                if (!$session->get('representantes_adic_finalizado')) {
-                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
-                    if (array_key_exists('representante', $resultado)) {
-                        if(!$session->get('representantes_adic_inscripcion')){
-                            $session->set("representantes_adic_inscripcion", array());
-                        }
-                        $array_representantes_adic = $session->get('alumnos_inscripcion');
-                        array_push($array_representantes_adic, $resultado['representante']);
-                        $session->set("representantes_adic_inscripcion",$array_representantes_adic);
+                if (!$session->get('representantes_adic_anteriores')) {
+                    $alumnos = $session->get("representante_inscripcion")->getAlumno();
+                    $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
+                    $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                        ->createQueryBuilder('usuario')
+                        ->innerJoin('usuario.alumno', 'alumnos')
+                        ->where('alumnos.id in (:id)')
+                        ->andWhere('usuario.activo = true')
+                        ->setParameter('id', $lista_id)
+                        ->distinct()
+                        ->getQuery();
+                    $datos = $query->getArrayResult();
+                    $p = $this->getDoctrine()
+                        ->getRepository('alumnosBundle:Alumnos')
+                        ->findBy(array('id'=>$lista_id));
+                    $form = New AlumnosTypeAggRep('Agregar Representante', $query);
+                    $clase = 'alumnosBundle:Alumnos';
+                    $titulo = 'Alumnos';
+                    $url_redireccion = 'generico_inscripcion_completa';
+                    $remover = null;
+                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $form, $p, $datos, $url_redireccion);
 
-                        if(array_key_exists('representantes_finalizado', $resultado)){
-                            $session->set("representantes_adic_finalizado", true);
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                        }
-                        else{
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                        }
-                    }
                 }
-                else{
-                    $representante =
-                    $session->remove('representante_inscripcion');
-                    $session->remove('alumnos_inscripcion');
-                    $session->remove('alumnos_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_finalizado');
+                else {
+                    if (!$session->get('representantes_adic_nuevo')) {
+                        $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
 
-                    //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
+                        if (array_key_exists('representante', $resultado)) {
+                            if (!$session->get('representantes_adic_inscripcion')) {
+                                $session->set("representantes_adic_inscripcion", array());
+                            }
+                            $array_representantes_adic = $session->get('alumnos_inscripcion');
+                            array_push($array_representantes_adic, $resultado['representante']);
+                            $session->set("representantes_adic_inscripcion", $array_representantes_adic);
 
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                            if (array_key_exists('representantes_finalizado', $resultado)) {
+                                $session->set("representantes_adic_finalizado", true);
+                                return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                            } else {
+                                return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                            }
+                        }
+                    } else {
+                        //$representante =
+                            $session->remove('representante_inscripcion');
+                        $session->remove('alumnos_inscripcion');
+                        $session->remove('alumnos_finalizado');
+                        $session->remove('representantes_adic_inscripcion');
+                        $session->remove('representantes_adic_finalizado');
+
+                        //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
+
+                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                    }
                 }
             }
         }

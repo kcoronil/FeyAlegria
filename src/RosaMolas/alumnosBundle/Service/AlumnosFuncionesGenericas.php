@@ -4,6 +4,7 @@ namespace RosaMolas\alumnosBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeInscripcion;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,5 +65,30 @@ class AlumnosFuncionesGenericas extends Controller
             }
         }
         return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
+    }
+    public function agregar_representante(Request $request, $form, $instancias, $query, $url_redireccion){
+
+        $form = New AlumnosTypeAggRep('Agregar Representante', $query);
+
+        $formulario = $this->createForm('collection', $instancias, array('type'=>new AlumnosTypeAggRep('Agregar Representante', $query), 'allow_add' => false, 'allow_delete' => false,
+            'by_reference' => false,'prototype' => false, 'label' => false, 'cascade_validation'=>true,
+            'error_bubbling'=>false));
+        $formulario -> remove('guardar_crear');
+        $formulario -> remove('activo');
+
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Representante agregado con éxito');
+                return array('resulado'=>'exito', 'url'=> $url_redireccion);
+            }
+        }
+        return array('form'=>$formulario->createView(), 'accion'=>'Agregar Representante a alumnno');
+
     }
 }

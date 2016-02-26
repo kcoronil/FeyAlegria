@@ -25,7 +25,7 @@
 {%- block form_start -%}
     <div class="panel panel-{% if form.vars.tipo_panel is defined %}{{ form.vars.tipo_panel }} {% else %}info{% endif %} ">
         <div class="panel-heading">
-            <h2 class="panel-title">{{ form.vars.titulo }}</h2>
+            <h2 class="panel-title">{% if form.vars.tipo_panel is defined %}{{ form.vars.titulo }}{% endif %}</h2>
         </div>
         <div class="panel-body">
             {{- parent() -}}
