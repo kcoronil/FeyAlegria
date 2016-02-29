@@ -450,6 +450,16 @@ class Alumnos
         return $edad;
     }
 
+    public function getNombreApellido()
+    {
+        return $this->primerNombre.' '.$this->primerApellido;
+    }
+
+
+    public function getNombreCompleto()
+    {
+        return $this->primerNombre.' '.$this->segundoApellido.' '.$this->primerApellido.' '.$this->segundoNombre;
+    }
     /**
      * Remove representante
      *

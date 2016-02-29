@@ -100,11 +100,19 @@
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
                     {% if accion == 'Agregar Representante a alumnno' %}
-                        {{ form(form.0) }}
+                    {{ form_start(form) }}
+                        {% for form_col in form %}
+                            {{ app.session.get('alumnos_inscripcion')[loop.index0].primerNombre }} {{ app.session.get('alumnos_inscripcion')[loop.index0].primerApellido }}
+                            {{ form_row(form_col) }}
+                        {% endfor %}
+                       <div class="col-sm-12 text-center ">
+                                <br>
+                                <button id="test_inicialbundle_usuarios_guardar" class="data-first-button btn-default btn" name="test_inicialbundle_usuarios[guardar]" type="submit">Guardar</button>
+                            </div>
+                    {{ form_end(form) }}
                     {% endif %}
                     {% if accion == 'Crear Representante' %}
                     {{ form_start(form) }}
-
                         {% if form.tipoUsuario is defined %}
                             {{ form_row(form.tipoUsuario) }}
                         {% endif %}
@@ -149,8 +157,6 @@
                             {% if form.omitir is defined %}
                                 {{ form_row(form.omitir) }}
                             {% endif %}
-
-
                         </div>
                     {{ form_end(form) }}
                     {% endif %}

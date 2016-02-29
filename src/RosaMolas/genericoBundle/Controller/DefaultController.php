@@ -515,7 +515,11 @@ class DefaultController extends Controller
             }
             else{
                 if (!$session->get('representantes_adic_anteriores')) {
-                    $alumnos = $session->get("representante_inscripcion")->getAlumno();
+                    $rep = $this->getDoctrine()
+                        ->getRepository('usuariosBundle:Usuarios')
+                        ->find($session->get("representante_inscripcion")->getId());
+                    $alumnos_actuales = $session->get("representante_inscripcion")->getAlumno();
+                    $alumnos = $rep->getAlumno();
                     $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
                     $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                         ->createQueryBuilder('usuario')
@@ -525,16 +529,19 @@ class DefaultController extends Controller
                         ->setParameter('id', $lista_id)
                         ->distinct()
                         ->getQuery();
-                    $datos = $query->getArrayResult();
+                    $datos = $query->getResult();
                     $p = $this->getDoctrine()
                         ->getRepository('alumnosBundle:Alumnos')
                         ->findBy(array('id'=>$lista_id));
-                    $form = New AlumnosTypeAggRep('Agregar Representante', $query);
+                    //print_r($session->get('alumnos_inscripcion'));
+                    //print_r($alumnos[1]->getPrimerNombre());
+                    //exit;
+                    $form = New AlumnosTypeAggRep('Agregar Representante', $lista_id);
                     $clase = 'alumnosBundle:Alumnos';
                     $titulo = 'Alumnos';
                     $url_redireccion = 'generico_inscripcion_completa';
                     $remover = null;
-                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $form, $p, $datos, $url_redireccion);
+                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $form, $session->get('alumnos_inscripcion'), $lista_id, $url_redireccion);
 
                 }
                 else {
@@ -558,7 +565,7 @@ class DefaultController extends Controller
                         }
                     } else {
                         //$representante =
-                            $session->remove('representante_inscripcion');
+                        $session->remove('representante_inscripcion');
                         $session->remove('alumnos_inscripcion');
                         $session->remove('alumnos_finalizado');
                         $session->remove('representantes_adic_inscripcion');

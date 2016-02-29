@@ -11,6 +11,10 @@ inicial_agregar_alumno:
     path:     /crear_alumno/{id_rep}
     defaults: { _controller: genericoBundle:Default:agregar_alumno_inscripcion, id_rep: null  }
 
+inicial_agregar_alumno_old:
+    path:     /crear_alumno_old
+    defaults: { _controller: alumnosBundle:Default:crear_alumno }
+
 inicial_agregar_alumno_usuario:
     path:     /crear_alumno_usuario
     defaults: { _controller: alumnosBundle:Default:crear_alumno_usuario }

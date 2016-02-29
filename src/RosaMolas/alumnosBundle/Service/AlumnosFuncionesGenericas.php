@@ -2,6 +2,7 @@
 
 namespace RosaMolas\alumnosBundle\Service;
 
+use RosaMolas\alumnosBundle\Form\AlumnosTypeAggReps;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
@@ -66,13 +67,10 @@ class AlumnosFuncionesGenericas extends Controller
         }
         return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
     }
-    public function agregar_representante(Request $request, $form, $instancias, $query, $url_redireccion){
+    public function agregar_representante(Request $request, $form, $instancias, $ids, $url_redireccion){
 
-        $form = New AlumnosTypeAggRep('Agregar Representante', $query);
 
-        $formulario = $this->createForm('collection', $instancias, array('type'=>new AlumnosTypeAggRep('Agregar Representante', $query), 'allow_add' => false, 'allow_delete' => false,
-            'by_reference' => false,'prototype' => false, 'label' => false, 'cascade_validation'=>true,
-            'error_bubbling'=>false));
+        $formulario = $this->createForm(new AlumnosTypeAggReps($ids), array('test'=>$instancias));
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
 

@@ -11,11 +11,17 @@
     </id>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <many-to-one field="periodoEscolar" target-entity="\Test\inicialBundle\Entity\PeriodoEscolar">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-columns>
         <join-column name="periodo_escolar_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="cursoSeccion" target-entity="\Test\inicialBundle\Entity\CursoSeccion">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-columns>
         <join-column name="curso_seccion_id" referenced-column-name="id"/>
       </join-columns>
