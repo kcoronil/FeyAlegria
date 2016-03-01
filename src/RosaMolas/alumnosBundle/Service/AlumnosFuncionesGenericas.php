@@ -67,23 +67,38 @@ class AlumnosFuncionesGenericas extends Controller
         }
         return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
     }
-    public function agregar_representante(Request $request, $form, $instancias, $ids, $url_redireccion){
+    public function agregar_representante(Request $request, $id_estudiante, $ids, $url_redireccion){
 
+        $instancias = $this->getDoctrine()
+            ->getRepository('alumnosBundle:Alumnos')
+            ->findBy(array('id'=>$id_estudiante));
+        //print_r($instancias);
 
-        $formulario = $this->createForm(new AlumnosTypeAggReps($ids), array('test'=>$instancias));
+        $formulario = $this->createForm('collection', $instancias, array('type'=>new AlumnosTypeAggRep('Agregar Representante', $ids), 'allow_add' => true, 'allow_delete' => false,
+            'by_reference' => false,'prototype' => false, 'label' => null, 'cascade_validation'=>false,
+            'error_bubbling'=>false));
         $formulario -> remove('guardar_crear');
         $formulario -> remove('activo');
 
         $formulario-> handleRequest($request);
-
         if($request->getMethod()=='POST') {
-
+            //print_r($formulario->get(0)->getData()->getRepresentante()->get());
             if ($formulario->isValid()) {
+                $i=0;
                 $em = $this->getDoctrine()->getManager();
+                foreach($instancias as $objeto){
+                    foreach($formulario->get($i)->getData()->getRepresentante() as $representante){
+                        print_r($formulario->get($i)->getData()->getRepresentante()->getNombres());
+
+                        $objeto->addUsuario($representante);
+                    }
+                    $em->persist($objeto);
+                    $i++;
+                }
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
                     'success', 'Representante agregado con éxito');
-                return array('resulado'=>'exito', 'url'=> $url_redireccion);
+                return array('resulado'=>'exito', 'url'=> $url_redireccion, 'representantes_adic_anteriores'=>true);
             }
         }
         return array('form'=>$formulario->createView(), 'accion'=>'Agregar Representante a alumnno');

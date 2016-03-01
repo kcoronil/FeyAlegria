@@ -467,6 +467,7 @@ class DefaultController extends Controller
     public function agregar_alumno_inscripcionAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
+        $session->remove('representantes_adic_anteriores');
         if($id_rep){
             $p = $this->getDoctrine()
                 ->getRepository('usuariosBundle:Usuarios')
@@ -518,34 +519,21 @@ class DefaultController extends Controller
                     $rep = $this->getDoctrine()
                         ->getRepository('usuariosBundle:Usuarios')
                         ->find($session->get("representante_inscripcion")->getId());
-                    $alumnos_actuales = $session->get("representante_inscripcion")->getAlumno();
                     $alumnos = $rep->getAlumno();
+                    $id_estudiante = [];
+                    foreach($session->get('alumnos_inscripcion') as $estudiante){
+                        array_push($id_estudiante,$estudiante->getId());
+                    }
                     $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-                    $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                        ->createQueryBuilder('usuario')
-                        ->innerJoin('usuario.alumno', 'alumnos')
-                        ->where('alumnos.id in (:id)')
-                        ->andWhere('usuario.activo = true')
-                        ->setParameter('id', $lista_id)
-                        ->distinct()
-                        ->getQuery();
-                    $datos = $query->getResult();
-                    $p = $this->getDoctrine()
-                        ->getRepository('alumnosBundle:Alumnos')
-                        ->findBy(array('id'=>$lista_id));
-                    //print_r($session->get('alumnos_inscripcion'));
-                    //print_r($alumnos[1]->getPrimerNombre());
-                    //exit;
-                    $form = New AlumnosTypeAggRep('Agregar Representante', $lista_id);
-                    $clase = 'alumnosBundle:Alumnos';
-                    $titulo = 'Alumnos';
                     $url_redireccion = 'generico_inscripcion_completa';
-                    $remover = null;
-                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $form, $session->get('alumnos_inscripcion'), $lista_id, $url_redireccion);
-
+                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $id_estudiante, $lista_id, $url_redireccion);
+                    if (array_key_exists('representantes_adic_anteriores', $resultado)) {
+                        $session->set("representantes_adic_anteriores", true);
+                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                    }
                 }
                 else {
-                    if (!$session->get('representantes_adic_nuevo')) {
+                    if (!$session->get('representantes_adic_nuevo_finalizado')) {
                         $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
 
                         if (array_key_exists('representante', $resultado)) {
@@ -557,7 +545,7 @@ class DefaultController extends Controller
                             $session->set("representantes_adic_inscripcion", $array_representantes_adic);
 
                             if (array_key_exists('representantes_finalizado', $resultado)) {
-                                $session->set("representantes_adic_finalizado", true);
+                                $session->set("representantes_adic_nuevo_finalizado", true);
                                 return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
                             } else {
                                 return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
@@ -568,6 +556,12 @@ class DefaultController extends Controller
                         $session->remove('representante_inscripcion');
                         $session->remove('alumnos_inscripcion');
                         $session->remove('alumnos_finalizado');
+                        $session->remove('representantes_adic_anteriores');
+                        $session->remove('representantes_adic_inscripcion');
+                        $session->remove('representante_inscripcion');
+                        $session->remove('representantes_adic_nuevo_finalizado');
+                        $session->remove('representantes_adic_inscripcion');
+                        $session->remove('representantes_adic_nuevo_finalizado');
                         $session->remove('representantes_adic_inscripcion');
                         $session->remove('representantes_adic_finalizado');
 

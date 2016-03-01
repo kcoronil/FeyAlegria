@@ -101,13 +101,15 @@
                 <div class="col-sm-12">
                     {% if accion == 'Agregar Representante a alumnno' %}
                     {{ form_start(form) }}
-                        {% for form_col in form %}
-                            {{ app.session.get('alumnos_inscripcion')[loop.index0].primerNombre }} {{ app.session.get('alumnos_inscripcion')[loop.index0].primerApellido }}
-                            {{ form_row(form_col) }}
+                        {% for key, form_col in form %}
+                            {% if not loop.last %}
+                                {{ app.session.get('alumnos_inscripcion')[loop.index0].primerNombre }} {{ app.session.get('alumnos_inscripcion')[loop.index0].primerApellido }}
+                            {% endif %}
+                            {{ form_widget(form_col) }}
                         {% endfor %}
                        <div class="col-sm-12 text-center ">
                                 <br>
-                                <button id="test_inicialbundle_usuarios_guardar" class="data-first-button btn-default btn" name="test_inicialbundle_usuarios[guardar]" type="submit">Guardar</button>
+                                <input class="btn" title="guardar" name="test_inicialbundle_usuarios[guardar]" type="submit"/>
                             </div>
                     {{ form_end(form) }}
                     {% endif %}

@@ -456,10 +456,6 @@ class Alumnos
     }
 
 
-    public function getNombreCompleto()
-    {
-        return $this->primerNombre.' '.$this->segundoApellido.' '.$this->primerApellido.' '.$this->segundoNombre;
-    }
     /**
      * Remove representante
      *
