@@ -37,6 +37,9 @@
       </join-columns>
     </many-to-one>
     <many-to-many field="representante" target-entity="RosaMolas\usuariosBundle\Entity\Usuarios" inversed-by="alumno">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-table name="alumnos_representantes">
         <join-columns>
           <join-column name="alumno_id" referenced-column-name="id"/>

@@ -409,7 +409,7 @@ class Usuarios
     }
     public function __toString()
     {
-        return $this->nombres;
+        return $this->nombres.' '.$this->apellidos;
     }
 
 

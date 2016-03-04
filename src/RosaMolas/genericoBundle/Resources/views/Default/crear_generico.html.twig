@@ -165,7 +165,6 @@
                     {% if accion == 'Crear Estudiante' %}
                         {{ form_start(form) }}
                             {{ form_row(form.cedula) }}
-                            {{ form_row(form.cedulaEstudiantil) }}
                             {{ form_row(form.primerApellido) }}
                             {{ form_row(form.segundoApellido) }}
                             {{ form_row(form.primerNombre) }}
@@ -181,6 +180,7 @@
                                 </div>
                                     <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
                             {% endif %}
+                             {{ form_row(form.representante) }}
                             <div class="col-sm-12 text-center ">
                                 <br>
                                 {{ form_row(form.guardar) }}

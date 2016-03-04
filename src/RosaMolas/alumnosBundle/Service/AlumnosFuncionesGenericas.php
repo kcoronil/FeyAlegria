@@ -20,9 +20,10 @@ class AlumnosFuncionesGenericas extends Controller
     {
         $this->container = $container;
     }
-    public function crear_alumno_generico(Request $request, $remover = null, $usuario = null){
+    public function crear_alumno_generico(Request $request, $remover = null, $usuario = null, $lista_id=null){
         $p = New Alumnos();
-        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante'), $p);
+
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $lista_id), $p);
 
         if($remover){
             foreach($remover as $campo){
@@ -32,19 +33,31 @@ class AlumnosFuncionesGenericas extends Controller
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
+                print_r('hola654');
                 $p->setActivo(true);
                 $periodo_activo = $this->getDoctrine()
                     ->getRepository('inicialBundle:PeriodoEscolar')
                     ->findOneBy(array('activo'=>true));
+
                 foreach($p->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
+                    print_r('hola6');
                     $periodo_alumno->setPeriodoEscolar($periodo_activo);
                     $periodo_alumno->setActivo(true);
+                }
+                //print_r($p->getUsuario());
+                foreach($p->getUsuario() as $rep){
+                    print_r('representantes');
+                    print_r($rep->getNombres());
+                }
+                foreach($p->getUsuario() as $rep){
+                    print_r('usuarios');
+                    print_r($rep->getNombres());
                 }
                 if($usuario){
                     $usuario_query = $this->getDoctrine()
                         ->getRepository('usuariosBundle:Usuarios')
                         ->find($usuario->getId());
-                    $p->addUsuario($usuario_query);
+                    $p->addRepresentante($usuario_query);
                 }
 
                 $em = $this->getDoctrine()->getManager();

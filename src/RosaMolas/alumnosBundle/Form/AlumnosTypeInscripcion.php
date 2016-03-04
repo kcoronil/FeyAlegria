@@ -12,9 +12,10 @@ use Symfony\Component\Form\FormView;
 
 class AlumnosTypeInscripcion extends AbstractType
 {
-    public function __construct ($titulo)
+    public function __construct ($titulo, $lista_id = null)
     {
         $this->titulo = $titulo;
+        $this->lista_id = $lista_id;
     }
     /**
      * @param FormBuilderInterface $builder
@@ -23,10 +24,7 @@ class AlumnosTypeInscripcion extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario','entity', array('label'=>'Representante', 'required' => true,
-                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false))
             ->add('cedula')
-            ->add('cedulaEstudiantil')
             ->add('primerApellido')
             ->add('segundoApellido')
             ->add('primerNombre')
@@ -46,6 +44,21 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
+        if($this->lista_id){
+            $builder->add('representante','entity', array('label'=>'Representantes Adicionales', 'required' => true,
+                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>true, 'by_reference' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('usuario')
+                        ->where('usuario.id in (:ids)')
+                        ->andWhere('usuario.tipoUsuario=5')
+                        ->andWhere('usuario.activo = true')
+                        ->setParameter('ids', $this->lista_id)
+                        ->distinct();}));
+        }
+        else{
+            $builder->add('usuario','entity', array('label'=>'Representante', 'required' => true,
+                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false));
+        }
     }
     public function buildView(FormView $view, FormInterface $form, array $options)
     {

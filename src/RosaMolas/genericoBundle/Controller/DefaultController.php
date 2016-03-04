@@ -488,15 +488,33 @@ class DefaultController extends Controller
 
             return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
 
-            /*if (array_key_exists('representante', $resultado)) {
-                $session->set("representante_inscripcion", $resultado['representante']);
-                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-            }*/
         }
         else {
             if (!$session->get('alumnos_finalizado')) {
-                $remover = array('usuario');
-                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'));
+                $remover = null;
+                $rep = $this->getDoctrine()
+                    ->getRepository('usuariosBundle:Usuarios')
+                    ->find($session->get("representante_inscripcion")->getId());
+                $alumnos = $rep->getAlumno();
+                $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
+                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                    ->createQueryBuilder('usuario')
+                    ->select('usuario.id')
+                    ->innerJoin('usuario.alumno', 'alumnos')
+                    ->where('alumnos.id in (:id)')
+                    ->andWhere('usuario.activo = true')
+                    ->andWhere('usuario.principal = false')
+                    ->andWhere('usuario.tipoUsuario=5')
+                    ->setParameter('id', $lista_id)
+                    ->distinct('usuario.id')
+                    ->getQuery();
+                $test = $query->getArrayResult();
+                //$lista_id_rep = $query->
+                $id_representantes = [];
+                foreach($test as $id){
+                    array_push($id_representantes, $id['id']);
+                }
+                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'), $id_representantes);
                 if (array_key_exists('alumnos', $resultado)){
                     if(!$session->get('alumnos_inscripcion')){
                         $session->set("alumnos_inscripcion", array());
@@ -515,60 +533,41 @@ class DefaultController extends Controller
                 }
             }
             else{
-                if (!$session->get('representantes_adic_anteriores')) {
-                    $rep = $this->getDoctrine()
-                        ->getRepository('usuariosBundle:Usuarios')
-                        ->find($session->get("representante_inscripcion")->getId());
-                    $alumnos = $rep->getAlumno();
-                    $id_estudiante = [];
-                    foreach($session->get('alumnos_inscripcion') as $estudiante){
-                        array_push($id_estudiante,$estudiante->getId());
-                    }
-                    $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-                    $url_redireccion = 'generico_inscripcion_completa';
-                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $id_estudiante, $lista_id, $url_redireccion);
-                    if (array_key_exists('representantes_adic_anteriores', $resultado)) {
-                        $session->set("representantes_adic_anteriores", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                    }
-                }
-                else {
-                    if (!$session->get('representantes_adic_nuevo_finalizado')) {
-                        $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
+                if (!$session->get('representantes_adic_nuevo_finalizado')) {
+                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
 
-                        if (array_key_exists('representante', $resultado)) {
-                            if (!$session->get('representantes_adic_inscripcion')) {
-                                $session->set("representantes_adic_inscripcion", array());
-                            }
-                            $array_representantes_adic = $session->get('alumnos_inscripcion');
-                            array_push($array_representantes_adic, $resultado['representante']);
-                            $session->set("representantes_adic_inscripcion", $array_representantes_adic);
-
-                            if (array_key_exists('representantes_finalizado', $resultado)) {
-                                $session->set("representantes_adic_nuevo_finalizado", true);
-                                return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                            } else {
-                                return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                            }
+                    if (array_key_exists('representante', $resultado)) {
+                        if (!$session->get('representantes_adic_inscripcion')) {
+                            $session->set("representantes_adic_inscripcion", array());
                         }
-                    } else {
-                        //$representante =
-                        $session->remove('representante_inscripcion');
-                        $session->remove('alumnos_inscripcion');
-                        $session->remove('alumnos_finalizado');
-                        $session->remove('representantes_adic_anteriores');
-                        $session->remove('representantes_adic_inscripcion');
-                        $session->remove('representante_inscripcion');
-                        $session->remove('representantes_adic_nuevo_finalizado');
-                        $session->remove('representantes_adic_inscripcion');
-                        $session->remove('representantes_adic_nuevo_finalizado');
-                        $session->remove('representantes_adic_inscripcion');
-                        $session->remove('representantes_adic_finalizado');
+                        $array_representantes_adic = $session->get('alumnos_inscripcion');
+                        array_push($array_representantes_adic, $resultado['representante']);
+                        $session->set("representantes_adic_inscripcion", $array_representantes_adic);
 
-                        //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
-
-                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                        if (array_key_exists('representantes_finalizado', $resultado)) {
+                            $session->set("representantes_adic_nuevo_finalizado", true);
+                            return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                        } else {
+                            return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                        }
                     }
+                } else {
+                    //$representante =
+                    $session->remove('representante_inscripcion');
+                    $session->remove('alumnos_inscripcion');
+                    $session->remove('alumnos_finalizado');
+                    $session->remove('representantes_adic_anteriores');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representante_inscripcion');
+                    $session->remove('representantes_adic_nuevo_finalizado');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_adic_nuevo_finalizado');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_adic_finalizado');
+
+                    //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
+
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
             }
         }
