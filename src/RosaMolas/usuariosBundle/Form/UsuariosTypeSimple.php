@@ -29,8 +29,10 @@ class UsuariosTypeSimple extends AbstractType
                     ->where('u.id!=1');},))
             ->add('principal', 'checkbox', array('required'=>false))
             ->add('cedula')
-            ->add('apellidos')
-            ->add('nombres')
+            ->add('primerApellido')
+            ->add('segundoApellido')
+            ->add('primerNombre')
+            ->add('segundoNombre')
             ->add('fechaNacimiento','date', array('widget'=>'single_text', 'format'=>'d-M-y', 'attr'=>array('class'=>'fecha_nacimiento') ) )
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))

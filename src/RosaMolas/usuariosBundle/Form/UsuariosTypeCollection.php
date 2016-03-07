@@ -31,8 +31,10 @@ class UsuariosTypeCollection extends AbstractType
                 'choices' => array(true => 'Si', false => 'No'),  'attr'=>array('class'=>'radio-inline'),
                 'label'=>'Representante Principal?',))
             ->add('cedula')
-            ->add('apellidos')
-            ->add('nombres')
+            ->add('primerApellido')
+            ->add('segundoApellido')
+            ->add('primerNombre')
+            ->add('segundoNombre')
             ->add('fechaNacimiento','date', array('widget'=>'single_text',
                 'format'=>'d-M-y', 'attr'=>array('class'=>'fecha_nacimiento')))
             ->add('direccion')

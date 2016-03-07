@@ -23,7 +23,7 @@ class AlumnosTypeSimple extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario','entity', array('label'=>'Representante', 'required' => true,
+            ->add('representante','entity', array('label'=>'Representante', 'required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')

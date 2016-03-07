@@ -75,7 +75,6 @@ class DefaultController extends Controller
             ->getQuery();
         $datos = $query->getArrayResult();
 
-
         if(!array_key_exists('1', $datos)){
             $this->get('session')->getFlashBag()->add(
                 'warning', 'El estudiante no esta asociado a ninguna seccion'
@@ -92,7 +91,6 @@ class DefaultController extends Controller
                 ->setParameter('periodo_alumno', $datos[1]['periodo_estudiante']['id'])
                 ->getQuery();
             $facturas = $query_factura->getArrayResult();
-
             return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('accion' => 'Listado de Facturas Pendientes', 'datos' => $datos, 'facturas' => $facturas));
         }
     }

@@ -38,7 +38,7 @@
                     {% for representante in dato.alumno.representante %}
                         {% if representante.principal %}
                             <tr>
-                                <td><strong>{{ representante.nombres }} {{ representante.apellidos }}</strong></td><td>Cedula: {{ representante.cedula }}</td>
+                                <td><strong>{{ representante.primerNombre }} {{ representante.primerApellido }}</strong></td><td>Cedula: {{ representante.cedula }}</td>
                                 <td>Contacto:
                                 {% for contacto in representante.representanteContacto %}
                                     {{ contacto.contacto }}
@@ -53,7 +53,7 @@
                     {% for representante in dato.alumno.representante %}
                         {% if not representante.principal %}
                             <tr>
-                                <td>{{ representante.nombres }} {{ representante.apellidos }}</td><td>Cedula: {{ representante.cedula }}</td>
+                                <td>{{ representante.primerNombre }} {{ representante.primerApellido }}</td><td>Cedula: {{ representante.cedula }}</td>
                                 <td>Contacto:
                                     {% for contacto in representante.representanteContacto %}
                                         {{ contacto.contacto }}

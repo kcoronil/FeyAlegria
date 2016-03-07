@@ -33,7 +33,7 @@ class AlumnosTypeUsuario extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
-            ->add('usuario', 'collection', array('type'=>new UsuariosTypeCollection('Registrar Representante'), 'allow_add' => true, 'allow_delete' => true,
+            ->add('representante', 'collection', array('type'=>new UsuariosTypeCollection('Registrar Representante'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('periodoEscolarCursoAlumno', 'collection', array('type'=>new PeriodoEscolarCursoAlumnoType('Seleccionar Curso'), 'allow_add' => true, 'allow_delete' => true,

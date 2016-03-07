@@ -104,7 +104,21 @@ class Usuarios
      *
      * @Assert\NotBlank()
      */
-    private $apellidos;
+    private $primerApellido;
+
+    /**
+     * @var string
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Regex(pattern="/\d/", match=false,
+     * message="el valor {{ value }} no es alfabético.")
+     * @ORM\Column(name="apellidos", type="string", length=30)
+     *
+     * @Assert\NotBlank()
+     */
+    private $segundoApellido;
+
 
     /**
      * @var string
@@ -117,7 +131,21 @@ class Usuarios
      * message="el valor {{ value }} no es alfabético.")
      * @Assert\NotBlank()
      */
-    private $nombres;
+    private $primerNombre;
+
+    /**
+     * @var string
+     * @Assert\Length(min = 3, max = 30,
+     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
+     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     * @Assert\Regex(pattern="/\d/", match=false,
+     * message="el valor {{ value }} no es alfabético.")
+     * @ORM\Column(name="apellidos", type="string", length=30)
+     *
+     * @Assert\NotBlank()
+     */
+    private $segundoNombre;
+
 
     /**
      * @var \DateTime
@@ -224,38 +252,62 @@ class Usuarios
     }
 
     /**
-     * Set apellidos
+     * Set primerApellido
      *
-     * @param string $apellidos
+     * @param string $primerApellido
      * @return Usuarios
      */
 
-    public function setApellidos($apellidos)
+    public function setPrimerApellido($primerApellido)
     {
-        $this->apellidos = $apellidos;
+        $this->primerApellido = $primerApellido;
 
         return $this;
     }
 
     /**
-     * Get apellidos
+     * Get primerApellido
      *
      * @return string
      */
-    public function getApellidos()
+    public function getPrimerApellido()
     {
-        return $this->apellidos;
+        return $this->primerApellido;
     }
 
     /**
-     * Set nombres
+     * Set primerApellido
      *
-     * @param string $nombres
+     * @param string $segundoApellido
      * @return Usuarios
      */
-    public function setNombres($nombres)
+
+    public function setSegundoApellido($segundoApellido)
     {
-        $this->nombres = $nombres;
+        $this->segundoApellido = $segundoApellido;
+
+        return $this;
+    }
+
+    /**
+     * Get segundoApellido
+     *
+     * @return string
+     */
+    public function getSegundoApellido()
+    {
+        return $this->segundoApellido;
+    }
+
+    /**
+     * Set primerNombre
+     *
+     * @param string $primerNombre
+     * @return Usuarios
+     */
+    public function setPrimerNombre($primerNombre)
+    {
+        $this->primerNombre = $primerNombre;
 
         return $this;
     }
@@ -265,9 +317,33 @@ class Usuarios
      *
      * @return string
      */
-    public function getNombres()
+    public function getPrimerNombre()
     {
-        return $this->nombres;
+        return $this->primerNombre;
+    }
+
+    /**
+     * Set segundoNombre
+     *
+     * @param string $segundoNombre
+     * @return Usuarios
+     */
+    public function setSegundoNombre($segundoNombre)
+    {
+        $this->segundoNombre = $segundoNombre;
+
+        return $this;
+    }
+
+
+    /**
+     * Get segundoNombre
+     *
+     * @return string
+     */
+    public function getSegundoNombre()
+    {
+        return $this->segundoNombre;
     }
 
     /**
@@ -409,7 +485,7 @@ class Usuarios
     }
     public function __toString()
     {
-        return $this->nombres.' '.$this->apellidos;
+        return $this->primerNombre.' '.$this->primerApellido;
     }
 
 

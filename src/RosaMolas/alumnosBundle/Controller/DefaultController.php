@@ -200,7 +200,7 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
             ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
             ->andwhere('alumno.activo = true')
@@ -255,7 +255,7 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.nombres as Nombre_Representante', 'usuario.apellidos as Apellido_Representante', 'usuario.id as usuario_id')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
             ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
             ->where('usuario.principal = true')

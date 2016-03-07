@@ -12,8 +12,10 @@
             <generator strategy="SEQUENCE"/>
         </id>
         <field name="cedula" type="integer" column="cedula" nullable="false"/>
-        <field name="apellidos" type="string" column="apellidos" length="30" nullable="false"/>
-        <field name="nombres" type="string" column="nombres" length="30" nullable="false"/>
+        <field name="primerApellido" type="string" column="primer_apellido" length="30" nullable="false"/>
+        <field name="primerNombre" type="string" column="primer_nombre" length="30" nullable="false"/>
+        <field name="segundoApellido" type="string" column="segundo_apellido" length="30" nullable="true"/>
+        <field name="segundoNombre" type="string" column="segundo_nombre" length="30" nullable="true"/>
         <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="false"/>
         <field name="direccion" type="text" column="direccion" nullable="false"/>
         <field name="email" type="string" column="email" length="256" nullable="true"/>

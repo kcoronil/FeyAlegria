@@ -24,7 +24,7 @@ class AlumnosTypeAggRep extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario','entity', array('label'=>false, 'required' => true,
+            ->add('representante','entity', array('label'=>false, 'required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>true, 'by_reference' => false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('usuario')

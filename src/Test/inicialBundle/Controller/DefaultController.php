@@ -67,7 +67,7 @@ class DefaultController extends Controller
                             $session->set("usuario_id", $user[0]['id']);
                             $session->set("autenticado", true);
                             $session->set("nombre_usuario", $user[0]['nombreUsuario']);
-                            $session->set("nombres", $user[1]['nombres']);
+                            $session->set("nombres", $user[1]['primerNombre'].' '.$user[1]['primerApellido']);
                             $session->set("tipo_usuario", $user[2]['nombre']);
                             $session->set("id_tipo_usuario", $user[2]['id']);
                             return $this->render('inicialBundle:Default:index.html.twig');
@@ -207,9 +207,9 @@ class DefaultController extends Controller
         $objeto = 'ConceptosFactura';
         $clase = 'facturacionBundle:ConceptosFactura';
         $titulo = 'Conceptos de Factura';
-        $remover = null;
+        $remover = ['tipoFactura'];
         $url_redireccion = 'inicial_agregar_conceptos_factura';
-        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion, $remover);
         if(array_key_exists('resulado', $resultado)){
             return $this->redirect($this->generateUrl($resultado['url']));
         }

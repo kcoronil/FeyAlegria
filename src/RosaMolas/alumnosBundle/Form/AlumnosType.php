@@ -2,7 +2,6 @@
 
 namespace RosaMolas\alumnosBundle\Form;
 
-use Proxies\__CG__\Test\inicialBundle\Entity\Usuarios;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

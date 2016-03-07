@@ -114,7 +114,7 @@ class FuncionesGenericas extends Controller
         return array('form'=>$formulario->createView(), 'accion'=>'Editar '.$titulo);
     }
 
-    public function borrar_generico($id, $request, $formulario_base, $clase, $objeto, $titulo, $url_redireccion)
+    public function borrar_generico($id, $request, $formulario_base, $clase, $objeto, $titulo, $url_redireccion, $remover = null)
     {
         $p = $this->getDoctrine()
             ->getRepository($clase)
@@ -127,6 +127,11 @@ class FuncionesGenericas extends Controller
         }
         $formulario = $this->createForm($formulario_base, $p);
         $formulario -> remove('nombre');
+        if($remover){
+            foreach($remover as $campo){
+                $formulario->remove($campo);
+            }
+        }
         $formulario-> handleRequest($request);
 
         $query = $this->getDoctrine()->getRepository($clase)

@@ -3,7 +3,7 @@ generico_homepage:
     defaults: { _controller: genericoBundle:Default:index }
 
 generico_listado_alumnos_contactos:
-    path:     /listado_alumnos_contactos/{id}
+    path:     /listado_alumnos_contactos/
     defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos }
 
 generico_constancia_inscripcion:

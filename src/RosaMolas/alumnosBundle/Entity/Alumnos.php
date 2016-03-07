@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
+use RosaMolas\alumnosBundle\Entity\AlumnoRepresentante;
 
 /**
  * Alumnos
@@ -88,7 +89,7 @@ class Alumnos
     public function __construct()
     {
         $this->representante = new ArrayCollection();
-        $this->usuario = new ArrayCollection();
+        $this->alumno_representante = new ArrayCollection();
         $this->periodoEscolarCursoAlumno = new ArrayCollection();
         //$this->periodoEscolarCurso = new ArrayCollection();
     }
@@ -368,32 +369,38 @@ class Alumnos
 
         return $this;
     }
-    /**
-     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="alumno", cascade={"persist"})
-     * @ORM\JoinTable(name="alumnos_representantes", joinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")}
-     * )
-     **/
-
-    protected $usuario;
 
 
-    public function getUsuario()
+    public $alumnorepresentante;
+
+
+    public function getAlumnoRepresentante()
     {
-        return $this->usuario;
+        return $this->alumnorepresentante;
     }
 
 
-    public function addUsuario(Usuarios $usuario)
+    public function addAlumnoRepresentante(AlumnoRepresentante $alumnorepresentante)
     {
-        $usuario->addAlumno($this);
-        $this->usuario[] = $usuario;
+        $alumnorepresentante->setAlumno($this);
+        $this->alumno_representante[] = $alumnorepresentante;
     }
 
-    public function removeUsuario($usuario)
+    public function removeAlumnoRepresentante($alumnorepresentante)
     {
         //optionally add a check here to see that $group exists before removing it.
-        return $this->usuario->removeElement($usuario);
+        return $this->alumnorepresentante->removeElement($alumnorepresentante);
+    }
+
+
+    /**
+     * Get usuario
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsuario()
+    {
+        return $this->alumnorepresentante;
     }
 
     /**

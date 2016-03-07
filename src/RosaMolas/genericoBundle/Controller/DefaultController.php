@@ -43,7 +43,7 @@ class DefaultController extends Controller
             array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
     }
 
-    public function listado_alumnos_contactosAction($id, Request $request)
+    public function listado_alumnos_contactosAction(Request $request)
     {
         $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->createQueryBuilder('periodo_alumno')
@@ -51,12 +51,10 @@ class DefaultController extends Controller
             ->Join('periodo_alumno.alumno', 'alumnos')
             ->Join('alumnos.representante', 'representantes')
             ->Join('representantes.representanteContacto', 'contactos')
-            ->where('periodo_alumno.cursoSeccion = :id')
-            ->andwhere('periodo_alumno.activo = true')
+            ->where('periodo_alumno.activo = true')
             ->andwhere('alumnos.activo = true')
             ->andwhere('representantes.activo = true')
             ->orderBy('alumnos.id', 'DESC')
-            ->setParameter('id',$id)
             ->getQuery();
 
         $datos = $query->getResult();
@@ -468,16 +466,18 @@ class DefaultController extends Controller
     {
         $session = $this->getRequest()->getSession();
         $session->remove('representantes_adic_anteriores');
+
         if($id_rep){
             $p = $this->getDoctrine()
                 ->getRepository('usuariosBundle:Usuarios')
                 ->find($id_rep);
             $session->set("representante_inscripcion", $p);
         }
+
         if (!$session->get('representante_inscripcion')) {
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.apellidos, usuario.nombres, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
                 ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
                 ->where('usuario.activo = true')
                 ->andWhere('tipo_usuario.id=5')
@@ -487,8 +487,8 @@ class DefaultController extends Controller
             $elemento = 'Seleccione Representante';
 
             return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
-
         }
+
         else {
             if (!$session->get('alumnos_finalizado')) {
                 $remover = null;

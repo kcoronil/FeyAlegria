@@ -115,7 +115,7 @@
                     </tbody>
                 </table>
             </div>
-            {% if facturas is defined%}
+            {% if facturas %}
                 <div class="row">
                     <div id="div_tbl_factura" class="col-sm-12">
                         <h4>Representanrtes Registrados</h4>
@@ -191,6 +191,11 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            {% else %}
+                <div class="col-sm-12">
+                    <br>
+                    <p>No hay Facturas pendientes para este alumno</p>
                 </div>
             {% endif %}
         {% endif %}
