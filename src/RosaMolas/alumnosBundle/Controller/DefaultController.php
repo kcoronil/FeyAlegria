@@ -3,7 +3,9 @@
 namespace RosaMolas\alumnosBundle\Controller;
 
 
+use RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
+use RosaMolas\alumnosBundle\Form\AlumnoRepresentanteDatosType;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
 use RosaMolas\alumnosBundle\Form\PeriodoEscolarAlumnoType;
@@ -351,4 +353,73 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:borrar.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>'Borrar Estudiante', 'atajo'=>$atajo));
     }
+    public function datos_alumnos_representante_listaAction(Request $request){
+
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
+            ->createQueryBuilder('alumno')
+            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
+            ->leftJoin('alumno.representante', 'usuario')
+            ->where('usuario.activo = true')
+            ->where('usuario.principal = true')
+            ->andwhere('alumno.activo = true')
+            ->orderBy('alumno.id', 'DESC')
+            ->getQuery();
+
+        $datos = $query->getArrayResult();
+
+        return $this->render('alumnosBundle:Default:datos_alumno_representante.html.twig', array('accion'=>'Seleccione Alumno', 'datos'=>$datos));
+
+    }
+    public function datos_alumnos_representanteAction($id, Request $request){
+
+        $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+            ->createQueryBuilder('usuario')
+            ->select('usuario.id')
+            ->innerJoin('usuario.alumno', 'alumnos')
+            ->where('alumnos.id = :id')
+            ->andWhere('usuario.activo = true')
+            ->andWhere('usuario.tipoUsuario=5')
+            ->setParameter('id', $id)
+            ->distinct('usuario.id')
+            ->getQuery();
+        $test = $query->getArrayResult();
+        //$lista_id_rep = $query->
+        $id_representantes = [];
+        foreach($test as $id_rep){
+            array_push($id_representantes, $id_rep['id']);
+        }
+        $p = New AlumnoRepresentanteDatos();
+
+        $formulario = $this->createForm(new AlumnoRepresentanteDatosType('Datos Representante', $id_representantes), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+
+                $alumno = $this->getDoctrine()
+                    ->getRepository('alumnosBundle:Alumnos')
+                    ->find($id);
+                $rep_alumn = $this->getDoctrine()
+                    ->getRepository('alumnosBundle:AlumnoRepresentanteDatos')
+                    ->findOneBy(array('alumno'=>$id, 'principal'=>true));
+                if($p->getPrincipal()){
+                    if ($rep_alumn) {
+                        $this->get('session')->getFlashBag()->add(
+                            'danger', 'Ya existe representante principal para este estudiante');
+                        return $this->render('alumnosBundle:Default:datos_alumno_representante.html.twig', array('accion' => 'Datos Alumnos Representantes', 'form' => $formulario->createView()));
+                    }
+                }
+                $p->setAlumno($alumno);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Datos creados con éxito');
+                return $this->redirect($this->generateUrl('inicial_lista_datos_alumno_representante'));
+            }
+
+        }
+        return $this->render('alumnosBundle:Default:datos_alumno_representante.html.twig', array('accion'=>'Datos Alumnos Representantes', 'form'=>$formulario->createView()));
+    }
+
 }

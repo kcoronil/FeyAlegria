@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="RosaMolas\alumnosBundle\Entity\AlumnoRepresentante" table="alumno_representante">
+  <entity name="RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos" table="alumno_representante_datos">
     <indexes>
       <index name="IDX_FE46CA10FC28E5EE" columns="alumno_id"/>
       <index name="IDX_FE46CA102FD20D28" columns="representante_id"/>

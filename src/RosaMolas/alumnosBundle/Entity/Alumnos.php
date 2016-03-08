@@ -380,7 +380,7 @@ class Alumnos
     }
 
 
-    public function addAlumnoRepresentante(AlumnoRepresentante $alumnorepresentante)
+    public function addAlumnoRepresentante(AlumnoRepresentanteDatos $alumnorepresentante)
     {
         $alumnorepresentante->setAlumno($this);
         $this->alumno_representante[] = $alumnorepresentante;

@@ -39,49 +39,17 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Proyecto</a>
+                            <a class="navbar-brand" href="{{ path('inicial_homepage') }}">Inicio</a>
                         </div>
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-                                <li><a href="{{ path('inicial_homepage') }}">Inicio <span class="sr-only">(current)</span></a></li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menú <span class="caret"></span></a>
-                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Inscripciones <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                         {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
-                                            <!--<li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preinscripciones</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#" >Consulta</a></li>
-                                                    <li><a href="#" >Gestionar</a></li>
-                                                </ul>
-                                            </li>-->
-                                            <li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Estudiante</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('generico_inscripcion_completa') }}" >· Inscripción Completa</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_alumno') }}" >· Agregar Estudiante</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_alumno_usuario') }}" >· Agregar Estudiante - Representante</a></li>
-                                                    <li><a href="{{ path('inicial_lista_alumno') }}" >· Consulta</a></li>
-                                                    <li><a href="{{ path('inicial_pdf_alumno') }}" target="_blank">· Consulta PDF</a></li>
-                                                </ul>
-                                            </li>
-                                            <!--<li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inscripciones</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#" >Consulta</a></li>
-                                                    {% if  (app.session.get('id_tipo_usuario')== 1)%}
-                                                        <li><a href="#" >Gestionar</a></li>
-                                                    {% endif %}
-                                                </ul>
-                                            </li>-->
-                                            <li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Representantes</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="{{ path('inicial_lista_representante') }}" >· Consulta</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_representante') }}" >· Agregar</a></li>
-                                                </ul>
-                                            </li>
+                                            <li><a href="{{ path('generico_inscripcion_completa') }}" title="Registro de Representantes y Estudiantes">· Inscripción Completa</a></li>
+                                            <li><a href="{{ path('inicial_agregar_alumno') }}" title="Registro Estudiantes Con representantes previamente registrados">· Inscripción Estudiante</a></li>
                                             <!--
                                             <li class="dropdown-submenu">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Año escolar</a>
@@ -130,18 +98,25 @@
                                             </li>-->
 
                                         {% endif %}
-                                        {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==5)%}
-                                            <!--
-                                            <li class="dropdown-submenu">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preinscripcion</a>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#" >Consultas</a></li>
-                                                    <li><a href="#">agregar</a></li>
-                                                </ul>
-                                            </li>-->
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Estudiantes <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                        {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
+                                            <li><a href="{{ path('inicial_lista_alumno') }}" >· Consulta</a></li>
+                                            <li><a href="{{ path('inicial_pdf_alumno') }}" target="_blank">· Consulta PDF</a></li>
+                                            <li><a href="{{ path('inicial_lista_datos_alumno_representante') }}" >· Datos Representante </a></li>
                                         {% endif %}
-                                        <!-- <li class="divider"></li>
-                                        <li><a tabindex="-1" href="#">Separated link</a></li> -->
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Representantes <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                        {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
+                                            <li><a href="{{ path('inicial_lista_representante') }}" >· Consulta</a></li>
+                                            <li><a href="{{ path('inicial_agregar_representante') }}" >· Agregar</a></li>
+                                        {% endif %}
                                     </ul>
                                 </li>
                                 <li class="dropdown">
@@ -194,6 +169,7 @@
                                                     <li><a href="{{ path('inicial_agregar_bancos') }}" >· Bancos</a></li>
                                                     <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >· Conceptos Factura</a></li>
                                                     <li><a href="{{ path('facturacion_agregar_tipo_montos') }}">· Tipos de Monto</a></li>
+                                                    <li><a href="{{ path('generico_agregar_parentescos') }}">· Parentescos</a></li>
                                                 </ul>
                                             </li>
                                             <li class="dropdown-submenu">

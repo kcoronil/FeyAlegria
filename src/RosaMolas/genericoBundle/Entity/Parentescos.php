@@ -17,7 +17,7 @@ class Parentescos
     /**
      * @var boolean
      */
-    private $activo;
+    private $activo = true;
 
     /**
      * @var integer
@@ -79,5 +79,9 @@ class Parentescos
     public function getId()
     {
         return $this->id;
+    }
+    public function __toString()
+    {
+        return $this->nombre;
     }
 }

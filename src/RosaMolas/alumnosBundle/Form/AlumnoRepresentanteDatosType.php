@@ -3,14 +3,13 @@
 namespace RosaMolas\alumnosBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-
-class AlumnosTypeAggRep extends AbstractType
+class AlumnoRepresentanteDatosType extends AbstractType
 {
     public function __construct ($titulo, $lista_id)
     {
@@ -24,30 +23,34 @@ class AlumnosTypeAggRep extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('representante','entity', array('label'=>false, 'required' => true,
-                'class' => 'usuariosBundle:Usuarios','empty_data' => 'Sin datos para seleccionar', 'multiple'=>true, 'expanded'=>true, 'by_reference' => false,
+            ->add('representante', 'entity', array('required' => true,
+                'class' => 'usuariosBundle:Usuarios','empty_data' => 'Sin datos para seleccionar', 'multiple'=>false, 'expanded'=>true, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('usuario')
-                        ->innerJoin('usuario.alumno', 'alumnos')
-                        ->where('alumnos.id in (:id)')
+                        ->where('usuario.id in (:ids)')
+                        ->andWhere('usuario.tipoUsuario=5')
                         ->andWhere('usuario.activo = true')
-                        ->setParameter('id', $this->lista_id)
+                        ->setParameter('ids', $this->lista_id)
                         ->distinct();}))
-            ;
+            ->add('parentesco')
+            ->add('principal')
+            ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
+        ;
     }
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
 
         $view->vars['titulo'] = $this->titulo;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RosaMolas\alumnosBundle\Entity\Alumnos'
+            'data_class' => 'RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos'
         ));
     }
 
@@ -56,12 +59,6 @@ class AlumnosTypeAggRep extends AbstractType
      */
     public function getName()
     {
-        return 'alumnosbundle_alumnos_agg_rep';
-    }
-    public function getDefaultOptions()
-    {
-        return array(
-            'data_class' => 'RosaMolas\alumnosBundle\Entity\Alumnos',
-        );
+        return 'rosamolas_alumnosbundle_alumnorepresentantedatos';
     }
 }

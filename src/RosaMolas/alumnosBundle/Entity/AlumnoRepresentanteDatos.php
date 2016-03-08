@@ -7,12 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AlumnoRepresentante
  */
-class AlumnoRepresentante
+class AlumnoRepresentanteDatos
 {
     /**
      * @var boolean
      */
-    private $principal;
+    private $principal = false;
 
     /**
      * @var integer
@@ -39,7 +39,7 @@ class AlumnoRepresentante
      * Set principal
      *
      * @param boolean $principal
-     * @return AlumnoRepresentante
+     * @return AlumnoRepresentanteDatos
      */
     public function setPrincipal($principal)
     {
@@ -72,7 +72,7 @@ class AlumnoRepresentante
      * Set parentesco
      *
      * @param \RosaMolas\genericoBundle\Entity\Parentescos $parentesco
-     * @return AlumnoRepresentante
+     * @return AlumnoRepresentanteDatos
      */
     public function setParentesco(\RosaMolas\genericoBundle\Entity\Parentescos $parentesco = null)
     {
@@ -95,7 +95,7 @@ class AlumnoRepresentante
      * Set representante
      *
      * @param \RosaMolas\usuariosBundle\Entity\Usuarios $representante
-     * @return AlumnoRepresentante
+     * @return AlumnoRepresentanteDatos
      */
     public function setRepresentante(\RosaMolas\usuariosBundle\Entity\Usuarios $representante = null)
     {
@@ -118,7 +118,7 @@ class AlumnoRepresentante
      * Set alumno
      *
      * @param \RosaMolas\alumnosBundle\Entity\Alumnos $alumno
-     * @return AlumnoRepresentante
+     * @return AlumnoRepresentanteDatos
      */
     public function setAlumno(\RosaMolas\alumnosBundle\Entity\Alumnos $alumno = null)
     {

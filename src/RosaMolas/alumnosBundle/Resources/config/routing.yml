@@ -34,3 +34,11 @@ inicial_pdf_alumno:
 inicial_agregar_periodo_alumno:
     path:     /crear_periodo_alumno
     defaults: { _controller: alumnosBundle:Default:crear_periodo_alumno }
+
+inicial_lista_datos_alumno_representante:
+    path:     /lista_datos_alumno_representante
+    defaults: { _controller: alumnosBundle:Default:datos_alumnos_representante_lista }
+
+inicial_datos_alumno_representante:
+    path:     /datos_alumno_representante/{id}
+    defaults: { _controller: alumnosBundle:Default:datos_alumnos_representante }

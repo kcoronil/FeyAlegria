@@ -8,7 +8,9 @@ use RosaMolas\facturacionBundle\Entity\DetalleFactura;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
 use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\genericoBundle\Entity\Pagos;
+use RosaMolas\genericoBundle\Entity\Parentescos;
 use RosaMolas\genericoBundle\Form\PagosType;
+use RosaMolas\genericoBundle\Form\ParentescosType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -346,6 +348,50 @@ class DefaultController extends Controller
         $atajo = $url_redireccion;
         return $this->render('inicialBundle:Default:'.$plantilla.'.html.twig', array('form'=>$formulario->createView(),
             'datos'=>$datos, 'accion'=>$accion, 'atajo'=>$atajo));
+    }
+
+
+    public function crear_parentescoAction(Request $request){
+        $modelo = New Parentescos();
+        $form = new ParentescosType('Crear Parentesco');
+        $objeto = 'Parentescos';
+        $clase = 'genericoBundle:Parentescos';
+        $titulo = 'Parentesco';
+        $datos = 'true';
+        $remover = '';
+        $url_redireccion = 'generico_agregar_parentescos';
+        $url_editar = 'generico_editar_parentescos';
+        $url_borrar = 'generico_borrar_parentescos';
+        $resultado = $this->get('funciones_genericas')->crear_generico($request, $modelo, $form, $objeto, $clase, $titulo, $url_redireccion, $url_editar, $url_borrar, $datos, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+    }
+    public function editar_parentescoAction($id, Request $request){
+        $form = new ParentescosType('Editar Parentesco');
+        $clase = 'genericoBundle:Parentescos';
+        $titulo = 'Parentesco';
+        $url_redireccion = 'generico_agregar_parentescos';
+        $remover = null;
+        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+        if(array_key_exists('resulado', $resultado)) {
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+    }
+    public function borrar_parentescoAction($id, Request $request){
+        $form = New ParentescosType('Borrar Parentesco');
+        $objeto = 'Parentescos';
+        $clase = 'genericoBundle:Parentescos';
+        $titulo = 'Parentesco';
+        $remover = null;
+        $url_redireccion = 'generico_agregar_parentescos';
+        $resultado = $this->get('funciones_genericas')->borrar_generico($id, $request, $form, $clase, $objeto, $titulo, $url_redireccion);
+        if(array_key_exists('resulado', $resultado)){
+            return $this->redirect($this->generateUrl($resultado['url']));
+        }
+        return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
 
     public function inscripcion_completaAction(Request $request)

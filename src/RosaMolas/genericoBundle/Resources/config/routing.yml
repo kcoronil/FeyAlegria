@@ -25,3 +25,16 @@ generico_inscripcion_agregar_alumno:
 generico_agregar_pago:
     path:     /agregar_pago/{id}
     defaults: { _controller: genericoBundle:Default:agregar_pago }
+
+
+generico_agregar_parentescos:
+    path:     /crear_parentesco
+    defaults: { _controller: genericoBundle:Default:crear_parentesco }
+
+generico_editar_parentescos:
+    path:     /editar_parentesco/{id}
+    defaults: { _controller: genericoBundle:Default:editar_parentesco }
+
+generico_borrar_parentescos:
+    path:     /borrar_parentesco/{id}
+    defaults: { _controller: genericoBundle:Default:borrar_parentesco }
