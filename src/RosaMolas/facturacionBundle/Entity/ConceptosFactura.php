@@ -3,7 +3,6 @@
 namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * ConceptosFactura
@@ -18,7 +17,7 @@ class ConceptosFactura
     /**
      * @var boolean
      */
-    private $activo = true;
+    private $activo;
 
     /**
      * @var integer
@@ -28,20 +27,20 @@ class ConceptosFactura
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $tipoFactura;
+    private $tipoMontoConceptos;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    public $tipoMontoConceptos;
+    private $tipoFactura;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->tipoFactura = new ArrayCollection();
-        $this->tipoMontoConceptos = new ArrayCollection();
+        $this->tipoMontoConceptos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -101,6 +100,39 @@ class ConceptosFactura
     }
 
     /**
+     * Add tipoMontoConceptos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
+     * @return ConceptosFactura
+     */
+    public function addTipoMontoConcepto(\RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos)
+    {
+        $this->tipoMontoConceptos[] = $tipoMontoConceptos;
+
+        return $this;
+    }
+
+    /**
+     * Remove tipoMontoConceptos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
+     */
+    public function removeTipoMontoConcepto(\RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos)
+    {
+        $this->tipoMontoConceptos->removeElement($tipoMontoConceptos);
+    }
+
+    /**
+     * Get tipoMontoConceptos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTipoMontoConceptos()
+    {
+        return $this->tipoMontoConceptos;
+    }
+
+    /**
      * Add tipoFactura
      *
      * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
@@ -131,53 +163,5 @@ class ConceptosFactura
     public function getTipoFactura()
     {
         return $this->tipoFactura;
-    }
-
-    /**
-     * Set tipoFactura
-     *
-     * @param \RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura
-     * @return ConceptosFactura
-     */
-    public function setTipoFactura(\RosaMolas\facturacionBundle\Entity\TipoFactura $tipoFactura = null)
-    {
-        $test_tipofact = New ArrayCollection();
-        $test_tipofact->add($tipoFactura);
-        $this->tipoFactura = $test_tipofact;
-
-        return $this;
-    }
-
-    public function getTipoMontoConceptos()
-    {
-        return $this->tipoMontoConceptos;
-    }
-
-    /*public function setTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos = null)
-    {
-        $this->tipoMontoConceptos[] = $tipoMontoConceptos;
-    }*/
-
-    /**
-     * Add tipoMontoConceptos
-     *
-     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
-     * @return ConceptosFactura
-     */
-
-    public function addTipoMontoConceptos(TipoMontoConceptos $tipoMontoConceptos)
-    {
-        $tipoMontoConceptos->setConceptosFactura($this);
-        $this->tipoMontoConceptos[] = $tipoMontoConceptos;
-    }
-
-    /**
-     * Remove tipoMontoConceptos
-     *
-     * @param \RosaMolas\facturacionBundle\Entity\TipoMontoConceptos $tipoMontoConceptos
-     */
-    public function removePeriodoEscolarCursoAlumno(TipoMontoConceptos $tipoMontoConceptos)
-    {
-        $this->tipoMontoConceptos->removeElement($tipoMontoConceptos);
     }
 }

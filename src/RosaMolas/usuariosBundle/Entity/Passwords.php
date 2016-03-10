@@ -27,28 +27,28 @@ class Passwords
      *
      * @ORM\Column(name="password", type="string", length=40, nullable=false)
      */
-    public $password;
+    protected $password;
 
     /**
      * @var string
      *
      * @ORM\Column(name="salt", type="string", length=40, nullable=false)
      */
-    public $salt;
+    protected $salt;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_creacion", type="date", nullable=false)
      */
-    public $fechaCreacion;
+    protected $fechaCreacion;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="activo", type="boolean", nullable=false)
      */
-    public $activo;
+    protected $activo;
 
     /**
      *
@@ -57,7 +57,7 @@ class Passwords
      *   @ORM\JoinColumn(name="perfil_id", referencedColumnName="id")
      * })
      */
-    public $perfil;
+    protected $perfil;
 
     public function __construct() {
         if(!$this->salt){

@@ -10,7 +10,7 @@
     </id>
     <field name="monto" type="decimal" column="monto" precision="10" scale="2" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-one field="factura" target-entity="Factura">
+    <many-to-one field="factura" target-entity="Factura" inversed-by="detalleFactura">
       <join-columns>
         <join-column name="factura_id" referenced-column-name="id"/>
       </join-columns>

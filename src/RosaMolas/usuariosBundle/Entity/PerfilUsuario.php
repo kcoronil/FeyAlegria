@@ -3,93 +3,12 @@
 namespace RosaMolas\usuariosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * PerfilUsuario
- *
- * @ORM\Table()
- * @ORM\Entity(repositoryClass="RosaMolas\usuariosBundle\Entity\PerfilUsuarioRepository")
  */
-class PerfilUsuario implements UserInterface
+class PerfilUsuario
 {
-    /**
-     * @ORM\OneToOne(targetEntity="Usuarios", inversedBy="perfil")
-     * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id", unique=true)
-     */
-
-    public $usuario;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Passwords", mappedBy="perfil")
-     * @ORM\JoinColumn(name="perfil_id", referencedColumnName="id", unique=true)
-     */
-
-    public $password;
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-
-    /*public function getPublishedImages()
-    {
-        return $this->images->filter( function( $image ) {
-            return ( $image->isPublished() );
-        });
-    }*/
-
-    public function getSalt()
-    {
-        return $this->password->getSalt();
-    }
-
-    public function eraseCredentials()
-    {
-    }
-
-    /**
-     * @ORM\OneToMany(targetEntity="RecuperarPasswordTmp", inversedBy="perfil")
-     * @ORM\JoinColumn(name="id_perfil", referencedColumnName="id")
-     */
-
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Roles", inversedBy="perfil")
-     * @ORM\JoinColumn(name="sexo_id", referencedColumnName="id")
-     */
-
-    public $rol;
-
-       public function __construct() {
-           $this->rol = new ArrayCollection();
-           $this->isActive = true;
-           $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
-       }
-
-       public function getRoles(){
-           return $this->rol->toArray();
-       }
-
-       public function setRoles($rol){
-           $this->rol = $rol;
-           return $this;
-       }
-
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-
-    private $id;
-
     /**
      * @var string
      *
@@ -100,8 +19,9 @@ class PerfilUsuario implements UserInterface
      * @Assert\Length(min = 6, max = 30,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
+     *
      */
-    private $nombreUsuario = null;
+    private $nombreUsuario;
 
     /**
      * @var string
@@ -110,6 +30,7 @@ class PerfilUsuario implements UserInterface
      * @Assert\Email(
      * message = "El correo '{{ value }}' no es un correo valido.",
      * checkMX = true)
+     *
      */
     private $email;
 
@@ -126,7 +47,7 @@ class PerfilUsuario implements UserInterface
      * message="el valor {{ value }} no es alfanumérico.")
      *
      */
-    private $lugarNacimiento = null;
+    private $lugarNacimiento;
 
     /**
      * @var string
@@ -139,50 +60,46 @@ class PerfilUsuario implements UserInterface
      * message="el valor {{ value }} no es alfanumérico.")
      *
      */
-    private $preguntaSecreta = null;
+    private $preguntaSecreta;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="fecha_creacion", type="date")
      */
     private $fechaCreacion;
 
     /**
      * @var string
+     *
      * @Assert\Length(min = 3, max = 20,
      * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
      * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * pattern="[ 0-9a-zA-Z]*$", match=false,
      * message="el valor {{ value }} no es alfanumérico.")
      * @ORM\Column(name="respuesta", type="string", length=20)
-     */
-    private $respuesta = null;
-
-    /**
-     * @var integer
      *
-     * @ORM\Column(name="usuario_id", type="integer")
      */
-    private $usuarioId;
+    private $respuesta;
 
     /**
      * @var boolean
-     *
-     * @ORM\Column(name="activo", type="boolean")
      */
-    private $activo = true;
-
+    private $activo;
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * @var integer
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $id;
+
+    /**
+     * @var \RosaMolas\usuariosBundle\Entity\Usuarios
+     */
+    private $usuario;
+
+    /**
+     * @var \RosaMolas\usuariosBundle\Entity\Roles
+     */
+    private $rol;
+
 
     /**
      * Set nombreUsuario
@@ -200,19 +117,9 @@ class PerfilUsuario implements UserInterface
     /**
      * Get nombreUsuario
      *
-     * @return string
+     * @return string 
      */
     public function getNombreUsuario()
-    {
-        return $this->nombreUsuario;
-    }
-
-    /**
-     * Get nombreUsuario
-     *
-     * @return string
-     */
-    public function getUsername()
     {
         return $this->nombreUsuario;
     }
@@ -333,29 +240,6 @@ class PerfilUsuario implements UserInterface
     }
 
     /**
-     * Set usuarioId
-     *
-     * @param integer $usuarioId
-     * @return PerfilUsuario
-     */
-    public function setUsuarioId($usuarioId)
-    {
-        $this->usuarioId = $usuarioId;
-
-        return $this;
-    }
-
-    /**
-     * Get usuarioId
-     *
-     * @return integer 
-     */
-    public function getUsuarioId()
-    {
-        return $this->usuarioId;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
@@ -377,8 +261,60 @@ class PerfilUsuario implements UserInterface
     {
         return $this->activo;
     }
-    public function __toString()
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
     {
-        return $this->nombreUsuario;
+        return $this->id;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \RosaMolas\usuariosBundle\Entity\Usuarios $usuario
+     * @return PerfilUsuario
+     */
+    public function setUsuario(\RosaMolas\usuariosBundle\Entity\Usuarios $usuario = null)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \RosaMolas\usuariosBundle\Entity\Usuarios 
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+    /**
+     * Set rol
+     *
+     * @param \RosaMolas\usuariosBundle\Entity\Roles $rol
+     * @return PerfilUsuario
+     */
+    public function setRol(\RosaMolas\usuariosBundle\Entity\Roles $rol = null)
+    {
+        $this->rol = $rol;
+
+        return $this;
+    }
+
+    /**
+     * Get rol
+     *
+     * @return \RosaMolas\usuariosBundle\Entity\Roles 
+     */
+    public function getRol()
+    {
+        return $this->rol;
     }
 }

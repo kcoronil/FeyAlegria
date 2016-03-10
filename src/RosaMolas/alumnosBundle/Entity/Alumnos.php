@@ -89,7 +89,7 @@ class Alumnos
     public function __construct()
     {
         $this->representante = new ArrayCollection();
-        $this->alumno_representante = new ArrayCollection();
+        $this->alumnoRepresentanteDatos = new ArrayCollection();
         $this->periodoEscolarCursoAlumno = new ArrayCollection();
         //$this->periodoEscolarCurso = new ArrayCollection();
     }
@@ -371,36 +371,29 @@ class Alumnos
     }
 
 
-    public $alumnorepresentante;
-
-
-    public function getAlumnoRepresentante()
-    {
-        return $this->alumnorepresentante;
-    }
-
-
-    public function addAlumnoRepresentante(AlumnoRepresentanteDatos $alumnorepresentante)
-    {
-        $alumnorepresentante->setAlumno($this);
-        $this->alumno_representante[] = $alumnorepresentante;
-    }
-
-    public function removeAlumnoRepresentante($alumnorepresentante)
-    {
-        //optionally add a check here to see that $group exists before removing it.
-        return $this->alumnorepresentante->removeElement($alumnorepresentante);
-    }
-
+    protected $alumnoRepresentanteDatos;
 
     /**
-     * Get usuario
+     * Get alumnoRepresentanteDatos
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getUsuario()
+    public function getAlumnoRepresentanteDatos()
     {
-        return $this->alumnorepresentante;
+        return $this->alumnoRepresentanteDatos;
+    }
+
+
+    public function addAlumnoRepresentanteDatos(AlumnoRepresentanteDatos $alumnoRepresentanteDatos)
+    {
+        $alumnoRepresentanteDatos->setAlumno($this);
+        $this->alumnoRepresentanteDatos[] = $alumnoRepresentanteDatos;
+    }
+
+    public function removeAlumnoRepresentanteDatos($alumnoRepresentanteDatos)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->alumnoRepresentanteDatos->removeElement($alumnoRepresentanteDatos);
     }
 
     /**

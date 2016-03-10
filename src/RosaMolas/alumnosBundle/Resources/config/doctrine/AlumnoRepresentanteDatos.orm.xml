@@ -23,7 +23,7 @@
         <join-column name="representante_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="alumnorepresentante">
+    <many-to-one field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" inversed-by="alumnoRepresentanteDatos">
       <join-columns>
         <join-column name="alumno_id" referenced-column-name="id"/>
       </join-columns>
