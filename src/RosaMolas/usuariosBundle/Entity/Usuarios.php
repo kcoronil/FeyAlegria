@@ -5,6 +5,7 @@ namespace RosaMolas\usuariosBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use RosaMolas\AlumnosBundle\Entity\Alumnos;
+use RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -30,6 +31,7 @@ class Usuarios
     public function __construct(){
         $this->alumno = new ArrayCollection();
         $this->representanteContacto = new ArrayCollection();
+        $this->alumnoRepresentanteDatos = new ArrayCollection();
     }
 
     public function getAlumno()
@@ -72,6 +74,29 @@ class Usuarios
         return $this->representanteContacto->removeElement($representanteContacto);
     }
 
+    protected $alumnoRepresentanteDatos;
+
+    /**
+     * Get alumnoRepresentanteDatos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAlumnoRepresentanteDatos()
+    {
+        return $this->alumnoRepresentanteDatos;
+    }
+
+    public function addAlumnoRepresentanteDatos(AlumnoRepresentanteDatos $alumnoRepresentanteDatos)
+    {
+        $alumnoRepresentanteDatos->setRepresentante($this);
+        $this->alumnoRepresentanteDatos[] = $alumnoRepresentanteDatos;
+    }
+
+    public function removeAlumnoRepresentanteDatos($alumnoRepresentanteDatos)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->alumnoRepresentanteDatos->removeElement($alumnoRepresentanteDatos);
+    }
 
     /**
      * @var integer

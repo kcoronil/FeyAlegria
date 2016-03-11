@@ -492,7 +492,7 @@ class DefaultController extends Controller
                     }
                     else{
 
-                        print_r($session->get('representante_inscripcion')->getEmail().'<br>');
+
                         $mail =$this->get('funciones_genericas')->email_inscripcion($session->get('representante_inscripcion'), $session->get('alumnos_inscripcion'));
                         $session->remove('representante_inscripcion');
                         $session->remove('alumnos_inscripcion');
@@ -555,7 +555,6 @@ class DefaultController extends Controller
                     ->distinct('usuario.id')
                     ->getQuery();
                 $test = $query->getArrayResult();
-                //$lista_id_rep = $query->
                 $id_representantes = [];
                 foreach($test as $id){
                     array_push($id_representantes, $id['id']);
@@ -597,8 +596,8 @@ class DefaultController extends Controller
                             return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
                         }
                     }
-                } else {
-                    //$representante =
+                }
+                else {
                     $session->remove('representante_inscripcion');
                     $session->remove('alumnos_inscripcion');
                     $session->remove('alumnos_finalizado');
@@ -610,8 +609,6 @@ class DefaultController extends Controller
                     $session->remove('representantes_adic_nuevo_finalizado');
                     $session->remove('representantes_adic_inscripcion');
                     $session->remove('representantes_adic_finalizado');
-
-                    //return $this->redirect($this->generateUrl('_getuser', array( 'id' => $id ));
 
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }

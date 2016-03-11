@@ -33,26 +33,17 @@ class AlumnosFuncionesGenericas extends Controller
         $formulario-> handleRequest($request);
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
-                print_r('hola654');
+
                 $p->setActivo(true);
                 $periodo_activo = $this->getDoctrine()
                     ->getRepository('inicialBundle:PeriodoEscolar')
                     ->findOneBy(array('activo'=>true));
 
                 foreach($p->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
-                    print_r('hola6');
                     $periodo_alumno->setPeriodoEscolar($periodo_activo);
                     $periodo_alumno->setActivo(true);
                 }
                 //print_r($p->getUsuario());
-                foreach($p->getUsuario() as $rep){
-                    print_r('representantes');
-                    print_r($rep->getNombres());
-                }
-                foreach($p->getUsuario() as $rep){
-                    print_r('usuarios');
-                    print_r($rep->getNombres());
-                }
                 if($usuario){
                     $usuario_query = $this->getDoctrine()
                         ->getRepository('usuariosBundle:Usuarios')

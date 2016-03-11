@@ -41,6 +41,7 @@ class AlumnosTypeInscripcion extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.activo=true');}))
+
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
@@ -56,7 +57,7 @@ class AlumnosTypeInscripcion extends AbstractType
                         ->distinct();}));
         }
         else{
-            $builder->add('usuario','entity', array('label'=>'Representante', 'required' => true,
+            $builder->add('representante','entity', array('label'=>'Representante', 'required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false));
         }
     }
