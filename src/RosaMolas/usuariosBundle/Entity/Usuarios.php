@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Usuarios
 {
     /**
-     * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="usuario", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Alumnos", inversedBy="representante", cascade={"persist"})
      * @ORM\JoinTable(name="alumnos_representantes",joinColumns={@ORM\JoinColumn(name="representante_id", referencedColumnName="id")},
      * inverseJoinColumns={@ORM\JoinColumn(name="alumno_id", referencedColumnName="id")}
      * )

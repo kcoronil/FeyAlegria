@@ -22,7 +22,6 @@ class AlumnosFuncionesGenericas extends Controller
     }
     public function crear_alumno_generico(Request $request, $remover = null, $usuario = null, $lista_id=null){
         $p = New Alumnos();
-
         $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $lista_id), $p);
 
         if($remover){

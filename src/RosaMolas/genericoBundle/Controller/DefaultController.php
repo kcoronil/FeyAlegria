@@ -397,18 +397,32 @@ class DefaultController extends Controller
     public function inscripcion_completaAction(Request $request)
     {
         $session = $this->getRequest()->getSession();
-        if (!$session->get('representante_inscripcion')) {
-            $remover = array('guardar_crear');
-            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, true, $remover, null, 'Crear Representante Principal');
-
+        if (!$session->get('representantes_finalizado')) {
+            $remover = null;
+            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
             if (array_key_exists('representante', $resultado)) {
-                $session->set("representante_inscripcion", $resultado['representante']);
-                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                if($resultado['representante']!='') {
+                    if (!$session->get('representantes')) {
+                        $session->set("representantes", array());
+                    }
+                    $array_representantes = $session->get('representantes');
+                    array_push($array_representantes, $resultado['representante']);
+                    $session->set("representantes", $array_representantes);
+                }
+                if(array_key_exists('representantes_finalizado', $resultado)){
+                    $session->set("representantes_finalizado", true);
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+
+                }
+                else{
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                }
             }
+
         }
         else {
             if (!$session->get('alumnos_finalizado')) {
-                $remover = array('usuario');
+                $remover = null;
                 $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'));
                 if (array_key_exists('alumnos', $resultado)){
                     if(!$session->get('alumnos_inscripcion')){
@@ -438,31 +452,42 @@ class DefaultController extends Controller
                 }
             }
             else{
-                if (!$session->get('representantes_adic_finalizado')) {
-                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
-                    if (array_key_exists('representante', $resultado)) {
-                        if($resultado['representante']!='') {
-                            if (!$session->get('representantes_adic_inscripcion')) {
-                                $session->set("representantes_adic_inscripcion", array());
-                            }
-                            $array_representantes_adic = $session->get('alumnos_inscripcion');
-                            array_push($array_representantes_adic, $resultado['representante']);
-                            $session->set("representantes_adic_inscripcion", $array_representantes_adic);
-                        }
-                        if(array_key_exists('representantes_finalizado', $resultado)){
-                            $session->set("representantes_adic_finalizado", true);
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-
-                        }
-                    else{
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                        }
+                if (!$session->get('representantes_parentescos')) {
+                    $rep = $this->getDoctrine()
+                        ->getRepository('usuariosBundle:Usuarios')
+                        ->find($session->get("representante_inscripcion")->getId());
+                    $alumnos = $rep->getAlumno();
+                    $id_estudiante = [];
+                    foreach($session->get('alumnos_inscripcion') as $estudiante){
+                        array_push($id_estudiante,$estudiante->getId());
                     }
-                }
+                    $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
+                    $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                        ->createQueryBuilder('usuario')
+                        ->select('usuario.id')
+                        ->innerJoin('usuario.alumno', 'alumnos')
+                        ->where('alumnos.id in (:id)')
+                        ->andWhere('usuario.activo = true')
+                        ->andWhere('usuario.principal = false')
+                        ->andWhere('usuario.tipoUsuario=5')
+                        ->setParameter('id', $lista_id)
+                        ->distinct('usuario.id')
+                        ->getQuery();
+                    $test = $query->getArrayResult();
+                    $id_representantes = [];
+                    foreach($test as $id){
+                        array_push($id_representantes, $id['id']);
+                    }
+                    $url_redireccion = 'generico_inscripcion_completa';
+                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $id_estudiante, $lista_id, $url_redireccion);
+                    if (array_key_exists('representantes_adic_anteriores', $resultado)) {
+                        $session->set("representantes_adic_anteriores", true);
+                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                    }
+            }
+
                 else{
                     if (!$session->get('pagos_finalizado')) {
-                        print_r($session->get('facturas'));
-                        print_r('hola');
                         foreach($session->get('facturas') as $facturas){
                             if($facturas->getPagada() == false){
                                 $factura_form =$facturas;
