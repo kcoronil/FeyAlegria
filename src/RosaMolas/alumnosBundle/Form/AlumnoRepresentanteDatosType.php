@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormView;
 
 class AlumnoRepresentanteDatosType extends AbstractType
 {
-    public function __construct ($titulo, $lista_id)
+    public function __construct($titulo, $lista_id)
     {
         $this->titulo = $titulo;
         $this->lista_id = $lista_id;
@@ -23,7 +23,7 @@ class AlumnoRepresentanteDatosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('representante', 'entity', array('required' => true,
+            /*->add('representante', 'entity', array('required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'Sin datos para seleccionar', 'multiple'=>false, 'expanded'=>true, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('usuario')
@@ -31,10 +31,9 @@ class AlumnoRepresentanteDatosType extends AbstractType
                         ->andWhere('usuario.tipoUsuario=5')
                         ->andWhere('usuario.activo = true')
                         ->setParameter('ids', $this->lista_id)
-                        ->distinct();}))
+                        ->distinct();}))*/
             ->add('parentesco')
-            ->add('principal')
-            ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
+            ->add('principal', 'checkbox', array('required'=>false, 'attr'=>array('class'=>'representante_principal')))
         ;
     }
 

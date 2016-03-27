@@ -7,6 +7,9 @@ use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\facturacionBundle\Entity\DetalleFactura;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
 use RosaMolas\facturacionBundle\Entity\Factura;
+use RosaMolas\facturacionBundle\Entity\MontosAlumnos;
+use RosaMolas\facturacionBundle\Entity\TipoFactura;
+use RosaMolas\facturacionBundle\Form\TipoFacturaType;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Entity\Parentescos;
 use RosaMolas\genericoBundle\Form\PagosType;
@@ -85,7 +88,7 @@ class DefaultController extends Controller
             ->findOneBy(array('factura'=>$id));
 
         $fecha_actual = new \DateTime("now");
-        $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
+        $html = $this->renderView('genericoBundle:Default:recibo_pago.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
         print_r($html);
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
@@ -397,7 +400,8 @@ class DefaultController extends Controller
     public function inscripcion_completaAction(Request $request)
     {
         $session = $this->getRequest()->getSession();
-        if (!$session->get('representantes_finalizado')) {
+
+        if (!$session->get('representantes_finalizado')){
             $remover = null;
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
             if (array_key_exists('representante', $resultado)) {
@@ -418,12 +422,15 @@ class DefaultController extends Controller
                     return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                 }
             }
-
         }
         else {
             if (!$session->get('alumnos_finalizado')) {
                 $remover = null;
-                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'));
+                $id_representantes = [];
+                foreach($session->get('representantes') as $rep){
+                    array_push($id_representantes, $rep->getId());
+                }
+                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $id_representantes);
                 if (array_key_exists('alumnos', $resultado)){
                     if(!$session->get('alumnos_inscripcion')){
                         $session->set("alumnos_inscripcion", array());
@@ -432,15 +439,6 @@ class DefaultController extends Controller
                     $array_alumnos = $session->get('alumnos_inscripcion');
                     array_push($array_alumnos, $resultado['alumnos']);
                     $session->set("alumnos_inscripcion",$array_alumnos);
-
-                    $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
-                    $fact = $this->get('funciones_genericas')->crear_factura($resultado['alumnos']->getPeriodoEscolarCursoAlumno()[0], $tipo_factura);
-                    if(!$session->get('facturas')){
-                        $session->set("facturas", array());
-                    }
-                    $array_facturas = $session->get('facturas');
-                    array_push($array_facturas, $fact['factura']);
-                    $session->set("facturas",$array_facturas);
 
                     if(array_key_exists('alumnos_finalizado', $resultado)){
                         $session->set("alumnos_finalizado", true);
@@ -452,100 +450,165 @@ class DefaultController extends Controller
                 }
             }
             else{
-                if (!$session->get('representantes_parentescos')) {
-                    $rep = $this->getDoctrine()
-                        ->getRepository('usuariosBundle:Usuarios')
-                        ->find($session->get("representante_inscripcion")->getId());
-                    $alumnos = $rep->getAlumno();
-                    $id_estudiante = [];
+                if(!$session->get('datos_facturacion')) {
+                    if(!$session->get('alumnos_montos_procesados')){
+                        $session->set("alumnos_montos_procesados", array());
+                    }
+                    $estudiante_monto = null;
                     foreach($session->get('alumnos_inscripcion') as $estudiante){
-                        array_push($id_estudiante,$estudiante->getId());
-                    }
-                    $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-                    $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                        ->createQueryBuilder('usuario')
-                        ->select('usuario.id')
-                        ->innerJoin('usuario.alumno', 'alumnos')
-                        ->where('alumnos.id in (:id)')
-                        ->andWhere('usuario.activo = true')
-                        ->andWhere('usuario.principal = false')
-                        ->andWhere('usuario.tipoUsuario=5')
-                        ->setParameter('id', $lista_id)
-                        ->distinct('usuario.id')
-                        ->getQuery();
-                    $test = $query->getArrayResult();
-                    $id_representantes = [];
-                    foreach($test as $id){
-                        array_push($id_representantes, $id['id']);
-                    }
-                    $url_redireccion = 'generico_inscripcion_completa';
-                    $resultado = $this->get('alumnos_funciones_genericas')->agregar_representante($request, $id_estudiante, $lista_id, $url_redireccion);
-                    if (array_key_exists('representantes_adic_anteriores', $resultado)) {
-                        $session->set("representantes_adic_anteriores", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                    }
-            }
-
-                else{
-                    if (!$session->get('pagos_finalizado')) {
-                        foreach($session->get('facturas') as $facturas){
-                            if($facturas->getPagada() == false){
-                                $factura_form =$facturas;
+                        if ($estudiante->getTipoFacturacion()=='particular'){
+                            if(!in_array($estudiante->getId(), $session->get('alumnos_montos_procesados')) ){
+                                $estudiante_monto = $estudiante;
                                 break;
                             }
                         }
-                        $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
-                        if (array_key_exists('pago', $resultado)) {
+                        else{
+                            $array_alumnos_prc = $session->get('alumnos_montos_procesados');
+                            array_push($array_alumnos_prc, $estudiante->getId());
+                            $session->set("alumnos_montos_procesados", $array_alumnos_prc);
+                        }
+                    }
+                    if($estudiante_monto){
+                        $resultado = $this->get('alumnos_funciones_genericas')->agregar_monto_alumno($request, $estudiante_monto->getId());
+                        if (array_key_exists('monto_creado', $resultado)) {
+                            $array_alumnos_prc = $session->get('alumnos_montos_procesados');
+                            array_push($array_alumnos_prc, $resultado['alumno']->getId());
+                            $session->set("alumnos_montos_procesados", $array_alumnos_prc);
+                            //return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                        }
+                    }
+                    if (sizeof($session->get('alumnos_inscripcion')) == sizeof($session->get('alumnos_montos_procesados'))) {
+                        $session->set("datos_facturacion", true);
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
 
-                            foreach($session->get('facturas') as $fact){
-                                if($fact->getId()==$resultado['factura']->getId()){
-                                    $fact->setPagada(true);
-                                }
-                            }
-                            if(!$session->get('pagos')){
-                                $session->set("pagos", array());
-                            }
-                            $array_pagos = $session->get('pagos');
-                            array_push($array_pagos, $resultado['pago']);
-                            $session->set("pagos",$array_pagos);
-                            if (sizeof($session->get('facturas')) == sizeof($session->get('pagos'))) {
-                                $session->set("pagos_finalizado", true);
-                                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                            }
+                }
+                else{
+                    if (!$session->get('faturacion_finalizado')) {
+                        $array_facturas=[];
+                        $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
+                        foreach($session->get('alumnos_inscripcion') as $estudiante){
+                            $fact = $this->get('funciones_genericas')->crear_factura($estudiante, $tipo_factura);
+                            array_push($array_facturas, $fact['factura']);
+                        }
+                        $session->set("facturas", $array_facturas);
+                        if (sizeof($session->get('alumnos_inscripcion')) == sizeof($session->get('facturas'))) {
+                            $session->set("faturacion_finalizado", true);
                             return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                         }
                     }
-                    else{
+                    else {
+                        if (!$session->get('pagos_finalizado')) {
+                            foreach ($session->get('facturas') as $facturas) {
+                                if ($facturas->getPagada() == false) {
+                                    $factura_form = $facturas;
+                                    break;
+                                }
+                            }
+                            $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
+                            if (array_key_exists('pago', $resultado)) {
 
+                                foreach ($session->get('facturas') as $fact) {
+                                    if ($fact->getId() == $resultado['factura']->getId()) {
+                                        $fact->setPagada(true);
+                                    }
+                                }
+                                if (!$session->get('pagos')) {
+                                    $session->set("pagos", array());
+                                }
+                                $array_pagos = $session->get('pagos');
+                                array_push($array_pagos, $resultado['pago']);
+                                $session->set("pagos", $array_pagos);
+                                if (sizeof($session->get('facturas')) == sizeof($session->get('pagos'))) {
+                                    $session->set("pagos_finalizado", true);
+                                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                                }
+                                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                            }
+                        }
+                        else {
+                            if(!$session->get('resumen_visto')){
+                                if($request->getMethod()=='POST') {
+                                    $session->set("resumen_visto", true);
+                                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                                }
+                                $estudiantes=[];
+                                $periodos_alumnos=[];
+                                foreach($session->get('alumnos_inscripcion') as $estudiante_sesion) {
+                                    $estudiante = $this->getDoctrine()
+                                        ->getRepository('alumnosBundle:Alumnos')
+                                        ->find($estudiante_sesion->getId());
+                                    array_push($estudiantes, $estudiante);
+                                }
+                                foreach($session->get('alumnos_inscripcion') as $estudiante_sesion) {
+                                    $periodo_alumno = $this->getDoctrine()
+                                        ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                                        ->findby(array('alumno'=>$estudiante_sesion->getId(), 'activo'=>'true'));
+                                    array_push($periodos_alumnos, $periodo_alumno);
+                                }
 
-                        $mail =$this->get('funciones_genericas')->email_inscripcion($session->get('representante_inscripcion'), $session->get('alumnos_inscripcion'));
-                        $session->remove('representante_inscripcion');
-                        $session->remove('alumnos_inscripcion');
-                        $session->remove('alumnos_finalizado');
-                        $session->remove('representantes_adic_inscripcion');
-                        $session->remove('representantes_adic_finalizado');
-                        $this->get('session')->getFlashBag()->add(
-                            'success', 'Inscripción realizada con éxito');
-                        return $this->redirect($this->generateUrl('inicial_homepage'));
+                                $resultado = array('accion'=>'Resumen Inscripción', 'estudiantes'=>$estudiantes, 'periodos_alumnos'=>$periodos_alumnos);
+                            }
+                            else {
+                                //$mail = $this->get('funciones_genericas')->email_inscripcion($session->get('representantes')[0], $session->get('alumnos_inscripcion'));
+                                $session->remove('representantes_finalizado');
+                                $session->remove('representantes');
+                                $session->remove('alumnos_finalizado');
+                                $session->remove('alumnos_inscripcion');
+                                $session->remove('datos_facturacion');
+                                $session->remove('alumnos_montos_procesados');
+                                $session->remove('faturacion_finalizado');
+                                $session->remove('facturas');
+                                $session->remove('pagos_finalizado');
+                                $session->remove('pagos');
+                                $session->remove('resumen_visto');
+                                $this->get('session')->getFlashBag()->add(
+                                    'success', 'Inscripción realizada con éxito');
+                                return $this->redirect($this->generateUrl('inicial_homepage'));
+                            }
+                        }
                     }
                 }
             }
         }
         return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
     }
+
+
     public function agregar_alumno_inscripcionAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
-        $session->remove('representantes_adic_anteriores');
 
         if($id_rep){
             $p = $this->getDoctrine()
                 ->getRepository('usuariosBundle:Usuarios')
                 ->find($id_rep);
-            $session->set("representante_inscripcion", $p);
+            $alumnos = $p->getAlumno();
+            $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                ->createQueryBuilder('usuario')
+                ->select('usuario')
+                ->innerJoin('usuario.alumno', 'alumnos')
+                ->where('alumnos.id in (:id)')
+                ->andWhere('usuario.activo = true')
+                ->andWhere('usuario.principal = false')
+                ->andWhere('usuario.tipoUsuario=5')
+                ->setParameter('id', $lista_id)
+                ->distinct('usuario.id')
+                ->getQuery();
+            $test = $query->getResult();
+            if (!$session->get('representantes')) {
+                $session->set("representantes", array());
+            }
+            $array_representantes = $session->get('representantes');
+            foreach($test as $representante){
+                array_push($array_representantes, $representante);
+            }
+            $session->set("representantes", $array_representantes);
+            //print_r($array_representantes[0]->getprimerNombre());
         }
 
-        if (!$session->get('representante_inscripcion')) {
+        if (!$session->get('representantes')) {
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
                 ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
@@ -563,28 +626,12 @@ class DefaultController extends Controller
         else {
             if (!$session->get('alumnos_finalizado')) {
                 $remover = null;
-                $rep = $this->getDoctrine()
-                    ->getRepository('usuariosBundle:Usuarios')
-                    ->find($session->get("representante_inscripcion")->getId());
-                $alumnos = $rep->getAlumno();
-                $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                    ->createQueryBuilder('usuario')
-                    ->select('usuario.id')
-                    ->innerJoin('usuario.alumno', 'alumnos')
-                    ->where('alumnos.id in (:id)')
-                    ->andWhere('usuario.activo = true')
-                    ->andWhere('usuario.principal = false')
-                    ->andWhere('usuario.tipoUsuario=5')
-                    ->setParameter('id', $lista_id)
-                    ->distinct('usuario.id')
-                    ->getQuery();
-                $test = $query->getArrayResult();
+
                 $id_representantes = [];
-                foreach($test as $id){
-                    array_push($id_representantes, $id['id']);
+                foreach($session->get('representantes') as $reps){
+                    array_push($id_representantes, $reps->getId());
                 }
-                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $session->get('representante_inscripcion'), $id_representantes);
+                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $id_representantes);
                 if (array_key_exists('alumnos', $resultado)){
                     if(!$session->get('alumnos_inscripcion')){
                         $session->set("alumnos_inscripcion", array());
@@ -603,26 +650,66 @@ class DefaultController extends Controller
                 }
             }
             else{
-                if (!$session->get('representantes_adic_nuevo_finalizado')) {
-                    $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, null, $session->get('alumnos_inscripcion'));
+                if(!$session->get('datos_facturacion')) {
+                    if(!$session->get('alumnos_fact_procesados')){
+                        $session->set("alumnos_fact_procesados", array());
+                    }
+                    foreach($session->get('alumnos_inscripcion') as $estudiante){
+                        if ($estudiante->getTipoFacturacion()=='particular'){
+                            if($estudiante->getId() ){
 
-                    if (array_key_exists('representante', $resultado)) {
-                        if (!$session->get('representantes_adic_inscripcion')) {
-                            $session->set("representantes_adic_inscripcion", array());
+                            }
                         }
-                        $array_representantes_adic = $session->get('alumnos_inscripcion');
-                        array_push($array_representantes_adic, $resultado['representante']);
-                        $session->set("representantes_adic_inscripcion", $array_representantes_adic);
-
-                        if (array_key_exists('representantes_finalizado', $resultado)) {
-                            $session->set("representantes_adic_nuevo_finalizado", true);
-                            return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                        } else {
-                            return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
+                        else{
+                            print_r('pudrete');
                         }
                     }
+                    $p = New TipoFactura();
+                    $formulario = $this->createForm(new TipoFacturaType('Crear Tipo Factura'), $p);
+                    $formulario-> handleRequest($request);
+
+                    if($request->getMethod()=='POST') {
+                        if ($formulario->isValid()) {
+                            $p->setActivo(true);
+
+                            foreach($p->getConceptosFactura() as $concepto_factura){
+                                foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
+                                    $tipo_monto_con->setConceptosFactura($concepto_factura);
+                                }
+                                $concepto_factura->setActivo(true);
+                            }
+                            $em = $this->getDoctrine()->getManager();
+                            $em->persist($p);
+                            $em->flush();
+                            $this->get('session')->getFlashBag()->add(
+                                'success', 'Tipo Factura creada con éxito');
+
+                            if ($formulario->get('guardar')->isClicked()) {
+                                return $this->redirect($this->generateUrl('inicial_homepage'));
+                            }
+                            if ($formulario->get('guardar_crear')->isClicked()){
+                                return $this->redirect($this->generateUrl('inicial_agregar_tfactura'));
+                            }
+                        }
+                    }
+                    return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
+                        'accion'=>'Crear Tipo Factura',));
+                exit;
                 }
                 else {
+                    $session->remove('representante_inscripcion');
+                    $session->remove('alumnos_inscripcion');
+                    $session->remove('alumnos_finalizado');
+                    $session->remove('representantes_adic_anteriores');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representante_inscripcion');
+                    $session->remove('representantes_adic_nuevo_finalizado');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_adic_nuevo_finalizado');
+                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_adic_finalizado');
+                    $session->remove('representantes_adic_anteriores');
+                    $session->remove('representantes');
                     $session->remove('representante_inscripcion');
                     $session->remove('alumnos_inscripcion');
                     $session->remove('alumnos_finalizado');

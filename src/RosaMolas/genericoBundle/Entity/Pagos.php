@@ -23,7 +23,7 @@ class Pagos
     /**
      * @var string
      *
-     * @Assert\Length(min = 20, max = 20,
+     * @Assert\Length(min = 5, max = 20,
      * minMessage = "Este campo debe tener {{ limit }} carácteres",
      * maxMessage = "Este campo debe tener {{ limit }} carácteres")
      * @Assert\Type(type="digit",message="el valor {{ value }} no es númerico.")

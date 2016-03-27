@@ -104,14 +104,14 @@
                     </tbody>
                 </table>
             </div>
-            {% if datos.0.representante is defined%}
+            {% if datos.0.alumnoRepresentanteDatos is defined%}
                 <div class="row">
                     <div id="div_tbl_alumnos" class="col-sm-12">
                         <h4>Representanrtes Registrados</h4>
                         <table id="tbl_alumnos" class="table table-bordered table-hover table-responsive"  width="100%">
                             <thead>
                             <tr>
-                                {% for key, campo in datos.0.representante.0 %}
+                                {% for key, campo in datos.0.alumnoRepresentanteDatos.0 %}
                                     {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
                                     {% else %}
                                         {% if campo is iterable %}
@@ -127,7 +127,7 @@
                                 {% endfor %}
                             </tr>
                             <tr>
-                                {% for key, campo in datos.0.representante.0 %}
+                                {% for key, campo in datos.0.alumnoRepresentanteDatos.0 %}
                                     {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
                                     {% else %}
                                         {% if campo is iterable %}
@@ -144,7 +144,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for dato in datos.0.representante %}
+                            {% for dato in datos.0.alumnoRepresentanteDatos %}
                                 <tr>
                                     {% for  key, elemento in dato %}
                                         {% if  (key == 'id') or (key == 'activo') or ( '_id' in key ) %}
@@ -155,7 +155,7 @@
                                                 <td><a href="{{ path('inicial_detalle_usuario', { 'id': dato.id, 'tipo': 'representantes' }) }}">{{ elemento }}</a></td>
                                             {% else %}
                                                 {% if elemento is iterable %}
-                                                    {% for k, item in elemento.0 %}
+                                                    {% for k, item in elemento %}
                                                         {% if  (k != 'id' ) or ('_id' not in key) %}
                                                             {% if item.timestamp is defined %}
                                                                 <td>{{ item|date('d/m/Y') }}</td>

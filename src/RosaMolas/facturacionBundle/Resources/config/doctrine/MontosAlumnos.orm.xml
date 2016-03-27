@@ -10,7 +10,10 @@
     </id>
     <field name="monto" type="decimal" column="monto" precision="10" scale="2" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <many-to-one field="conceptoFactura" target-entity="ConceptosFactura">
+    <many-to-one field="conceptoFactura" inversed-by="montosAlumnos" target-entity="ConceptosFactura">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
       <join-columns>
         <join-column name="concepto_factura_id" referenced-column-name="id"/>
       </join-columns>

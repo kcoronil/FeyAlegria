@@ -11,9 +11,10 @@ use Symfony\Component\Form\FormView;
 
 class TipoFacturaType extends AbstractType
 {
-    public function __construct ($titulo, $tipo_panel = null)
+    public function __construct ($titulo, $tipo_panel = null, $monto_particular = null)
     {
         $this->titulo = $titulo;
+        $this->monto_particular = $monto_particular;
         if($tipo_panel){
             $this->tipo_panel = $tipo_panel;
         }
@@ -27,11 +28,21 @@ class TipoFacturaType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if(!$this->monto_particular) {
+
+            $concepto_form = new ConceptosFacturaColectionType('Crear Concepto de Factura');
+        }
+        else{
+            $concepto_form = new ConceptosFacturaColectionType('Crear Concepto de Factura', null, $this->monto_particular);
+
+        }
         $builder
-            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
-            ->add('conceptosFactura', 'collection', array('type'=>new ConceptosFacturaColectionType('Crear Concepto de Factura'), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true, 'error_bubbling'=>false))
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
+            ->add('nombre' ,'text',  array('label' => 'Nombre Tipo de Factura', 'attr'=>array('class'=>'campo_unico')))
+            ->add('conceptosFactura', 'collection', array('type'=>$concepto_form, 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true, 'error_bubbling'=>false, 'attr'=>array('class'=>'campo_unico')));
+            if(!$this->monto_particular) {
+                $builder->add('guardar', 'submit', array('label' => 'Guardar', 'attr' => array('class' => 'btn-default data-first-button data-last-button')));
+            }
         ;
     }
 

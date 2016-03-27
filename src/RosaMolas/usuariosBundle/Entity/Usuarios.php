@@ -140,7 +140,7 @@ class Usuarios
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
-     * @Assert\NotBlank()
+     *
      */
     private $segundoApellido;
 
@@ -167,7 +167,7 @@ class Usuarios
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
      *
-     * @Assert\NotBlank()
+     *
      */
     private $segundoNombre;
 

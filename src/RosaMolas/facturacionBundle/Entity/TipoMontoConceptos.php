@@ -29,6 +29,11 @@ class TipoMontoConceptos
      */
     private $conceptosFactura;
 
+    /**
+     * @var boolean
+     */
+    private $activo;
+
 
     /**
      * Set monto
@@ -107,4 +112,28 @@ class TipoMontoConceptos
     {
         return $this->conceptosFactura;
     }
+
+    /**
+     * Set activo
+     *
+     * @param boolean $activo
+     * @return TipoMontoConceptos
+     */
+    public function setActivo($activo)
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * Get activo
+     *
+     * @return boolean
+     */
+    public function getActivo()
+    {
+        return $this->activo;
+    }
+
 }

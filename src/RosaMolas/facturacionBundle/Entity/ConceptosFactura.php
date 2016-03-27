@@ -35,12 +35,19 @@ class ConceptosFactura
     private $tipoFactura;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $montosAlumnos;
+
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->tipoMontoConceptos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->montosAlumnos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -164,4 +171,43 @@ class ConceptosFactura
     {
         return $this->tipoFactura;
     }
+
+    /**
+     * Add montosAlumnos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\MontosAlumnos $montosAlumnos
+     * @return ConceptosFactura
+     */
+    public function addMontosAlumno(\RosaMolas\facturacionBundle\Entity\MontosAlumnos $montosAlumnos)
+    {
+        $this->montosAlumnos[] = $montosAlumnos;
+
+        return $this;
+    }
+
+    /**
+     * Remove montosAlumnos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\MontosAlumnos $montosAlumnos
+     */
+    public function removemontosAlumno(\RosaMolas\facturacionBundle\Entity\MontosAlumnos $montosAlumnos)
+    {
+        $this->montosAlumnos->removeElement($montosAlumnos);
+    }
+
+    /**
+     * Get montosAlumnos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMontosAlumnos()
+    {
+        return $this->montosAlumnos;
+    }
+
+    public function __toString()
+    {
+        return $this->nombre;
+    }
+
 }

@@ -14,6 +14,10 @@ generico_constancia_estudios:
     path:     /constancia_estudios/{id}
     defaults: { _controller: genericoBundle:Default:constancia_estudios }
 
+generico_recibo_pago:
+    path:     /recibo_pago/{id}
+    defaults: { _controller: genericoBundle:Default:recibo_pago }
+
 generico_inscripcion_completa:
     path:     /inscripcion
     defaults: { _controller: genericoBundle:Default:inscripcion_completa }

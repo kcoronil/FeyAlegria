@@ -196,12 +196,16 @@ class FuncionesGenericas extends Controller
 
         return array('resultado' => true);
     }
-    public function crear_factura($periodo_alumnos, $tipo_factura)
+    public function crear_factura($estudiante, $tipo_factura)
     {
+        print_r('<br>');
         $nueva_fact = New Factura();
         $monto_factura = 0;
         $nueva_fact->setActivo(true);
-        $nueva_fact->setPeriodoEscolarCursoAlumnos($periodo_alumnos);
+        $periodo_alumno = $this->getDoctrine()
+            ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->findOneBy(array('alumno' => $estudiante, 'activo'=> 'true'));
+        $nueva_fact->setPeriodoEscolarCursoAlumnos($periodo_alumno);
         $nueva_fact->setTipoFactura($tipo_factura);
         $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
         $nueva_fact->setPagada(false);
@@ -210,7 +214,17 @@ class FuncionesGenericas extends Controller
             $nueva_fact_detalle->setActivo(true);
             $nueva_fact_detalle->setConcepto($concepto_tipo);
             $nueva_fact_detalle->setFactura($nueva_fact);
-            $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+            if($estudiante->getTipoFacturacion()=='particular'){
+                $p = $this->getDoctrine()
+                    ->getRepository('facturacionBundle:MontosAlumnos')
+                    ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura'=> $concepto_tipo));
+                $nueva_fact_detalle->setMonto($p->getMonto());
+                print_r($nueva_fact_detalle->getMonto().'<br>');
+            }
+            else {
+                $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
+                print_r($nueva_fact_detalle->getMonto().'<br>');
+            }
             $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
             $nueva_fact->addDetalleFactura($nueva_fact_detalle);
 

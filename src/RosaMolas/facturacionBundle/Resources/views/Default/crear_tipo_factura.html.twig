@@ -60,24 +60,45 @@
         {% if form is defined %}
             <div class="col-sm-12 text-left">
                 <div class="col-sm-6 col-sm-offset-3">
-                    {{ form_start(form) }}
-                        {{ form_row(form.nombre) }}
-                        {% if form.conceptosFactura is defined %}
-                            <div id="cont_conceptos" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.conceptosFactura, 'eliminar concepto')|escape }}">
-                                {% for widget in form.conceptosFactura.children %}
-                                    {{ _self.widget_prototype(widget, 'eliminar concepto') }}
-                                {% endfor %}
-                            </div>
+                    {% if accion == 'Crear Tipo Factura' %}
+                        {{ form_start(form) }}
+                            {{ form_row(form.nombre) }}
+                            {% if form.conceptosFactura is defined %}
+                                <div id="cont_conceptos" class="col-sm-12" data-prototype="{{ _self.widget_prototype(form.conceptosFactura, 'eliminar concepto')|escape }}">
+                                    {% for widget in form.conceptosFactura.children %}
+                                        {{ _self.widget_prototype(widget, 'eliminar concepto') }}
+                                    {% endfor %}
+                                </div>
 
+                                <div class="col-sm-12 text-center ">
+                                    <a class="btn-add btn btn-default" id="cont_montos" data-target="cont_conceptos">Agregar Concepto</a>
+                                </div>
+                            {% endif %}
                             <div class="col-sm-12 text-center ">
-                                <a class="btn-add btn btn-default" id="cont_montos" data-target="cont_conceptos">Agregar Concepto</a>
+                                <br>
+                                {{ form_row(form.guardar) }}
                             </div>
-                        {% endif %}
-                        <div class="col-sm-12 text-center ">
-                            <br>
-                            {{ form_row(form.guardar) }}
-                        </div>
-                    {{ form_end(form) }}
+                        {{ form_end(form) }}
+                    {% else %}
+                        {{ form_start(form) }}
+                            {% for subform in form.children %}
+                                {% if not loop.last %}
+                                    {{ form_row(subform.nombre) }}
+                                {% endif %}
+                                {% for item in subform %}
+                                    {% for elemento in item %}
+                                        {{ form_row(elemento.nombre) }}
+                                        {% if elemento.montosAlumnos is defined %}
+                                            {% for monto in elemento.montosAlumnos %}
+                                                {{ form_row(monto.monto) }}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        <button type="submit" id="collection_0_guardar" name="collection[0][guardar]" class="btn-default data-first-button data-last-button btn">Guardar</button>
+                        {{ form_end(form) }}
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

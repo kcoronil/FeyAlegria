@@ -33,10 +33,13 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('lugarNacimiento')
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
+            ->add('alumnoRepresentanteDatos', 'collection',array('type'=>new AlumnoRepresentanteDatosType('Agregar Representante', $this->lista_id), 'allow_add' => true, 'allow_delete' => false,
+        'by_reference' => true,'prototype' => false, 'label' => false, 'cascade_validation'=>true,
+        'error_bubbling'=>false))
             ->add('periodoEscolarCursoAlumno', 'collection', array('type'=>new PeriodoEscolarCursoAlumnoType('Seleccionar Curso'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
-            ->add('tipoFacturacion','entity', array('required' => true,'attr'=>array('style'=>"display: none"), 'label'=>false,
+            ->add('tipoFacturacion','entity', array('required' => true,
                 'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
@@ -46,7 +49,7 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
         if($this->lista_id){
-            $builder->add('representante','entity', array('label'=>'Representantes Adicionales', 'required' => true,
+            $builder->add('representante','entity', array('label'=>'Representantes', 'required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>true, 'by_reference' => false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('usuario')
@@ -57,8 +60,12 @@ class AlumnosTypeInscripcion extends AbstractType
                         ->distinct();}));
         }
         else{
-            $builder->add('representante','entity', array('label'=>'Representante', 'required' => true,
-                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false));
+            $builder->add('representante','entity', array('label'=>'Representantes', 'required' => true,
+                'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.tipoUsuario=5')
+                        ->andWhere('u.activo = true');}));
         }
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

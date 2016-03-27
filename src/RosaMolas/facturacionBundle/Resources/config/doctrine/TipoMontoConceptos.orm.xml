@@ -9,6 +9,7 @@
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="monto" type="decimal" column="monto" precision="8" scale="2" nullable="false"/>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
     <many-to-one field="tipoMonto" target-entity="TipoMontos">
       <join-columns>
         <join-column name="tipo_monto_id" referenced-column-name="id"/>

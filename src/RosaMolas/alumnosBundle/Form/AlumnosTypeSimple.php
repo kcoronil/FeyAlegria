@@ -27,7 +27,8 @@ class AlumnosTypeSimple extends AbstractType
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>false, 'by_reference' => false,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
-                        ->where('u.tipoUsuario=5');}))
+                        ->where('u.tipoUsuario=5')
+                        ->andWhere('usuario.activo = true');}))
             ->add('cedula')
             ->add('cedulaEstudiantil')
             ->add('primerApellido')

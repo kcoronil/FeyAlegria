@@ -202,12 +202,17 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.representante', 'usuario')
-            ->where('usuario.activo = true')
+            ->select('alumno.id','alumno.cedula', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
+            ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
+            ->innerJoin('alumnoRepresentante.representante', 'representante')
+            ->where('representante.activo = true')
             ->andwhere('alumno.activo = true')
+            ->andwhere('alumnoRepresentante.principal = true')
             ->orderBy('alumno.id', 'DESC')
             ->getQuery();
+
+
+
 
         $datos = $query->getArrayResult();
 
@@ -257,15 +262,18 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.representante', 'usuario')
-            ->where('usuario.activo = true')
-            ->where('usuario.principal = true')
+            ->select('alumno.id','alumno.cedula', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
+            ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
+            ->innerJoin('alumnoRepresentante.representante', 'representante')
+            ->where('representante.activo = true')
             ->andwhere('alumno.activo = true')
+            ->andwhere('alumnoRepresentante.principal = true')
+
             ->orderBy('alumno.id', 'DESC')
             ->getQuery();
 
         $datos = $query->getArrayResult();
+
 
         return $this->render('alumnosBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
@@ -277,15 +285,17 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno', 'usuarios')
-            ->innerJoin('alumno.representante', 'usuarios')
+            ->select('alumno', 'representante', 'alumnoRepresentante')
+            ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
+            ->innerJoin('alumnoRepresentante.representante', 'representante')
             ->where('alumno.id = :id')
-            ->andWhere('alumno.activo = true')
             ->setParameter('id', $id)
             ->getQuery();
 
 
         $datos = $query->getArrayResult();
+
+        print_r($datos);
 
         if (!$datos)
         {

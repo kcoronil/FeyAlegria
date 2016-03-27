@@ -87,8 +87,14 @@
             }).columnFilter({
                 sPlaceHolder: "head:after"
             });
-
+            $(".representante_principal").click(function(){
+                var grupo = "input:checkbox[class='representante_principal']";
+                //$(grupo).attr("checked",false);
+                $(grupo).not(this).prop("checked",false);
+                //$(this).attr("checked",true);
+            });
         });
+
     </script>
 {% endblock %}
 {% block enlace_atajo %}
@@ -182,12 +188,54 @@
                                 </div>
                                     <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
                             {% endif %}
-                             {{ form_row(form.representante) }}
+                            {{ form_row(form.representante) }}
+                            {% if form.alumnoRepresentanteDatos is defined %}
+                                {% for form_alumnoRepresentanteDatos in form.alumnoRepresentanteDatos %}
+                                <div class="col-sm-6">
+                                    Representante: {{ app.session.get('representantes')[loop.index0].primerNombre }} {{ app.session.get('representantes')[loop.index0].primerApellido }}
+                                    {{ form_row(form_alumnoRepresentanteDatos.parentesco) }}
+                                    <div class="col-sm-6">
+                                        {{ form_row(form_alumnoRepresentanteDatos.principal) }}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                            {{ form_row(form.tipoFacturacion) }}
                             <div class="col-sm-12 text-center ">
                                 <br>
                                 {{ form_row(form.guardar) }}
                                 {{ form_row(form.guardar_crear) }}
                             </div>
+                        {{ form_end(form) }}
+                    {% endif %}
+                    {% if accion == 'Crear Montos para Estudiante' %}
+                        {{ form_start(form) }}
+                            <div class="row text-center">
+                                Crear montos para el estudiante: {{ estudiante.primerNombre }} {{ estudiante.primerApellido }}
+                                <br>
+                                <br>
+                            </div>
+                            {{ form_errors(form) }}
+                            {% for subform in form.children %}
+                                <div class="col-sm-6">
+                                {% if not loop.last %}
+                                    {{ form_row(subform.nombre) }}
+                                {% endif %}
+                                {% for item in subform %}
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                    {% for elemento in item %}
+                                        {{ form_row(elemento.nombre) }}
+                                        {% if elemento.montosAlumnos is defined %}
+                                            {% for monto in elemento.montosAlumnos %}
+                                                {{ form_row(monto.monto) }}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" id="guardar" name="[guardar]" class="btn-default data-first-button data-last-button btn">Guardar</button>
                         {{ form_end(form) }}
                     {% endif %}
                     {% if accion == 'Agregar Pago' %}
@@ -209,40 +257,43 @@
                             </tr>
                         </table>
                     {% endif %}
-                    {% if app.session.get('representante_inscripcion') %}
-                        <table class="table table-bordered table-responsive table-hover">
-                            <thead>
-                                <tr>
-                                    <th colspan="4" class="text-center">Representante</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>nombre:</th>
-                                    <td>{{ app.session.get('representante_inscripcion').primerNombre }} {{ app.session.get('representante_inscripcion').primerApellido }}</td>
-                                    <th>cedula:</th>
-                                    <td>{{ app.session.get('representante_inscripcion').cedula}}</td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                    {% endif %}
-                    {% if app.session.get('alumnos_inscripcion') %}
-                        <table class="table table-bordered table-responsive table-hover">
-                            <thead>
-                                <tr>
-                                    <th colspan="4" class="text-center">Estudiantes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for estudiante in app.session.get('alumnos_inscripcion') %}
+                    {% if accion != 'Resumen Inscripción' %}
+                        {% if app.session.get('representantes') %}
+                            <table class="table table-bordered table-responsive table-hover">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">Representante</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for representante in app.session.get('representantes') %}
                                     <tr>
                                         <th>nombre:</th>
-                                        <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }}</td>
+                                        <td>{{ representante.primerNombre }} {{ representante.primerApellido }}</td>
+                                        <th>cedula:</th>
+                                        <td>{{ representante.cedula}}</td>
                                     </tr>
+                                </tbody>
                                 {% endfor %}
-                            </tbody>
-                        </table>
+                            </table>
+                        {% endif %}
+                        {% if app.session.get('alumnos_inscripcion') %}
+                            <table class="table table-bordered table-responsive table-hover">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">Estudiantes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for estudiante in app.session.get('alumnos_inscripcion') %}
+                                        <tr>
+                                            <th>nombre:</th>
+                                            <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -291,6 +342,69 @@
                 </table>
             </div>
         {% endif %}
-     </div>
+        {% if accion == 'Resumen Inscripción' %}
+            <h3>Resumen del proceso de Inscripción</h3>
+            <table class="table table-bordered table-responsive table-hover">
+                <thead>
+                <tr>
+                    <th colspan="4" class="text-center">Representantes</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for representante in app.session.get('representantes') %}
+                <tr>
+                    <th>nombre:</th>
+                    <td>{{ representante.primerNombre }} {{ representante.primerApellido }}</td>
+                    <th>cedula:</th>
+                    <td>{{ representante.cedula}}</td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            <table class="table table-bordered table-responsive table-hover">
+                <thead>
+                <tr>
+                    <th colspan="4" class="text-center">Estudiantes</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for estudiante in estudiantes %}
+                    <tr>
+                        <th>nombre:</th>
+                        <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }}</td>
+                        <td>{{ estudiante.cedula }}</td>
+                        {% for periodos in periodos_alumnos %}
+                            {% for periodo in periodos %}
+                                {% if periodo.Alumno.id == estudiante.id %}
+                                    <td>
+                                        {{ periodo.cursoSeccion.nombre }}
+                                    </td>
+                                {% endif %}
+                        </tr>
+                        <tr>
+                                {% for factura in app.session.get('facturas') %}
+                                    {% if periodo.id == factura.PeriodoEscolarCursoAlumnos.id %}
+                                    <td>
+                                        <a href="{{ path('generico_recibo_pago', { 'id': factura.id }) }}">Recibo cobro inscripción</a>
+                                    </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                    {% endfor %}
+                    <td>
+                        <a href="{{ path('generico_constancia_inscripcion', { 'id': estudiante.id }) }}">Constancia inscripción</a>
+                    </td>
+                    <td colspan="2">
+                        <a href="{{ path('generico_constancia_estudios', { 'id': estudiante.id }) }}">Constancia de Estudios</a>
+                    </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <form method="post">
+                <button type="submit" id="guardar" name="[guardar]" title="Finalizar" class="btn-default data-first-button data-last-button btn">Guardar</button>
+            </form>
+        {% endif %}
+    </div>
     </div>
 {% endblock %}

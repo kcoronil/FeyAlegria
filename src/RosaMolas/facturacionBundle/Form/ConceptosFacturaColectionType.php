@@ -10,9 +10,10 @@ use Symfony\Component\Form\FormView;
 
 class ConceptosFacturaColectionType extends AbstractType
 {
-    public function __construct ($titulo, $tipo_panel = null)
+    public function __construct ($titulo, $tipo_panel = null, $monto_particular = null)
     {
         $this->titulo = $titulo;
+        $this->monto_particular = $monto_particular;
         if($tipo_panel){
             $this->tipo_panel = $tipo_panel;
         }
@@ -27,10 +28,15 @@ class ConceptosFacturaColectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
-            //->add('tipoMontoConceptos',  new TipoMontoConceptosCollectionType('Crear Monto Concepto de Factura'), array('label'=>false, 'by_reference' => false ))
-            ->add('tipoMontoConceptos', 'collection', array('type'=>new TipoMontoConceptosCollectionType('Crear Concepto de Factura'), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true, 'error_bubbling'=>false, 'prototype_name'=>'tipomonto_nombre'))
+            ->add('nombre' ,'text',  array('label' => 'Nombre Concepto','attr'=>array('class'=>'campo_unico')));
+        if(!$this->monto_particular) {
+            $builder->add('tipoMontoConceptos', 'collection', array('type' => new TipoMontoConceptosCollectionType('Crear Concepto de Factura'), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false, 'prototype' => true, 'label' => false, 'cascade_validation' => true, 'error_bubbling' => false, 'prototype_name' => 'tipomonto_nombre', 'attr'=>array('class'=>'campo_unico')));
+        }
+        else{
+            $builder->add('montosAlumnos', 'collection', array('type' => new MontosAlumnosType('Crear Concepto de Factura'), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false, 'prototype' => true, 'label' => false, 'cascade_validation' => true, 'error_bubbling' => false, 'prototype_name' => 'tipomonto_nombre', 'attr'=>array('class'=>'campo_unico')));
+        }
         ;
     }
 
