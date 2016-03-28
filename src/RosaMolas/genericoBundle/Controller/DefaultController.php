@@ -597,18 +597,18 @@ class DefaultController extends Controller
                 ->distinct('usuario.id')
                 ->getQuery();
             $test = $query->getResult();
-            if (!$session->get('representantes')) {
-                $session->set("representantes", array());
+            if (!$session->get('representantes_agg_alumno')) {
+                $session->set("representantes_agg_alumno", array());
             }
-            $array_representantes = $session->get('representantes');
+            $array_representantes = $session->get('representantes_agg_alumno');
             foreach($test as $representante){
                 array_push($array_representantes, $representante);
             }
-            $session->set("representantes", $array_representantes);
+            $session->set("representantes_agg_alumno", $array_representantes);
             //print_r($array_representantes[0]->getprimerNombre());
         }
 
-        if (!$session->get('representantes')) {
+        if (!$session->get('representantes_agg_alumno')) {
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
                 ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
@@ -624,24 +624,24 @@ class DefaultController extends Controller
         }
 
         else {
-            if (!$session->get('alumnos_finalizado')) {
+            if (!$session->get('alumnos_agg_finalizado')) {
                 $remover = null;
 
                 $id_representantes = [];
-                foreach($session->get('representantes') as $reps){
+                foreach($session->get('representantes_agg_alumno') as $reps){
                     array_push($id_representantes, $reps->getId());
                 }
                 $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $id_representantes);
                 if (array_key_exists('alumnos', $resultado)){
-                    if(!$session->get('alumnos_inscripcion')){
-                        $session->set("alumnos_inscripcion", array());
+                    if(!$session->get('alumnos_agg_inscripcion')){
+                        $session->set("alumnos_agg_inscripcion", array());
                     }
-                    $array_alumnos = $session->get('alumnos_inscripcion');
+                    $array_alumnos = $session->get('alumnos_agg_inscripcion');
                     array_push($array_alumnos, $resultado['alumnos']);
-                    $session->set("alumnos_inscripcion",$array_alumnos);
+                    $session->set("alumnos_agg_inscripcion",$array_alumnos);
 
                     if(array_key_exists('alumnos_finalizado', $resultado)){
-                        $session->set("alumnos_finalizado", true);
+                        $session->set("alumnos_agg_finalizado", true);
                         return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
                     }
                     else{
@@ -650,11 +650,11 @@ class DefaultController extends Controller
                 }
             }
             else{
-                if(!$session->get('datos_facturacion')) {
-                    if(!$session->get('alumnos_fact_procesados')){
-                        $session->set("alumnos_fact_procesados", array());
+                if(!$session->get('datos_facturacion_agg_alumno')) {
+                    if(!$session->get('alumnos_agg_fact_procesados')){
+                        $session->set("alumnos_agg_fact_procesados", array());
                     }
-                    foreach($session->get('alumnos_inscripcion') as $estudiante){
+                    foreach($session->get('alumnos_agg_inscripcion') as $estudiante){
                         if ($estudiante->getTipoFacturacion()=='particular'){
                             if($estudiante->getId() ){
 
@@ -709,7 +709,7 @@ class DefaultController extends Controller
                     $session->remove('representantes_adic_inscripcion');
                     $session->remove('representantes_adic_finalizado');
                     $session->remove('representantes_adic_anteriores');
-                    $session->remove('representantes');
+                    $session->remove('representantes_agg_alumno');
                     $session->remove('representante_inscripcion');
                     $session->remove('alumnos_inscripcion');
                     $session->remove('alumnos_finalizado');
