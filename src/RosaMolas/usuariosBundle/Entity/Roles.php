@@ -5,6 +5,7 @@ namespace RosaMolas\usuariosBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\Role\RoleInterface;
 
 /**
  * Roles
@@ -12,9 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="RosaMolas\usuariosBundle\Entity\RolesRepository")
  */
-class Roles
+class Roles implements RoleInterface, \Serializable
 {
-
     /**
      * @ORM\OneToMany(targetEntity="PerfilUsuario", mappedBy="rol")
      **/
@@ -121,4 +121,25 @@ class Roles
     {
         return $this->nombre;
     }
+
+    public function getRole()
+    {
+        return $this->nombre;
+    }
+
+    public function serialize(){
+        return serialize(array(
+                $this->id,
+                $this->nombre
+            )
+        );
+    }
+
+    public function unserialize($serialized){
+        return list (
+            $this->id,
+            $this->nombre
+            ) = unserialize($serialized);
+    }
+
 }

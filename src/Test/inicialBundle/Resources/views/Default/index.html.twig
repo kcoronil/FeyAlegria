@@ -1,7 +1,7 @@
 {% extends '::plantilla.html.twig' %}
 {% block content %}
     <div class="col-sm-4 col-sm-offset-4">
-    {% if not app.session.get('autenticado') %}
+    {% if not app.user %}
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h2 class="panel-title">Ingreso al Sistema</h2>
@@ -25,7 +25,7 @@
         </div>
     {% endif %}
     </div>
-    {% if app.session.get('autenticado') %}
+    {% if app.user %}
       <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
           <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
@@ -66,36 +66,6 @@
                 </div>
             </div>
         {% endif %}
-{# {% if app.session.get('autenticado') %}
-        <div>
-            <table class="table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>Variable</th>
-                    <th>Dato</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Nombre de Usuario</td>
-                    <td>{{ app.session.get('nombre_usuario') }}</td>
-                </tr>
-                <tr>
-                    <td>Nombres</td>
-                    <td>{{ app.session.get('nombres') }}</td>
-                </tr>
-                <tr>
-                    <td>Tipo de Usuario</td>
-                    <td>{{ app.session.get('tipo_usuario') }}</td>
-                </tr>
-                <tr>
-                    <td>email</td>
-                    <td>{{ app.session.get('email') }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    {% endif %} #}
 
     </div>
 {% endblock %}

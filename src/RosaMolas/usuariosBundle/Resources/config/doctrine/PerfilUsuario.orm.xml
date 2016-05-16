@@ -15,7 +15,10 @@
     <field name="fechaCreacion" type="date" column="fecha_creacion" nullable="false"/>
     <field name="respuesta" type="string" column="respuesta" length="20" nullable="true"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
-    <one-to-one field="usuario" target-entity="Usuarios">
+    <field name="password" type="string" column="password" length="80" nullable="false"/>
+    <field name="salt" type="string" column="salt" length="40" nullable="false"/>
+    <field name="fechaCreacionPassword" type="date" column="fecha_creacion_password" nullable="false"/>
+      <one-to-one field="usuario" target-entity="Usuarios">
       <join-columns>
         <join-column name="usuario_id" referenced-column-name="id"/>
       </join-columns>

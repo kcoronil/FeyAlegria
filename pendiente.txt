@@ -22,3 +22,5 @@ cambiar a mpdf
 
 verificar viabilidad de multiples escalas de montos
 
+
+## {% if is_granted('IS_AUTHENTICATED_FULLY') %} -> validacion completa de usuario logueado

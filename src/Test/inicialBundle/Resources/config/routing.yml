@@ -1,6 +1,6 @@
-inicial_root:
-    path:     /
-    defaults: { _controller: inicialBundle:Default:index }
+#inicial_root:
+#    path:     /
+#    defaults: { _controller: inicialBundle:Default:index }
 
 inicial_homepage:
     path:     /inicio
@@ -198,11 +198,3 @@ inicial_editar_representante_contacto:
 inicial_borrar_representante_contacto:
     path:     /borrar_representante_contacto/{id}
     defaults: { _controller: inicialBundle:Default:borrar_etapa }
-
-#--------------------- pruebas autenticacion -------------------------
-login_route:
-    path:     /login
-    defaults: { _controller: inicialBundle:Default:login }
-
-login_check:
-    path: /login_check

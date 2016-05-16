@@ -3,11 +3,12 @@
 namespace RosaMolas\usuariosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * PerfilUsuario
  */
-class PerfilUsuario
+class PerfilUsuario implements  UserInterface, \Serializable
 {
     /**
      * @var string
@@ -100,6 +101,33 @@ class PerfilUsuario
      */
     private $rol;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=80, nullable=false)
+     */
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="salt", type="string", length=40, nullable=false)
+     */
+    protected $salt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_creacion_password", type="date", nullable=false)
+     */
+    protected $fechaCreacionPassword;
+
+
+    public function __construct() {
+        if(!$this->salt){
+            $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        }
+    }
 
     /**
      * Set nombreUsuario
@@ -120,6 +148,16 @@ class PerfilUsuario
      * @return string 
      */
     public function getNombreUsuario()
+    {
+        return $this->nombreUsuario;
+    }
+
+    /**
+     * Get nombreUsuario
+     *
+     * @return string
+     */
+    public function getUsername()
     {
         return $this->nombreUsuario;
     }
@@ -273,6 +311,76 @@ class PerfilUsuario
     }
 
     /**
+     * Set password
+     *
+     * @param string $password
+     * @return PerfilUsuario
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $salt
+     * @return string
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get dalt
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * Set fechaCreacion
+     *
+     * @param \DateTime $fechaCreacionPassword
+     * @return PerfilUsuario
+     */
+    public function setFechaCreacionPassword($fechaCreacionPassword)
+    {
+        $this->fechaCreacionPassword = $fechaCreacionPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaCreacion
+     *
+     * @return \DateTime
+     */
+    public function getFechaCreacionPassword()
+    {
+        return $this->fechaCreacionPassword;
+    }
+
+
+    /**
      * Set usuario
      *
      * @param \RosaMolas\usuariosBundle\Entity\Usuarios $usuario
@@ -307,14 +415,46 @@ class PerfilUsuario
 
         return $this;
     }
-
     /**
      * Get rol
      *
-     * @return \RosaMolas\usuariosBundle\Entity\Roles 
+     * @return \RosaMolas\usuariosBundle\Entity\Roles
      */
     public function getRol()
     {
         return $this->rol;
+    }
+
+    /**
+     * Get rol
+     *
+     * @return \RosaMolas\usuariosBundle\Entity\Roles
+     */
+    public function getRoles()
+    {
+        return array('ROLE_'.$this->getRol()->getNombre());
+    }
+
+    public function serialize()
+    {
+        return serialize(array(
+                $this->id,
+                $this->nombreUsuario,
+                $this->password
+            )
+        );
+    }
+
+    public function unserialize($serialized)
+    {
+        return list (
+                $this->id,
+                $this->nombreUsuario,
+                $this->password
+            ) = unserialize($serialized);
+    }
+
+    public function eraseCredentials(){
+        return null;
     }
 }

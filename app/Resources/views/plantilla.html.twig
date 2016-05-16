@@ -28,7 +28,7 @@
                     <img src= "{{ asset('public/images/FyA.png') }}">
                 </div>
             </div>
-            {% if app.session.get('autenticado') %}
+            {% if app.user %}
                 <nav class="navbar navbar-default">
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
@@ -205,7 +205,7 @@
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ app.session.get('nombres') }}<span class="caret"></span></a>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="#">· Cambio Contraseña</a></li>
-                                        <li><a href="{{ path('inicial_logout') }}">· Cerrar Sesión</a></li>
+                                        <li><a href="{{ path('logout') }}">· Cerrar Sesión</a></li>
                                     </ul>
                                 </li>
                             </ul>

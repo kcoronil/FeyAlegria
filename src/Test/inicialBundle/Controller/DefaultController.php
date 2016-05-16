@@ -95,6 +95,32 @@ class DefaultController extends Controller
                 return $this->render('inicialBundle:Default:index.html.twig');
             }
         }
+
+        if($this->getUser() and !$session->get('autenticado')){
+            print_r('hola');
+            $query = $this->getDoctrine()->getRepository('usuariosBundle:PerfilUsuario')
+                ->createQueryBuilder('perfil')
+                ->select('perfil', 'usuario', 'tipo_usuario')
+                ->innerJoin('usuariosBundle:Usuarios', 'usuario', 'WITH', 'perfil.usuario = usuario.id')
+                ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                ->where('perfil.nombreUsuario = :user')
+                ->setParameter('user', $this->getUser()->getUsername())
+                ->getQuery();
+            $user = $query->getArrayResult();
+            $session->set("email", $user[0]['email']);
+            $session->set("perfil_activo", $user[0]['activo']);
+            $session->set("usuario_id", $user[0]['id']);
+            $session->set("autenticado", true);
+            $session->set("nombre_usuario", $user[0]['nombreUsuario']);
+            $session->set("nombres", $user[1]['primerNombre'].' '.$user[1]['primerApellido']);
+            $session->set("tipo_usuario", $user[2]['nombre']);
+            $session->set("id_tipo_usuario", $user[2]['id']);
+
+        }
+        print_r($this->getUser()->getRoles());
+        //print_r($session->get("autenticado"));
+        //$test = $this->container->get('security.context')->getToken()->getUser();
+        //print_r($this->container->get('security.context')->getToken()->getUser());
         return $this->render('inicialBundle:Default:index.html.twig');
     }
     public function consultaAction()

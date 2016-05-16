@@ -1,7 +1,18 @@
 #------------------------- usuarios ----------------------------
+login:
+    pattern:   /login
+    defaults:  { _controller: usuariosBundle:Default:login }
+
+login_check:
+    pattern:   /login_check
+
+logout:
+    path: /logout
+
 inicial_logout:
-    path:     /logout
-    defaults: { _controller: usuariosBundle:Default:logout }
+    path:     /logout2
+    defaults: { _controller: usuariosBundle:Default:logout2 }
+
 
 inicial_solicitar_pass:
     path:     /solicitar_pass/

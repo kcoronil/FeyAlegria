@@ -1,20 +1,23 @@
 {% extends '::plantilla.html.twig' %}
 {% block content %}
     <div class="col-sm-4 col-sm-offset-4">
-    {% if not app.session.get('autenticado') %}
+        {% if error %}
+            <div>{{ error.message }}</div>
+        {% endif %}
+    {% if not app.user %}
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h2 class="panel-title">Ingreso al Sistema</h2>
             </div>
             <div class="panel-body">
-                <form class="form-signin" method="POST" action="{{path('inicial_homepage')}}">
+                <form class="form-signin" method="POST" action="{{path('login_check')}}">
                     <div class="form-group">
                         <label for="inputEmail" class="sr-only">Nombre de Usuario</label>
-                        <input type="text" id="usuario" class="form-control" name="usuario" placeholder="Nombre de Usuario" required autofocus>
+                        <input type="text" id="usuario" class="form-control" name="_username" placeholder="Nombre de Usuario" value="{{ last_username }}" required autofocus>
                     </div>
                     <div class="form-group">
                         <label for="inputPassword" class="sr-only">Clave</label>
-                        <input type="password" id="Password" class="form-control" name="password" placeholder="Clave" required>
+                        <input type="password" id="Password" class="form-control" name="_password" placeholder="Clave" required>
                     </div>
                     <div class="text-center">
                         <button class="btn btn-primary btn-default" type="submit">Iniciar Sesion</button>

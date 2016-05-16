@@ -4,6 +4,7 @@ namespace RosaMolas\usuariosBundle\Controller;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\usuariosBundle\Form\UsuariosType;
@@ -15,6 +16,27 @@ use RosaMolas\usuariosBundle\Form\PasswordsType;
 
 class DefaultController extends Controller
 {
+    public function loginAction(Request $request)
+    {
+        $session = $request->getSession();
+
+        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(
+                SecurityContext::AUTHENTICATION_ERROR
+            );
+        } else {
+            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
+            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
+        }
+        return $this->render(
+            'inicialBundle:Default:login.html.twig',
+            array(
+                'last_username' => $session->get(SecurityContext::LAST_USERNAME),
+                'error'         => $error,
+            )
+        );
+    }
+
     public function lista_usuarioAction(Request $request)
     {
         //hacer consulta simple a la bbdd
@@ -436,7 +458,7 @@ class DefaultController extends Controller
         }
         return $this->render('usuariosBundle:Default:recuperar_pass.html.twig', array('accion'=>'Solicitud Recuperar Contraseña'));
     }
-    public function logoutAction(Request $request)
+    public function logout2Action(Request $request)
     {
         $session = $request ->getSession();
         $session -> clear();
