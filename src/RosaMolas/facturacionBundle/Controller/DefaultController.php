@@ -317,5 +317,7 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
+    public function generar_mensualidadAction(Request $request){
 
+    }
 }

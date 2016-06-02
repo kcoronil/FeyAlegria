@@ -4,7 +4,7 @@ creacion de tipos de facuracion particulares
 
 creacion de facturacion mensual claculado montos regulares o particulares
 
-limitar cupos por seccion
+limitar cupos por seccion cantidad recomendada, debe permitir exceder la cantidad
 
 rutina finalizacion año escolar
 
@@ -24,3 +24,23 @@ verificar viabilidad de multiples escalas de montos
 
 
 ## {% if is_granted('IS_AUTHENTICATED_FULLY') %} -> validacion completa de usuario logueado
+
+Cambiar representante principal por representante legal
+
+separar etapa de grado en inscripcion
+
+reestructurar montos
+
+crear informacion del colegio parametrizable
+
+separar aporte por familia y seguro escolar de la inscripcion (se depositan por separado)
+
+reporte contactos incluir cedula de alumno o cedula escolar y direcciones
+
+construir cedula escolar
+
+cambiar logos
+
+permitir pago de multiples facturas de multiples alumnos con un solo pago
+
+generar nomina profesores

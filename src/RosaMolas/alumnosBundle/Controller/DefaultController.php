@@ -431,5 +431,7 @@ class DefaultController extends Controller
         }
         return $this->render('alumnosBundle:Default:datos_alumno_representante.html.twig', array('accion'=>'Datos Alumnos Representantes', 'form'=>$formulario->createView()));
     }
+    public function cambio_anio_ecolarAction($id, Request $request){
 
+    }
 }
