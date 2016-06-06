@@ -397,10 +397,59 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
 
-    public function inscripcion_completaAction(Request $request)
+    public function inscripcion_completaAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
 
+        if($request->get('_route')=='inicial_lista_representante'){
+
+            if($id_rep){
+                $p = $this->getDoctrine()
+                    ->getRepository('usuariosBundle:Usuarios')
+                    ->find($id_rep);
+                $alumnos = $p->getAlumno();
+                $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
+                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                    ->createQueryBuilder('usuario')
+                    ->select('usuario')
+                    ->innerJoin('usuario.alumno', 'alumnos')
+                    ->where('alumnos.id in (:id)')
+                    ->andWhere('usuario.activo = true')
+                    ->andWhere('usuario.principal = false')
+                    ->andWhere('usuario.tipoUsuario=5')
+                    ->setParameter('id', $lista_id)
+                    ->distinct('usuario.id')
+                    ->getQuery();
+                $test = $query->getResult();
+                if (!$session->get('representantes_agg_alumno')) {
+                    $session->set("representantes_agg_alumno", array());
+                }
+                $array_representantes = $session->get('representantes_agg_alumno');
+                foreach($test as $representante){
+                    array_push($array_representantes, $representante);
+                }
+                $session->set("representantes_agg_alumno", $array_representantes);
+                //print_r($array_representantes[0]->getprimerNombre());
+            }
+
+            if (!$session->get('representantes_alumno')) {
+                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+                    ->createQueryBuilder('usuario')
+                    ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+                    ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+                    ->where('usuario.activo = true')
+                    ->andWhere('tipo_usuario.id=5')
+                    ->orderBy('usuario.id', 'DESC')
+                    ->getQuery();
+                $datos = $query->getArrayResult();
+                $elemento = 'Seleccione Representante';
+
+                return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
+            }
+        }
+        else{
+
+        }
         if (!$session->get('representantes_finalizado')){
             $remover = null;
             $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
@@ -694,14 +743,13 @@ class DefaultController extends Controller
                     }
                     return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
                         'accion'=>'Crear Tipo Factura',));
-                exit;
                 }
                 else {
-                    $session->remove('representante_inscripcion');
-                    $session->remove('alumnos_inscripcion');
-                    $session->remove('alumnos_finalizado');
-                    $session->remove('representantes_adic_anteriores');
-                    $session->remove('representantes_adic_inscripcion');
+                    $session->remove('representantes_agg_alumno');
+                    $session->remove('alumnos_agg_finalizado');
+                    $session->remove('alumnos_agg_inscripcion');
+                    $session->remove('datos_facturacion_agg_alumno');
+                    $session->remove('alumnos_agg_fact_procesados');
                     $session->remove('representante_inscripcion');
                     $session->remove('representantes_adic_nuevo_finalizado');
                     $session->remove('representantes_adic_inscripcion');

@@ -189,17 +189,23 @@ class DefaultController extends Controller
 
     public function crear_alumno_usuarioAction(Request $request){
         $modelo = New Alumnos();
-        $form = new AlumnosTypeUsuario('Crear Estudiante');
+        $cursos = $this->getDoctrine()
+            ->getRepository('inicialBundle:CursoSeccion')
+            ->findBy(array('activo'=>true));
+
+        $cant_seccion = [];
+        foreach($cursos as $curso){
+            $alumnos = $this->getDoctrine()
+                ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('cursoSeccion'=>$curso->getId(), 'activo'=>true));
+            $cant_seccion[$curso->getId()] =  array('cupos'=>$curso->getCupos(), 'alumnos'=>count($alumnos));
+        }
+        $form = new AlumnosTypeUsuario('Crear Estudiante', $cant_seccion);
         return $this->crear_generico($request, $modelo, $form, 'Alumnos', 'Crear Estudiante', 'inicial_agregar_alumno_usuario', 'inicial_editar_tipo_factura', 'inicial_borrar_tipo_factura', 'crear_alumno');
     }
 
-
     public function lista_alumno_pdfAction()
     {
-
-        //hacer consulta simple a la bbdd
-
-
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->select('alumno.id','alumno.cedula', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
@@ -262,7 +268,7 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
+            ->select('alumno.id','alumno.cedula', 'alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
             ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
             ->innerJoin('alumnoRepresentante.representante', 'representante')
             ->where('representante.activo = true')

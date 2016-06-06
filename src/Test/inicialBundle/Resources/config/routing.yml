@@ -1,6 +1,6 @@
-#inicial_root:
-#    path:     /
-#    defaults: { _controller: inicialBundle:Default:index }
+inicial_root:
+    path:     /
+    defaults: { _controller: inicialBundle:Default:index }
 
 inicial_homepage:
     path:     /inicio

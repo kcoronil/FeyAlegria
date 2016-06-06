@@ -20,7 +20,7 @@ generico_recibo_pago:
 
 generico_inscripcion_completa:
     path:     /inscripcion
-    defaults: { _controller: genericoBundle:Default:inscripcion_completa }
+    defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null  }
 
 generico_inscripcion_agregar_alumno:
     path:     /inscripcion_alumno/{id_rep}
@@ -29,7 +29,6 @@ generico_inscripcion_agregar_alumno:
 generico_agregar_pago:
     path:     /agregar_pago/{id}
     defaults: { _controller: genericoBundle:Default:agregar_pago }
-
 
 generico_agregar_parentescos:
     path:     /crear_parentesco

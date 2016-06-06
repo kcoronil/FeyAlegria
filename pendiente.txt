@@ -1,46 +1,46 @@
-registro representantes quitar segundo apellido obligatorio
+registro representantes quitar segundo -------------- apellido obligatorio listo
+
+construir cedula escolar ---------------- listo
 
 creacion de tipos de facuracion particulares
 
 creacion de facturacion mensual claculado montos regulares o particulares
 
-limitar cupos por seccion cantidad recomendada, debe permitir exceder la cantidad
+limitar cupos por seccion cantidad recomendada, debe permitir exceder la cantidad -------------listo
 
 rutina finalizacion año escolar
 
-reportes por etapas y grados
+reportes por etapas y grados !!!!!!!!!!!!!
 
 definir historicos
 
-procesar alumnos inscritos buscando si tienen montos particulares
+procesar alumnos inscritos buscando si tienen montos particulares !!!!!!!!!!!!
 
 agregar boton para quitar representante durante la inscripcion
 
-ajustar funcion agregar alumno a nuevo formato de inscripción
+ajustar funcion agregar alumno a nuevo formato de inscripción !!!!!!!!!!!!!
 
-cambiar a mpdf
+cambiar a mpdf !!!!!!!!!!!!!
 
-verificar viabilidad de multiples escalas de montos
-
-
-## {% if is_granted('IS_AUTHENTICATED_FULLY') %} -> validacion completa de usuario logueado
-
-Cambiar representante principal por representante legal
-
-separar etapa de grado en inscripcion
+verificar viabilidad de multiples escalas de montos !!!!!!!!!!!!!!
 
 reestructurar montos
 
-crear informacion del colegio parametrizable
+separar aporte por familia y seguro escolar de la inscripcion (se depositan por separado) !!!!!!!!!!!
 
-separar aporte por familia y seguro escolar de la inscripcion (se depositan por separado)
+## {% if is_granted('IS_AUTHENTICATED_FULLY') %} -> validacion completa de usuario logueado
 
-reporte contactos incluir cedula de alumno o cedula escolar y direcciones
+Cambiar representante principal por representante legal !!!!!!!!!!!!!
 
-construir cedula escolar
+separar etapa de grado en inscripcion !!!!!!!!!!!!!!!!!!!
+
+
+crear informacion del colegio parametrizable !!!!!!!!!!!!!!!!!
+
+reporte contactos incluir cedula de alumno o cedula escolar y direcciones !!!!!!!!!!!!!!!
 
 cambiar logos
 
-permitir pago de multiples facturas de multiples alumnos con un solo pago
+permitir pago de multiples facturas de multiples alumnos con un solo pago !!!!!!!!!!!!!!!!!
 
 generar nomina profesores

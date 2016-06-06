@@ -47,6 +47,25 @@
                 if($('#cont_curso').children().length<1) {
                     agregar_form($('#curso-add'));
                 }
+                var cant_seccion = {{ form.vars.datos_secciones|json_encode|raw }};
+                $(document).on('change','#test_inicialbundle_alumnos_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
+                    $(this).closest('.control-group').removeClass('has-success', 'has-warning');
+                    var cupos_disp = cant_seccion[this.value]['cupos']-cant_seccion[this.value]['alumnos'];
+                    if(cant_seccion[this.value]['cupos'] > cant_seccion[this.value]['alumnos']){
+                        $(this).after('<p class="edd_info_field">Cupos disponibles '+cupos_disp+' de '+cant_seccion[this.value]['cupos']+'<p>')
+                    }
+                    else{
+                        if(cant_seccion[this.value]['cupos'] == cant_seccion[this.value]['alumnos']) {
+                            $(this).closest('div').addClass('has-warning');
+                            $(this).after('<p class="edd_info_field">Cupos llenos para esta seccion' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                        }
+                        else
+                        {
+                            $(this).closest('div').addClass('has-error');
+                            $(this).after('<p class="edd_info_field edd_info_field_warning">Cupos para esta seccion excedidos ' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                        }
+                    }
+                });
             {% endif %}
             $(document).on('click','.btn-add', function() {
                 agregar_form($(this));
@@ -188,13 +207,16 @@
                                 </div>
                                     <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
                             {% endif %}
-                            {{ form_row(form.representante) }}
+                            {#{ form_row(form.representante) }#}
                             {% if form.alumnoRepresentanteDatos is defined %}
+                                <p>Representantes:</p>
                                 {% for form_alumnoRepresentanteDatos in form.alumnoRepresentanteDatos %}
                                 <div class="col-sm-6">
-                                    Representante: {{ app.session.get('representantes')[loop.index0].primerNombre }} {{ app.session.get('representantes')[loop.index0].primerApellido }}
-                                    {{ form_row(form_alumnoRepresentanteDatos.parentesco) }}
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
+                                        {{ app.session.get('representantes')[loop.index0].primerNombre }} {{ app.session.get('representantes')[loop.index0].primerApellido }}
+                                    </div>
+                                        {{ form_row(form_alumnoRepresentanteDatos.parentesco) }}
+                                    <div class="col-sm-2">
                                         {{ form_row(form_alumnoRepresentanteDatos.principal) }}
                                     </div>
                                 </div>

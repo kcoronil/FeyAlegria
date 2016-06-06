@@ -36,6 +36,10 @@ class DefaultController extends Controller
     public function indexAction(request $request)
     {
         $session = $this->getRequest()->getSession();
+//        print_r($session->get("autenticado"));
+//        print_r('<br>');
+        //$test = $this->container->get('security.context')->getToken()->getUser();
+        //print_r($this->container->get('security.context')->getToken()->getUser());
         if($request->getMethod()=='POST'){
             $session->clear();
             $username=$request->get('usuario');
@@ -97,7 +101,6 @@ class DefaultController extends Controller
         }
 
         if($this->getUser() and !$session->get('autenticado')){
-            print_r('hola');
             $query = $this->getDoctrine()->getRepository('usuariosBundle:PerfilUsuario')
                 ->createQueryBuilder('perfil')
                 ->select('perfil', 'usuario', 'tipo_usuario')
@@ -117,10 +120,6 @@ class DefaultController extends Controller
             $session->set("id_tipo_usuario", $user[2]['id']);
 
         }
-        print_r($this->getUser()->getRoles());
-        //print_r($session->get("autenticado"));
-        //$test = $this->container->get('security.context')->getToken()->getUser();
-        //print_r($this->container->get('security.context')->getToken()->getUser());
         return $this->render('inicialBundle:Default:index.html.twig');
     }
     public function consultaAction()

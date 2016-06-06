@@ -164,7 +164,6 @@ class DefaultController extends Controller
         if($request->getMethod()=='POST') {
 
             if ($formulario->isValid()) {
-                print_r($elemento);
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();

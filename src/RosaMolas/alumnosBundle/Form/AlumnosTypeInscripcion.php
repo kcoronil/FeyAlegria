@@ -12,10 +12,11 @@ use Symfony\Component\Form\FormView;
 
 class AlumnosTypeInscripcion extends AbstractType
 {
-    public function __construct ($titulo, $lista_id = null)
+    public function __construct ($titulo, $lista_id = null, $secciones)
     {
         $this->titulo = $titulo;
         $this->lista_id = $lista_id;
+        $this->secciones = $secciones;
     }
     /**
      * @param FormBuilderInterface $builder
@@ -48,7 +49,7 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
-        if($this->lista_id){
+        /*if($this->lista_id){
             $builder->add('representante','entity', array('label'=>'Representantes', 'required' => true,
                 'class' => 'usuariosBundle:Usuarios','empty_data' => 'hola', 'multiple'=>true, 'expanded'=>true, 'by_reference' => false,
                 'query_builder' => function (EntityRepository $er) {
@@ -66,11 +67,11 @@ class AlumnosTypeInscripcion extends AbstractType
                     return $er->createQueryBuilder('u')
                         ->where('u.tipoUsuario=5')
                         ->andWhere('u.activo = true');}));
-        }
+        }*/
     }
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
+        $view->vars['datos_secciones'] = $this->secciones;
         $view->vars['titulo'] = $this->titulo;
     }
     

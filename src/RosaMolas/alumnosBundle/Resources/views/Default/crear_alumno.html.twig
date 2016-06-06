@@ -45,6 +45,26 @@
                 borrar_form($(this));
                 renombrar_forms($(this).attr('data-target'));
             });
+            var cant_seccion = {{ form.vars.datos_secciones|json_encode|raw }};
+
+            $(document).on('change','#test_inicialbundle_alumnos_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
+                $(this).closest('.control-group').removeClass('has-success', 'has-warning');
+                var cupos_disp = cant_seccion[this.value]['cupos']-cant_seccion[this.value]['alumnos'];
+                if(cant_seccion[this.value]['cupos'] > cant_seccion[this.value]['alumnos']){
+                    $(this).after('<p class="edd_info_field">Cupos disponibles '+cupos_disp+' de '+cant_seccion[this.value]['cupos']+'<p>')
+                }
+                else{
+                    if(cant_seccion[this.value]['cupos'] == cant_seccion[this.value]['alumnos']) {
+                        $(this).closest('div').addClass('has-warning');
+                        $(this).after('<p class="edd_info_field">Cupos llenos para esta seccion' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                    }
+                    else
+                    {
+                        $(this).closest('div').addClass('has-error');
+                        $(this).after('<p class="edd_info_field edd_info_field_warning">Cupos para esta seccion excedidos ' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}

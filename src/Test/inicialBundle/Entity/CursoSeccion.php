@@ -34,6 +34,23 @@ class CursoSeccion
      */
     private $curso;
 
+    /**
+     * @var integer
+     */
+    private $cupos;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $periodoEscolarCursoAlumno;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->periodoEscolarCursoAlumno = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Set activo
@@ -130,12 +147,72 @@ class CursoSeccion
     /**
      * Get curso
      *
-     * @return \Test\inicialBundle\Entity\Curso 
+     * @return \Test\inicialBundle\Entity\Curso
      */
     public function getCurso()
     {
         return $this->curso;
     }
+
+
+    /**
+     * Set cupos
+     *
+     * @param integer $cupos
+     * @return CursoSeccion
+     */
+    public function setCupos($cupos)
+    {
+        $this->cupos = $cupos;
+        return $this;
+    }
+
+    /**
+     * Get cupos
+     *
+     * @return integer
+     */
+    public function getCupos()
+    {
+        return $this->cupos;
+    }
+
+
+    /**
+     * Add periodoEscolarCursoAlumno
+     *
+     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno
+     * @return CursoSeccion
+     */
+    public function addPeriodoEscolarCursoAlumno(\RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno)
+    {
+        $this->periodoEscolarCursoAlumno[] = $periodoEscolarCursoAlumno;
+
+        return $this;
+    }
+
+    /**
+     * Remove periodoEscolarCursoAlumno
+     *
+     * @param \RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno
+     */
+    public function removePeriodoEscolarCursoAlumno(\RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno $periodoEscolarCursoAlumno)
+    {
+        $this->periodoEscolarCursoAlumno->removeElement($periodoEscolarCursoAlumno);
+    }
+
+    /**
+     * Get periodoEscolarCursoAlumno
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPeriodoEscolarCursoAlumno()
+    {
+        return $this->periodoEscolarCursoAlumno;
+    }
+
+
+
     public function getNombre()
     {
         return $this->getCurso()->getNombre().$this->getSeccion()->getNombre();

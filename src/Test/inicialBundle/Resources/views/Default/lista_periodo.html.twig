@@ -54,6 +54,8 @@
                             {% for campo in datos|keys %}
                                 {% if campo == 'id' %}
                                 {% else %}
+                                {% if campo == 'cedulaEstudiantil' %}
+                                {% else %}
                                     <th>{{ campo }}</th>
                                 {% endif %}
                             {% endfor %}
@@ -71,12 +73,16 @@
                         {% for dato in datos %}
                             <tr>
                             {% for  key, elemento in dato %}
-                                {% if  key != 'id' %}
+                                {% if  key != 'id' and key != 'cedulaEstudiantil' %}
                                     <td>
                                     {% if elemento.timestamp is defined %}
                                         {{ elemento|date('d/m/Y') }}
                                     {% elseif key == 'cedula' %}
-                                        <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                                        {% if not elemento %}
+                                        <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ datos.cedulaEstudiantil }}</a>
+                                        {% else %}
+                                            <a href="{{ path('inicial_detalle_usuario', { 'id': dato.id }) }}">{{ elemento }}</a>
+                                        {% endif %}
                                     {% else %}
                                         {{ elemento }}
                                     {% endif %}

@@ -10,6 +10,12 @@
       <generator strategy="SEQUENCE"/>
     </id>
     <field name="activo" type="boolean" column="activo" nullable="true"/>
+    <field name="cupos" type="integer" column="cupos" nullable="false"/>
+    <one-to-many field="periodoEscolarCursoAlumno" mapped-by="cursoSeccion" target-entity="RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="etapa" target-entity="Etapa">
       <join-columns>
         <join-column name="etapa_id" referenced-column-name="id"/>

@@ -9,12 +9,14 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use RosaMolas\usuariosBundle\Form\UsuariosTypeCollection;
+use Test\inicialBundle\Entity\CursoSeccion;
 
 class AlumnosTypeUsuario extends AbstractType
 {
-    public function __construct ($titulo)
+    public function __construct ($titulo, $secciones)
     {
         $this->titulo = $titulo;
+        $this->secciones = $secciones;
     }
     /**
      * @param FormBuilderInterface $builder
@@ -51,7 +53,7 @@ class AlumnosTypeUsuario extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
+        $view->vars['datos_secciones'] = $this->secciones;
         $view->vars['titulo'] = $this->titulo;
     }
     /**

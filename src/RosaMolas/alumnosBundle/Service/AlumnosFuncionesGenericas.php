@@ -13,12 +13,12 @@ use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeInscripcion;
 use Symfony\Component\HttpFoundation\Request;
 use RosaMolas\alumnosBundle\Entity\Alumnos;
-use RosaMolas\alumnosBundle\Entity\PeriodoEscolarAlumno;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
 use RosaMolas\alumnosBundle\Form\PeriodoEscolarAlumnoType;
 use RosaMolas\facturacionBundle\Entity\MontosAlumnos;
 use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\facturacionBundle\Form\TipoFacturaType;
+use Symfony\Component\Validator\Constraints\Null;
 
 class AlumnosFuncionesGenericas extends Controller
 {
@@ -38,7 +38,18 @@ class AlumnosFuncionesGenericas extends Controller
                 $p->addAlumnoRepresentanteDatos($test_parent);
             }
         }
-        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $ids_representantes), $p);
+        $cursos = $this->getDoctrine()
+            ->getRepository('inicialBundle:CursoSeccion')
+            ->findBy(array('activo'=>true));
+
+        $cant_seccion = [];
+        foreach($cursos as $curso){
+            $alumnos = $this->getDoctrine()
+                ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('cursoSeccion'=>$curso->getId(), 'activo'=>true));
+            $cant_seccion[$curso->getId()] =  array('cupos'=>$curso->getCupos(), 'alumnos'=>count($alumnos));
+        }
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $ids_representantes, $cant_seccion), $p);
 
         if($remover){
             foreach($remover as $campo){
@@ -50,17 +61,51 @@ class AlumnosFuncionesGenericas extends Controller
 
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
+                $cedula_alumno = '';
                 $rep_ppal = 0;
+                $representante_ppal = '';
+                if(!$p->getCedula()){
+                    $cedula_alumno = false;
+                }
                 foreach($p->getAlumnoRepresentanteDatos() as $alumno_rep_datos){
                     if($alumno_rep_datos->getPrincipal()==true){
                         $rep_ppal=  $rep_ppal + 1;
+                        if($cedula_alumno == false){
+                            $representante_ppal = $this->getDoctrine()
+                                ->getRepository('usuariosBundle:Usuarios')
+                                ->find($alumno_rep_datos->getRepresentante()->getId());
+                        }
                     }
                 }
+
                 if($rep_ppal==0 or $rep_ppal>1){
                     $this -> get('session') -> getFlashBag() -> add(
                         'danger', 'Debe Seleccionar un Representante Principal');
+
                     return array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante');
                 }
+
+                if($cedula_alumno == false){
+                    if($representante_ppal->getAlumnoRepresentanteDatos()){
+                        $cant_alumnos_anio = 0;
+                        foreach ($representante_ppal->getAlumnoRepresentanteDatos() as $alum_rep_datos) {
+                            if ($alum_rep_datos->getAlumno()->getId() != $p->getId() and $alum_rep_datos->getAlumno()->getFechaNacimiento == $p->getFechaNacimiento()) {
+                                $cant_alumnos_anio = $cant_alumnos_anio +1;
+                            }
+                        }
+                        if($cant_alumnos_anio>0){
+                            $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y').$representante_ppal->getCedula().$cant_alumnos_anio);
+                        }
+                        else{
+                            $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y').$representante_ppal->getCedula());
+                        }
+                    }
+                    else{
+                        $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y').$representante_ppal->getCedula());
+                    }
+                }
+
+
                 $p->setActivo(true);
                 $periodo_activo = $this->getDoctrine()
                     ->getRepository('inicialBundle:PeriodoEscolar')
@@ -137,7 +182,6 @@ class AlumnosFuncionesGenericas extends Controller
         return array('form'=>$formulario->createView(), 'accion'=>'Agregar Representante a alumnno');
 
     }
-
 
     public function agregar_monto_alumno(Request $request, $id_estudiante)
     {
