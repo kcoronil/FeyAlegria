@@ -48,7 +48,8 @@
                     agregar_form($('#curso-add'));
                 }
                 var cant_seccion = {{ form.vars.datos_secciones|json_encode|raw }};
-                $(document).on('change','#test_inicialbundle_alumnos_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
+
+                $(document).on('change','#test_inicialbundle_alumnos_simple_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
                     $(this).closest('.control-group').removeClass('has-success', 'has-warning');
                     var cupos_disp = cant_seccion[this.value]['cupos']-cant_seccion[this.value]['alumnos'];
                     if(cant_seccion[this.value]['cupos'] > cant_seccion[this.value]['alumnos']){
@@ -113,7 +114,6 @@
                 //$(this).attr("checked",true);
             });
         });
-
     </script>
 {% endblock %}
 {% block enlace_atajo %}
@@ -263,20 +263,23 @@
                     {% if accion == 'Agregar Pago' %}
                         {{ form(form) }}
                         <table class="table table-bordered table-hover table-responsive">
-                            <tr>
-                                <th colspan="2" class="text-center">Datos de la Factura</th>
-                            </tr>
-                            <tr>
-                                <td>Estudiante: {{ estudiante.primerNombre }} {{ estudiante.primerApellido }} </td>
-                                <td>{{ estudiante.cedula }}</td>
-                            </tr>
-                            <tr>
-                                <th colspan="2" class="text-center">Factura: </th>
-                            </tr>
-                            <tr>
-                                <td>{{ factura.fecha|date('d/m/Y')}}</td>
-                                <td>{{ factura.monto }}</td>
-                            </tr>
+                            {% for factura in facturas %}
+                                <tr>
+                                    <th colspan="2" class="text-center"><label><input type="checkbox" name="facturas[]" value="factura.id">Seleccionar para pagar</label>Datos de la Factura</th>
+                                </tr>
+                                <tr>
+                                    <td>Estudiante: {{ alumnos_facturas[factura.id].primerNombre }} {{  alumnos_facturas[factura.id].primerApellido }} </td>
+                                    <td>
+                                        {% if alumnos_facturas[factura.id].cedula %}
+                                            {{ alumnos_facturas[factura.id].cedula }}
+                                        {% else %}
+                                            {{ alumnos_facturas[factura.id].cedulaEstudiantil }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ factura.fecha|date('d/m/Y')}}</td>
+                                    <td>{{ factura.monto }}</td>
+                                </tr>
+                            {% endfor %}
                         </table>
                     {% endif %}
                     {% if accion != 'Resumen Inscripción' %}

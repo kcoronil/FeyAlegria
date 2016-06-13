@@ -17,7 +17,6 @@
       <cascade-persist/>
     </cascade>
   </one-to-many>
-
   <many-to-one field="periodoEscolarCursoAlumnos" target-entity="RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno">
     <join-columns>
       <join-column name="periodo_escolar_curso_alumnos_id" referenced-column-name="id"/>
@@ -28,5 +27,18 @@
       <join-column name="tipo_factura_id" referenced-column-name="id"/>
     </join-columns>
   </many-to-one>
+  <many-to-many field="pagos" target-entity="RosaMolas\genericoBundle\Entity\Pagos" mapped-by="factura">
+    <cascade>
+      <cascade-persist/>
+    </cascade>
+    <join-table name="pagos_facturas">
+      <join-columns>
+        <join-column name="factura_id" referenced-column-name="id"/>
+      </join-columns>
+      <inverse-join-columns>
+        <join-column name="pago_id" referenced-column-name="id"/>
+      </inverse-join-columns>
+    </join-table>
+  </many-to-many>
 </entity>
 </doctrine-mapping>

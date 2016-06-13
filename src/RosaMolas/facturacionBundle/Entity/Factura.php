@@ -3,6 +3,7 @@
 namespace RosaMolas\facturacionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use RosaMolas\genericoBundle\Entity\Pagos;
 
 /**
  * Factura
@@ -50,11 +51,17 @@ class Factura
     private $tipoFactura;
 
     /**
+     * @var \RosaMolas\genericoBundle\Entity\Pagos
+     */
+    private $pagos;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->detalleFactura = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pagos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -237,4 +244,19 @@ class Factura
     {
         return $this->tipoFactura;
     }
+
+
+    /*many to many pagos */
+
+    public function addPagos(Pagos $pagos)
+    {
+        $this->pagos->add($pagos);
+    }
+
+    public function removePagos($pagos)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->pagos->removeElement($pagos);
+    }
+
 }

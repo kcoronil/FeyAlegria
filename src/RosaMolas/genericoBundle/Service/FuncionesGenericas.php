@@ -198,7 +198,6 @@ class FuncionesGenericas extends Controller
     }
     public function crear_factura($estudiante, $tipo_factura)
     {
-        print_r('<br>');
         $nueva_fact = New Factura();
         $monto_factura = 0;
         $nueva_fact->setActivo(true);
@@ -210,24 +209,28 @@ class FuncionesGenericas extends Controller
         $nueva_fact->setFecha(new \DateTime(date('Y-m-d H:i:s')));
         $nueva_fact->setPagada(false);
         foreach ($nueva_fact->getTipoFactura()->getConceptosFactura() as $concepto_tipo) {
-            $nueva_fact_detalle = New DetalleFactura();
-            $nueva_fact_detalle->setActivo(true);
-            $nueva_fact_detalle->setConcepto($concepto_tipo);
-            $nueva_fact_detalle->setFactura($nueva_fact);
-            if($estudiante->getTipoFacturacion()=='particular'){
-                $p = $this->getDoctrine()
-                    ->getRepository('facturacionBundle:MontosAlumnos')
-                    ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura'=> $concepto_tipo));
-                $nueva_fact_detalle->setMonto($p->getMonto());
-                print_r($nueva_fact_detalle->getMonto().'<br>');
+            if($concepto_tipo->getActivo()) {
+                $nueva_fact_detalle = New DetalleFactura();
+                $nueva_fact_detalle->setActivo(true);
+                $nueva_fact_detalle->setConcepto($concepto_tipo);
+                $nueva_fact_detalle->setFactura($nueva_fact);
+                if($estudiante->getTipoFacturacion() == 'particular') {
+                    $p = $this->getDoctrine()
+                        ->getRepository('facturacionBundle:MontosAlumnos')
+                        ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura' => $concepto_tipo, 'activo'=>true));
+                    $nueva_fact_detalle->setMonto($p->getMonto());
+                    //print_r($nueva_fact_detalle->getMonto().'<br>');
+                }
+                else {
+                    $concepto_monto = $this->getDoctrine()
+                        ->getRepository('facturacionBundle:TipoMontoConceptos')
+                        ->findOneBy(array('conceptosFactura' => $concepto_tipo, 'activo'=>true));
+                    $nueva_fact_detalle->setMonto($concepto_monto->getMonto());
+                    //print_r($nueva_fact_detalle->getMonto() . '<br>');
+                }
+                $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
+                $nueva_fact->addDetalleFactura($nueva_fact_detalle);
             }
-            else {
-                $nueva_fact_detalle->setMonto($concepto_tipo->getTipoMontoConceptos()->first()->getMonto());
-                print_r($nueva_fact_detalle->getMonto().'<br>');
-            }
-            $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
-            $nueva_fact->addDetalleFactura($nueva_fact_detalle);
-
         }
         $nueva_fact->setMonto($monto_factura);
         $em = $this->getDoctrine()->getManager();
@@ -235,15 +238,25 @@ class FuncionesGenericas extends Controller
         $em->flush();
         return array('factura'=>$nueva_fact);
     }
-    public function agregar_pago_generico($id, $request)
+    public function agregar_pago_generico($facturas, $request)
     {
-        $factura = $this->getDoctrine()
+        /*$factura = $this->getDoctrine()
             ->getRepository('facturacionBundle:Factura')
-            ->find($id);
-        $estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
+            ->find($id);*/
+        //$estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
         $p = new Pagos();
-        $p->setFactura($factura);
-        $p->setFechaRegistro(new \DateTime("now"));
+        //$p->addFactura($factura);
+        //$p->setFechaRegistro(new \DateTime("now"));
+        $alumnos_facturas = [];
+        foreach($facturas as $factura){
+
+            $alumno_fact = $this->getDoctrine()
+                ->getRepository('alumnosBundle:Alumnos')
+                ->find($factura->getPeriodoEscolarCursoAlumnos()->getAlumno()->getId());
+            //print_r($factura->getPeriodoEscolarCursoAlumnos()->getAlumno()->getId());
+            $alumnos_facturas[$factura->getId()]= $alumno_fact;
+        }
+        //print_r($alumnos_facturas);
         $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
         $formulario-> handleRequest($request);
 
@@ -266,8 +279,8 @@ class FuncionesGenericas extends Controller
                 }*/
             }
         }
-        return array('form'=>$formulario->createView(), 'accion'=>'Agregar Pago', 'factura'=>$factura,
-            'estudiante'=>$estudiante);
+        return array('form'=>$formulario->createView(), 'accion'=>'Agregar Pago', 'facturas'=>$facturas,
+            'alumnos_facturas'=>$alumnos_facturas);
     }
     public function email_inscripcion($representante, $estudiantes)
     {

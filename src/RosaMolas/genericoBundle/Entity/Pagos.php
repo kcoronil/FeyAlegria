@@ -3,7 +3,9 @@
 namespace RosaMolas\genericoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use RosaMolas\facturacionBundle\Entity\Factura;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Pagos
@@ -61,6 +63,7 @@ class Pagos
     public function __construct()
     {
         $this->fechaRegistro = new \DateTime();
+        $this->factura = new ArrayCollection();
     }
 
     /**
@@ -190,28 +193,19 @@ class Pagos
         return $this->id;
     }
 
-    /**
-     * Set factura
-     *
-     * @param \RosaMolas\facturacionBundle\Entity\Factura $factura
-     * @return Pagos
-     */
-    public function setFactura(\RosaMolas\facturacionBundle\Entity\Factura $factura = null)
-    {
-        $this->factura = $factura;
+//    /**
+//     * Set factura
+//     *
+//     * @param \RosaMolas\facturacionBundle\Entity\Factura $factura
+//     * @return Pagos
+//     */
+//    public function setFactura(\RosaMolas\facturacionBundle\Entity\Factura $factura = null)
+//    {
+//        $this->factura = $factura;
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
-
-    /**
-     * Get factura
-     *
-     * @return \RosaMolas\facturacionBundle\Entity\Factura
-     */
-    public function getFactura()
-    {
-        return $this->factura;
-    }
 
     /**
      * Set banco
@@ -235,4 +229,33 @@ class Pagos
     {
         return $this->banco;
     }
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Factura", inversedBy="pagos", cascade={"persist"})
+     * @ORM\JoinTable(name="pagos_facturas",joinColumns={@ORM\JoinColumn(name="pago_id", referencedColumnName="id")},
+     * inverseJoinColumns={@ORM\JoinColumn(name="factura_id", referencedColumnName="id")}
+     * )
+     **/
+
+    /**
+     * Get factura
+     *
+     * @return \RosaMolas\facturacionBundle\Entity\Factura
+     */
+    public function getFactura()
+    {
+        return $this->factura;
+    }
+
+    public function addFactura(Factura $factura)
+    {
+        $this->factura->add($factura);
+    }
+
+    public function removeFactura($factura)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        return $this->factura->removeElement($factura);
+    }
+
 }

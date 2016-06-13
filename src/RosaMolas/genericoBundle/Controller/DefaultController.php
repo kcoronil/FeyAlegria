@@ -548,13 +548,14 @@ class DefaultController extends Controller
                     }
                     else {
                         if (!$session->get('pagos_finalizado')) {
+                            $factura_form=[];
                             foreach ($session->get('facturas') as $facturas) {
                                 if ($facturas->getPagada() == false) {
-                                    $factura_form = $facturas;
-                                    break;
+                                    //$factura_form = $facturas;
+                                    array_push($factura_form, $facturas);
                                 }
                             }
-                            $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form->getId(), $request);
+                            $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form, $request);
                             if (array_key_exists('pago', $resultado)) {
 
                                 foreach ($session->get('facturas') as $fact) {
