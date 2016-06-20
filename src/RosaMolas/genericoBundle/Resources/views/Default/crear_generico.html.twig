@@ -199,6 +199,7 @@
                             {{ form_row(form.fechaNacimiento) }}
                             {{ form_row(form.lugarNacimiento) }}
                             {{ form_row(form.sexo) }}
+                            {{ form_row(form.tipoFacturacion) }}
                             {% if form.periodoEscolarCursoAlumno is defined %}
                                 <div id="cont_curso" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
                                     {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}
@@ -209,20 +210,21 @@
                             {% endif %}
                             {#{ form_row(form.representante) }#}
                             {% if form.alumnoRepresentanteDatos is defined %}
-                                <p>Representantes:</p>
-                                {% for form_alumnoRepresentanteDatos in form.alumnoRepresentanteDatos %}
-                                <div class="col-sm-6">
-                                    <div class="col-sm-4">
-                                        {{ app.session.get('representantes')[loop.index0].primerNombre }} {{ app.session.get('representantes')[loop.index0].primerApellido }}
+                                <div class="col-sm-12">
+                                    <p>Representantes:</p>
+                                    {% for form_alumnoRepresentanteDatos in form.alumnoRepresentanteDatos %}
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12">
+                                            {{ app.session.get('representantes')[loop.index0].primerNombre }} {{ app.session.get('representantes')[loop.index0].primerApellido }}
+                                        </div>
+                                            {{ form_row(form_alumnoRepresentanteDatos.parentesco) }}
+                                        <div class="col-sm-2">
+                                            {{ form_row(form_alumnoRepresentanteDatos.principal) }}
+                                        </div>
                                     </div>
-                                        {{ form_row(form_alumnoRepresentanteDatos.parentesco) }}
-                                    <div class="col-sm-2">
-                                        {{ form_row(form_alumnoRepresentanteDatos.principal) }}
-                                    </div>
-                                </div>
                                 {% endfor %}
+                                </div>
                             {% endif %}
-                            {{ form_row(form.tipoFacturacion) }}
                             <div class="col-sm-12 text-center ">
                                 <br>
                                 {{ form_row(form.guardar) }}
@@ -265,7 +267,8 @@
                         <table class="table table-bordered table-hover table-responsive">
                             {% for factura in facturas %}
                                 <tr>
-                                    <th colspan="2" class="text-center"><label><input type="checkbox" name="facturas[]" value="factura.id">Seleccionar para pagar</label>Datos de la Factura</th>
+                                    <td><label><input type="checkbox" name="facturas[]" value="factura.id"> Seleccionar para pagar</label></td>
+                                    <th colspan="3" class="text-center">Datos de la Factura</th>
                                 </tr>
                                 <tr>
                                     <td>Estudiante: {{ alumnos_facturas[factura.id].primerNombre }} {{  alumnos_facturas[factura.id].primerApellido }} </td>

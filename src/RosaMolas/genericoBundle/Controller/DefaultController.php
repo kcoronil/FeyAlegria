@@ -89,7 +89,7 @@ class DefaultController extends Controller
 
         $fecha_actual = new \DateTime("now");
         $html = $this->renderView('genericoBundle:Default:recibo_pago.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
-        print_r($html);
+        //print_r($html);
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,

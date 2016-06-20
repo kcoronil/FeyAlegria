@@ -244,12 +244,14 @@ class FuncionesGenericas extends Controller
             ->getRepository('facturacionBundle:Factura')
             ->find($id);*/
         //$estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
+
         $p = new Pagos();
+
         //$p->addFactura($factura);
         //$p->setFechaRegistro(new \DateTime("now"));
         $alumnos_facturas = [];
         foreach($facturas as $factura){
-
+            $p->addFactura($factura);
             $alumno_fact = $this->getDoctrine()
                 ->getRepository('alumnosBundle:Alumnos')
                 ->find($factura->getPeriodoEscolarCursoAlumnos()->getAlumno()->getId());
