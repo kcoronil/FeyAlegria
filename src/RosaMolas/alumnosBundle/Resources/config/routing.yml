@@ -9,7 +9,7 @@ inicial_detalle_alumno:
 
 inicial_agregar_alumno:
     path:     /crear_alumno/{id_rep}
-    defaults: { _controller: genericoBundle:Default:agregar_alumno_inscripcion, id_rep: null  }
+    defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null  }
 
 inicial_agregar_alumno_old:
     path:     /crear_alumno_old

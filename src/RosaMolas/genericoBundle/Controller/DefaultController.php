@@ -400,8 +400,8 @@ class DefaultController extends Controller
     public function inscripcion_completaAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
-
-        if($request->get('_route')=='inicial_lista_representante'){
+        print_r($request->get('_route'));
+        if($request->get('_route')=='generico_inscripcion_agregar_alumno' or $request->get('_route') == 'inicial_agregar_alumno' ){
 
             if($id_rep){
                 $p = $this->getDoctrine()

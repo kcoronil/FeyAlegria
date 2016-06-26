@@ -1,4 +1,4 @@
-registro representantes quitar segundo -------------- apellido obligatorio listo
+registro representantes quitar segundo -------------- apellido obligatorio -------------- listo
 
 construir cedula escolar ---------------- listo
 
