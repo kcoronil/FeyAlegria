@@ -9,6 +9,14 @@
     </id>
     <field name="nombre" type="string" column="nombre" length="40" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-one field="tipoDatoVencimiento" target-entity="TipoDatoVencimiento">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="tipo_dato_vencimiento_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
     <many-to-many field="conceptosFactura" target-entity="RosaMolas\facturacionBundle\Entity\ConceptosFactura" inversed-by="tipoFactura">
       <cascade>
         <cascade-persist/>

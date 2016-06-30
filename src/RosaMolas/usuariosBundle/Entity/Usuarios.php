@@ -133,9 +133,6 @@ class Usuarios
 
     /**
      * @var string
-     * @Assert\Length(min = 3, max = 30,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Regex(pattern="/\d/", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
@@ -160,9 +157,6 @@ class Usuarios
 
     /**
      * @var string
-     * @Assert\Length(min = 3, max = 30,
-     * minMessage = "Este campo debe tener al menos {{ limit }} carácteres",
-     * maxMessage = "Este campo no debe superar los {{ limit }} carácteres")
      * @Assert\Regex(pattern="/\d/", match=false,
      * message="el valor {{ value }} no es alfabético.")
      * @ORM\Column(name="apellidos", type="string", length=30)
@@ -237,7 +231,7 @@ class Usuarios
      * @ORM\Column(name="email", type="string", length=256)
      * @Assert\Email(
      * message = "El correo '{{ value }}' no es un correo valido.",
-     * checkMX = true)
+     * checkMX = false)
      */
     private $email;
 

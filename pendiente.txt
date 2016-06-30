@@ -24,6 +24,27 @@ cambiar a mpdf !!!!!!!!!!!!!
 
 verificar viabilidad de multiples escalas de montos !!!!!!!!!!!!!!
 
+permitir pago de multiples mensualidades e multiples alumnos con un solo deposito
+
+cambiar logo
+
+cambiar termino representante principal por representante legal
+
+separar etapa de grado en las secciones de seleccion
+
+cambiar termino coorperativa preescolar por papeleria preescolar
+
+agregar tabla datos colegio para ingreso de datos de director, telefonos, direccion, etc
+
+ajustes proceso inscripción separar conceptos: aporte por familia y seguro escolar debido a que se pagan por banesco
+
+montos de inscripcion no varian entre alumnos, solo los de mensualidad
+
+!error no suma todos los montos al facturar
+
+!al crear monto particular muestra los montos actuales
+
+reporte de alumnos completo: direccion de los representantes y cedula del estudiante
 reestructurar montos
 
 separar aporte por familia y seguro escolar de la inscripcion (se depositan por separado) !!!!!!!!!!!

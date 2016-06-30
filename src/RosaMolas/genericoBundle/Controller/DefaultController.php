@@ -770,11 +770,13 @@ class DefaultController extends Controller
                     $session->remove('representantes_adic_nuevo_finalizado');
                     $session->remove('representantes_adic_inscripcion');
                     $session->remove('representantes_adic_finalizado');
-
                     return $this->redirect($this->generateUrl('inicial_homepage'));
                 }
             }
         }
         return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
+    }
+    public function finalizarAnioAction(Request $request){
+
     }
 }
