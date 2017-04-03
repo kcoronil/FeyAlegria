@@ -94,4 +94,3 @@ class Bancos
         return $this->nombre;
     }
 }
-

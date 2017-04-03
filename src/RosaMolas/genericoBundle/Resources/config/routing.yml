@@ -22,6 +22,10 @@ generico_inscripcion_completa:
     path:     /inscripcion
     defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null   }
 
+generico_formulario_crear_representante:
+    path:     /formulario_crear_representante_generico
+    defaults: { _controller: genericoBundle:Default:formulario_crear_representante_generico }
+
 generico_inscripcion_agregar_alumno:
     path:     /inscripcion_alumno/{id_rep}
     defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null   }

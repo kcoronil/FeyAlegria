@@ -11,7 +11,7 @@
     </id>
     <field name="idObjeto" type="integer" column="id_objeto" nullable="false"/>
     <field name="detalles" type="string" column="detalles" length="200" nullable="false"/>
-    <field name="fecha" type="datetimetz" column="fecha" nullable="false"/>
+    <field name="fecha" type="datetimetz" column="fecha" nullable="true"/>
     <many-to-one field="usuario" target-entity="RosaMolas\usuariosBundle\Entity\Usuarios">
       <join-columns>
         <join-column name="usuario_id" referenced-column-name="id"/>

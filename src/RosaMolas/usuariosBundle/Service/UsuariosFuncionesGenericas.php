@@ -16,6 +16,39 @@ class UsuariosFuncionesGenericas extends Controller
         $this->container = $container;
     }
 
+    public function formulario_crear_representante_generico($request){
+        $p = new Usuarios();
+
+        $titulo= 'Crear Representante';
+        $formulario = $this->createForm(new UsuariosTypeInscripcion($titulo), $p);
+        $formulario -> remove('tipoUsuario');
+        $formulario -> remove('principal');
+
+        $tipo_usuario = $this->getDoctrine()
+            ->getRepository('usuariosBundle:TipoUsuario')
+            ->find(5);
+        $p->setTipoUsuario($tipo_usuario);
+        $p->setPrincipal(false);
+
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+//        if($request->getMethod()=='POST') {
+//
+//            if ($formulario->isValid()) {
+//                $em = $this->getDoctrine()->getManager();
+//                $em->persist($p);
+//                $em->flush();
+//                $this->get('session')->getFlashBag()->add(
+//                    'success', 'Representante Creado con éxito');
+//                return array('representante'=>$p,);
+//            }
+//        }
+//        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+
+        exit;
+        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
+    }
+
     public function crear_representante_generico($request, $principal=false, $remover = null, $alumnos=null, $titulo=null)
     {
         $p = new Usuarios();

@@ -605,3 +605,80 @@ input[type=number] {
     color: red;
     font-weight: 700;
 }
+
+.ourprojects-modal {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+.modal {
+    z-index: 10500 !important;
+}
+.modal {
+    display: none;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+}
+
+.crear-modal .modal-content {
+    background: transparent;
+    background-clip: border-box;
+    background-size: auto auto;
+    border-radius: 0;
+    background-clip: border-box;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: none;
+    min-height: 100%;
+    padding: 10px 0;
+    text-align: center;
+    background-size: cover;
+}
+
+.crear-modal .close-modal {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background: rgba(0,0,0,0.4);
+    top: 25px;
+    right: 25px;
+    cursor: pointer;
+    border-radius: 10px;
+    z-index: 10501 !important;
+}
+
+
+.crear-modal .close-modal .lr {
+    height: 75px;
+    width: 1px;
+    margin-left: 35px;
+    background-color: white;
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    z-index: 1051;
+}
+.crear-modal .close-modal .lr .rl {
+    height: 75px;
+    width: 1px;
+    background-color: white;
+    transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    z-index: 1052;
+}
+.modal-body {
+    position: relative;
+    padding: 15px;
+}
+.modal-body .container {
+    background: rgba(0,0,0,0.4);
+}

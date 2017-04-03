@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="RosaMolas\genericoBundle\Entity\InscripcionRepresentanteContacto" table="inscripcion_representante_contacto">
+    <indexes>
+      <index name="inscripcion_representante_contacto_tipo_contacto_id" columns="tipo_contacto_id"/>
+      <index name="inscripcion_representante_contacto_representante_id" columns="representante_id"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="inscripcion_representante_contacto_contacto_key" columns="contacto"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="contacto" type="string" column="contacto" length="100" nullable="false"/>
+    <field name="principal" type="boolean" column="principal" nullable="false"/>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <many-to-one field="representante" target-entity="InscripcionUsuarios" inversed-by="inscripcionrepresentanteContacto">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="representante_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="tipoContacto" target-entity="RosaMolas\usuariosBundle\Entity\TipoContacto">
+      <join-columns>
+        <join-column name="tipo_contacto_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

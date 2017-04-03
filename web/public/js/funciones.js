@@ -101,3 +101,24 @@ $(function () {
         $('.datepicker').hide();
     });
 });
+
+$('#form_ajax').submit(function(e){
+    e.preventDefault();
+    var ajax_form = $('#form_ajax').closest('form');
+    $.ajax({
+        url: ajax_form.attr('action'),
+        type: 'POST',
+        data: ajax_form.serialize(),
+        dataType: 'json'
+        //crossDomain: true
+    }).done(function () {
+        var success = true;
+        //var msj_container = wrap.find('> .w-form-done');
+        //contact_form.toggle(!success);
+        //msj_container.toggle(success);
+    }).fail(function (response, textStatus, jqXHR) {
+        //var success = false;
+        //var msj_container = wrap.find('> .w-form-fail');
+        //msj_container.toggle(!success);
+    });
+});

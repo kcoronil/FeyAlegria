@@ -25,6 +25,11 @@ class TipoFactura
     private $id;
 
     /**
+     * @var \RosaMolas\facturacionBundle\Entity\TipoDatoVencimiento
+     */
+    private $tipoDatoVencimiento;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $conceptosFactura;
@@ -125,6 +130,33 @@ class TipoFactura
     {
         return $this->conceptosFactura;
     }
+
+    /**
+     * Set tipoDatoVencimiento
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\TipoDatoVencimiento $tipoDatoVencimiento
+     * @return TipoFactura
+     */
+    public function setTipoDatoVencimiento(\RosaMolas\facturacionBundle\Entity\TipoDatoVencimiento $tipoDatoVencimiento = null)
+    {
+        $this->tipoDatoVencimiento = $tipoDatoVencimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoDatoVencimiento
+     *
+     * @return \RosaMolas\facturacionBundle\Entity\TipoDatoVencimiento
+     */
+    public function getTipoDatoVencimiento()
+    {
+        return $this->tipoDatoVencimiento;
+    }
+
+
+
+
 
     public function __toString(){
         return $this->nombre;

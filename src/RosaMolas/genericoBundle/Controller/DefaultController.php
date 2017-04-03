@@ -10,10 +10,13 @@ use RosaMolas\facturacionBundle\Entity\Factura;
 use RosaMolas\facturacionBundle\Entity\MontosAlumnos;
 use RosaMolas\facturacionBundle\Entity\TipoFactura;
 use RosaMolas\facturacionBundle\Form\TipoFacturaType;
+use RosaMolas\genericoBundle\Entity\Inscripcion;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Entity\Parentescos;
 use RosaMolas\genericoBundle\Form\PagosType;
 use RosaMolas\genericoBundle\Form\ParentescosType;
+use RosaMolas\usuariosBundle\Entity\Usuarios;
+use RosaMolas\usuariosBundle\Form\UsuariosTypeInscripcion;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -400,7 +403,24 @@ class DefaultController extends Controller
     public function inscripcion_completaAction($id_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
-        print_r($request->get('_route'));
+        if (!$session->get('inscripcion'))
+        {
+            $inscripcion = $this->getDoctrine()
+                ->getRepository('genericoBundle:Inscripcion')
+                ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+
+            if(empty($inscripcion)){
+                $inscripcion = new Inscripcion();
+                $inscripcion->setFecha(new \DateTime("now"));
+                $inscripcion->setIscripcionHash(md5($inscripcion->getFecha()->format('Y-m-d-H-i-s').$this->getUser()->getUsername()));
+                $inscripcion->setActivo(true);
+                $inscripcion->setEstatus(1);
+                $inscripcion->setUsuario($this->getUser()->getUsuario());
+
+            }
+            $session->set("inscripcion", $inscripcion);
+        }
+        var_dump($session->get('inscripcion'));
         if($request->get('_route')=='generico_inscripcion_agregar_alumno' or $request->get('_route') == 'inicial_agregar_alumno' ){
 
             if($id_rep){
@@ -444,33 +464,34 @@ class DefaultController extends Controller
                 $datos = $query->getArrayResult();
                 $elemento = 'Seleccione Representante';
 
-                return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
+                return $this->render('genericoBundle:Default:crear_generico2.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
             }
         }
+
         else{
 
         }
         if (!$session->get('representantes_finalizado')){
-            $remover = null;
-            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
-            if (array_key_exists('representante', $resultado)) {
-                if($resultado['representante']!='') {
-                    if (!$session->get('representantes')) {
-                        $session->set("representantes", array());
-                    }
-                    $array_representantes = $session->get('representantes');
-                    array_push($array_representantes, $resultado['representante']);
-                    $session->set("representantes", $array_representantes);
-                }
-                if(array_key_exists('representantes_finalizado', $resultado)){
-                    $session->set("representantes_finalizado", true);
-                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-
-                }
-                else{
-                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                }
-            }
+//            $remover = null;
+//            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
+//            if (array_key_exists('representante', $resultado)) {
+//                if($resultado['representante']!='') {
+//                    if (!$session->get('representantes')) {
+//                        $session->set("representantes", array());
+//                    }
+//                    $array_representantes = $session->get('representantes');
+//                    array_push($array_representantes, $resultado['representante']);
+//                    $session->set("representantes", $array_representantes);
+//                }
+//                if(array_key_exists('representantes_finalizado', $resultado)){
+//                    $session->set("representantes_finalizado", true);
+//                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+//
+//                }
+//                else{
+//                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+//                }
+//            }
         }
         else {
             if (!$session->get('alumnos_finalizado')) {
@@ -621,7 +642,7 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
+        return $this->render('genericoBundle:Default:crear_generico2.html.twig');
     }
 
 
@@ -776,7 +797,88 @@ class DefaultController extends Controller
         }
         return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
     }
+
+    public function formulario_crear_representante_genericoAction(Request $request){
+        $p = new Usuarios();
+        $titulo= 'Crear Representante';
+        $formulario = $this->createForm(new UsuariosTypeInscripcion($titulo), $p);
+        $formulario -> remove('tipoUsuario');
+        $formulario -> remove('principal');
+
+        $tipo_usuario = $this->getDoctrine()
+            ->getRepository('usuariosBundle:TipoUsuario')
+            ->find(5);
+        $p->setTipoUsuario($tipo_usuario);
+        $p->setPrincipal(false);
+
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $session = $this->getRequest()->getSession();
+                $inscripcion = $session->get('inscripcion');
+                $inscripcion->setRepresentantes($inscripcion->getAlumnos().','.$p->getId());
+//                $em->persist();
+                $em->flush();
+                $session->set("inscripcion", $inscripcion);
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Representante Creado con éxito');
+//                return array('representante'=>$p,);
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+//        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
+    }
+
+
+    public function formulario_crear_alumnos_genericoAction(Request $request){
+        $p = new Alumnos();
+        $titulo= 'Crear Representante';
+
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $ids_representantes, $cant_seccion), $p);
+
+        $formulario = $this->createForm(new UsuariosTypeInscripcion($titulo), $p);
+        $formulario -> remove('tipoUsuario');
+        $formulario -> remove('principal');
+
+        $tipo_usuario = $this->getDoctrine()
+            ->getRepository('usuariosBundle:TipoUsuario')
+            ->find(5);
+        $p->setTipoUsuario($tipo_usuario);
+        $p->setPrincipal(false);
+
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $session = $this->getRequest()->getSession();
+                $inscripcion = $session->get('inscripcion');
+                $inscripcion->setRepresentantes($inscripcion->getAlumnos().','.$p->getId());
+//                $em->persist();
+                $em->flush();
+                $session->set("inscripcion", $inscripcion);
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Representante Creado con éxito');
+//                return array('representante'=>$p,);
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+//        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
+    }
+
     public function finalizarAnioAction(Request $request){
 
     }
+
+
 }

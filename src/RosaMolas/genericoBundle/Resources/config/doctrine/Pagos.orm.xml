@@ -3,7 +3,7 @@
   <entity name="RosaMolas\genericoBundle\Entity\Pagos" table="pagos">
     <indexes>
       <index name="pagos_banco_id" columns="banco_id"/>
-      <index name="IDX_DA9B0DFFF04F795F" columns="factura_id"/>
+      <index name="IDX_DA9B0DFFF04F795F" columns="fecha_deposito"/>
     </indexes>
     <unique-constraints>
       <unique-constraint name="pagos_numero_deposito_key" columns="numero_deposito"/>
