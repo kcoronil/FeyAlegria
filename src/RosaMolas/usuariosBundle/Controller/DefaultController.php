@@ -79,8 +79,9 @@ class DefaultController extends Controller
             $accion = 'Detalle Representante';
             $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
                 ->createQueryBuilder('usuario')
-                ->select('usuario', 'alumnos', 'contacto', 'tipo_contacto')
-                ->innerJoin('usuario.alumno', 'alumnos')
+                ->select('usuario', 'alumnos', 'contacto', 'tipo_contacto', 'alumadstos')
+                ->innerJoin('usuario.alumnoRepresentanteDatos', 'alumadstos')
+                ->innerJoin('alumadstos.alumno', 'alumnos')
                 ->innerJoin('usuario.representanteContacto', 'contacto')
                 ->innerJoin('contacto.tipoContacto', 'tipo_contacto','WITH', 'contacto.tipoContacto = tipo_contacto.id')
                 ->where('usuario.id = :id')

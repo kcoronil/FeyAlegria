@@ -45,7 +45,7 @@ class ParentescosType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RosaMolas\genericoBundle\Entity\Bancos'
+            'data_class' => 'RosaMolas\genericoBundle\Entity\Parentescos'
         ));
     }
 
@@ -54,6 +54,6 @@ class ParentescosType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_bancos';
+        return 'test_inicialbundle_parentescos';
     }
 }
