@@ -236,6 +236,11 @@ class Usuarios
     private $email;
 
     /**
+     * @var \RosaMolas\genericoBundle\Entity\Inscripcion
+     */
+    private $inscripcion;
+
+    /**
      * Get id
      *
      * @return integer
@@ -529,5 +534,29 @@ class Usuarios
     public function getEmail()
     {
         return $this->email;
+    }
+
+
+    /**
+     * Set inscripcion
+     *
+     * @param \RosaMolas\genericoBundle\Entity\inscripcion $inscripcion
+     * @return Usuarios
+     */
+    public function setInscripcion(\RosaMolas\genericoBundle\Entity\inscripcion $inscripcion)
+    {
+        $this->inscripcion = $inscripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get inscripcion
+     *
+     * @return \RosaMolas\genericoBundle\Entity\inscripcion
+     */
+    public function getInscripcion()
+    {
+        return $this->inscripcion;
     }
 }

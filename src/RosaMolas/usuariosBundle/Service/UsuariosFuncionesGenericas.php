@@ -32,21 +32,35 @@ class UsuariosFuncionesGenericas extends Controller
 
         $formulario -> remove('activo');
         $formulario-> handleRequest($request);
-//        if($request->getMethod()=='POST') {
-//
-//            if ($formulario->isValid()) {
-//                $em = $this->getDoctrine()->getManager();
-//                $em->persist($p);
-//                $em->flush();
-//                $this->get('session')->getFlashBag()->add(
-//                    'success', 'Representante Creado con éxito');
-//                return array('representante'=>$p,);
-//            }
-//        }
-//        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+        if($request->getMethod()=='POST') {
 
-        exit;
-        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
+            if ($formulario->isValid()) {
+
+                $inscripcion = $this->getDoctrine()
+                    ->getRepository('genericoBundle:Inscripcion')
+                    ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+
+                $em = $this->getDoctrine()->getManager();
+                $representantes = $inscripcion->getRepresentantes();
+                if(empty($representantes)){
+                    $representantes = $p->getId();
+                }
+                else{
+                    $representantes = $representantes.','.$p->getId();
+                }
+                $inscripcion->setRepresentantes($representantes);
+                $em->persist($p);
+                $em->persist($inscripcion);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Representante Creado con éxito');
+                return array('representante'=>$p,);
+            }
+        }
+        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
+
+//        exit;
+//        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
     }
 
     public function crear_representante_generico($request, $principal=false, $remover = null, $alumnos=null, $titulo=null)

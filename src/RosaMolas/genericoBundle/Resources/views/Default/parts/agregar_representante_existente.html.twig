@@ -1,0 +1,72 @@
+{% if lista_representante is defined %}
+    <script>
+        var datatable_usuarios_modal = $('#tbl_usuarios_modal').dataTable({
+            "dom": 'rtip',
+            "bInfo": true,
+            "bLengthChange": false,
+            "bPaginate": true,
+            "aaSorting": [],
+            language:{
+                "sZeroRecords": "No hay registros que coincidan",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                search: "Búsqueda",
+                paginate: {
+                    first: "Primero",
+                    previous: "Anterior",
+                    next: "Siguiente",
+                    last: "Ultimo"
+                }
+            }
+        }).columnFilter({
+            sPlaceHolder: "head:after"
+        });
+
+    </script>
+    <div class="col-sm-12 text-left">
+        <div class="col-sm-12 table_modal_container">
+            <h2 class="text-center">{{ accion|title }}</h2>
+            <div id="div_tbl_usuarios_modal">
+
+                <table id="tbl_usuarios_modal" class="table-bordered table-hover table-responsive"  width="100%">
+                    <thead>
+                    <tr>
+                        {% for campo in lista_representante.0|keys %}
+                            {% if campo == 'id' %}
+                            {% else %}
+                                <th>{{ campo }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for campo in lista_representante.0|keys %}
+                            {% if campo == 'id' %}
+                            {% else %}
+                                <th>{{ campo }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for dato in lista_representante %}
+                        <tr>
+                            {% for  key, elemento in dato %}
+                                {% if  key != 'id' %}
+                                    <td>
+                                        {% if elemento.timestamp is defined %}
+                                            {{ elemento|date('d/m/Y') }}
+                                        {% elseif key == 'cedula' %}
+                                            <a href="{{ path('generico_inscripcion_completa', { 'id_agg_rep': dato.id }) }}" class="enlace_inscripcion">{{ elemento }}</a>
+                                        {% else %}
+                                            {{ elemento }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endif %}

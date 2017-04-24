@@ -84,6 +84,12 @@ class Alumnos
     private $periodoEscolarCursoAlumno;
 
     /**
+     * @var \RosaMolas\genericoBundle\Entity\Inscripcion
+     */
+    private $inscripcion;
+
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -465,4 +471,28 @@ class Alumnos
     {
         $this->periodoEscolarCursoAlumno->removeElement($periodoEscolarCursoAlumno);
     }
+
+    /**
+     * Set inscripcion
+     *
+     * @param \RosaMolas\genericoBundle\Entity\inscripcion $inscripcion
+     * @return Alumnos
+     */
+    public function setInscripcion(\RosaMolas\genericoBundle\Entity\inscripcion $inscripcion)
+    {
+        $this->inscripcion = $inscripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get inscripcion
+     *
+     * @return \RosaMolas\genericoBundle\Entity\inscripcion
+     */
+    public function getInscripcion()
+    {
+        return $this->inscripcion;
+    }
+
 }

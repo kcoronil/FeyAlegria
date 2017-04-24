@@ -19,16 +19,44 @@ generico_recibo_pago:
     defaults: { _controller: genericoBundle:Default:recibo_pago }
 
 generico_inscripcion_completa:
-    path:     /inscripcion
-    defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null   }
+    path:     /inscripcion/{id_agg_rep}
+    defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null, id_agg_rep: null }
 
 generico_formulario_crear_representante:
     path:     /formulario_crear_representante_generico
     defaults: { _controller: genericoBundle:Default:formulario_crear_representante_generico }
 
+generico_formulario_actualizar_representante:
+    path:     /formulario_actualizar_representante/{id}
+    defaults: { _controller: genericoBundle:Default:formulario_actualizar_representante_generico }
+
+generico_formulario_crear_estudiante:
+    path:     /formulario_crear_estudiante
+    defaults: { _controller: genericoBundle:Default:formulario_crear_estudiante_generico }
+
+generico_formulario_actualizar_estudiante:
+    path:     /formulario_actualizar_estudiante/{id}
+    defaults: { _controller: genericoBundle:Default:formulario_actualizar_estudiante_generico }
+
+generico_lista_agregar_representante:
+    path:     /generico_lista_agregar_representante/
+    defaults: { _controller: genericoBundle:Default:inscripcion_lista_agregar_representante }
+
+generico_quitar_representante_inscripcion:
+    path:     /generico_quitar_representante_inscripcion/{id}
+    defaults: { _controller: genericoBundle:Default:quitar_representante_inscripcion }
+
+generico_quitar_alumno_inscripcion:
+    path:     /generico_quitar_estudiante_inscripcion/{id}
+    defaults: { _controller: genericoBundle:Default:quitar_alumno_inscripcion }
+
 generico_inscripcion_agregar_alumno:
     path:     /inscripcion_alumno/{id_rep}
     defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null   }
+
+generico_formulario_agregar_monto_estudiante:
+    path:     /formulario_agregar_monto_estudiante/{id}
+    defaults: { _controller: genericoBundle:Default:formulario_agregar_monto_estudiante_generico }
 
 generico_agregar_pago:
     path:     /agregar_pago/{id}

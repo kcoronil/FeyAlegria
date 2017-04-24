@@ -187,7 +187,7 @@ class AlumnosFuncionesGenericas extends Controller
     {
         $p = $this->getDoctrine()
             ->getRepository('facturacionBundle:TipoFactura')
-            ->findBy(array('activo' => 'true'));
+            ->findBy(array('activo' => 'true', 'inscripcion'=>false));
 
         foreach ($p as $tfact) {
             foreach ($tfact->getConceptosFactura() as $con_fact) {

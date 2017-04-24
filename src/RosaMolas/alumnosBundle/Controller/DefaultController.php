@@ -208,13 +208,22 @@ class DefaultController extends Controller
     {
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
+            ->select('alumno.id','alumno.cedula', 'alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'curso.nombre as Grado', 'seccion.nombre as Seccion', "CONCAT( CONCAT(representante.primerNombre, ' '),  representante.primerApellido) as Representante", 'representante.id as usuario_id')
             ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
             ->innerJoin('alumnoRepresentante.representante', 'representante')
+            ->innerJoin('alumno.periodoEscolarCursoAlumno', 'cursoAlumno')
+            ->innerJoin('cursoAlumno.cursoSeccion', 'curso_seccion')
+            ->innerJoin('curso_seccion.curso', 'curso')
+            ->innerJoin('curso_seccion.seccion', 'seccion')
             ->where('representante.activo = true')
             ->andwhere('alumno.activo = true')
             ->andwhere('alumnoRepresentante.principal = true')
-            ->orderBy('alumno.id', 'DESC')
+            ->andwhere('cursoAlumno.activo = true')
+//            ->groupBy('curso.paso')
+            ->addOrderBy('curso.paso', 'ASC')
+            ->addOrderBy('seccion.nombre', 'ASC')
+            ->addOrderBy('alumno.primerApellido', 'ASC')
+//            ->addOrderBy('alumno.id', 'ASC')
             ->getQuery();
 
 
@@ -225,6 +234,9 @@ class DefaultController extends Controller
 
         $mpdfService = $this->get('tfox.mpdfport');
 
+//        var_dump($datos);
+//        exit;
+
         $html = "<table>
 					<tr>
 						<td><img src='public/images/logo-FyA.jpg' width='150px' height='auto'></td>
@@ -233,23 +245,33 @@ class DefaultController extends Controller
 				<br/>
 				<table border='1' style='border-collapse:collapse; width:750px;'>
 					<tr>
-						<th colspan='5'>ESTUDIANTES REGISTRADOS</th>
+						<th colspan='7'>ESTUDIANTES REGISTRADOS</th>
 					</tr>
 					<tr>
-						<th>ID</th>
+						<th>Cedula</th>
 						<th>NOMBRE</th>
 						<th>APELIDO</th>
-						<th>CEDULA</th>
+						<th>FECHA DE NACIMIENTO</th>
+						<th>GRADO</th>
+						<th>SECCION</th>
 						<th>REPRESENTANTE</th>
 					</tr>";
 
         foreach($datos as $dato){
+            if(isset($dato['cedula'])){
+                $cedula = $dato['cedula'];
+            }
+            else{
+                $cedula = $dato['cedulaEstudiantil'];
+            }
             $html.="<tr>
-							<td>".$dato['id']."</td>
+							<td>".$cedula."</td>
 							<td>".$dato['primerNombre']."</td>
 							<td>".$dato['primerApellido']."</td>
-							<td>".$dato['cedula']."</td>
-							<td>".$dato['Nombre_Representante']." ".$dato['Apellido_Representante']."</td>
+							<td>".$dato['fechaNacimiento']->format('d/m/Y')."</td>
+							<td>".$dato['Grado']."</td>
+							<td>".$dato['Seccion']."</td>
+							<td>".$dato['Representante']."</td>
 						</tr>";
         }
 
@@ -268,19 +290,25 @@ class DefaultController extends Controller
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
-            ->select('alumno.id','alumno.cedula', 'alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'representante.primerNombre as Nombre_Representante', 'representante.primerApellido as Apellido_Representante', 'representante.id as usuario_id')
+            ->select('alumno.id','alumno.cedula', 'alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'curso.nombre as Grado', 'seccion.nombre as Seccion', "CONCAT( CONCAT(representante.primerNombre, ' '),  representante.primerApellido) as Representante", 'representante.id as usuario_id')
             ->innerJoin('alumno.alumnoRepresentanteDatos', 'alumnoRepresentante')
             ->innerJoin('alumnoRepresentante.representante', 'representante')
+            ->innerJoin('alumno.periodoEscolarCursoAlumno', 'cursoAlumno')
+            ->innerJoin('cursoAlumno.cursoSeccion', 'curso_seccion')
+            ->innerJoin('curso_seccion.curso', 'curso')
+            ->innerJoin('curso_seccion.seccion', 'seccion')
             ->where('representante.activo = true')
             ->andwhere('alumno.activo = true')
             ->andwhere('alumnoRepresentante.principal = true')
-
-            ->orderBy('alumno.id', 'DESC')
+            ->andwhere('cursoAlumno.activo = true')
+//            ->groupBy('curso.paso')
+            ->addOrderBy('curso.paso', 'ASC')
+            ->addOrderBy('seccion.nombre', 'ASC')
+            ->addOrderBy('alumno.primerApellido', 'ASC')
+//            ->addOrderBy('alumno.id', 'ASC')
             ->getQuery();
 
         $datos = $query->getArrayResult();
-
-
         return $this->render('alumnosBundle:Default:lista_alumno.html.twig', array('accion'=>'Listado de Alumnos', 'datos'=>$datos));
     }
 

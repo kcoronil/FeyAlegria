@@ -35,6 +35,26 @@ class Inscripcion
     private $alumnos;
 
     /**
+     * @var string
+     */
+    private $facturas;
+
+    /**
+     * @var string
+     */
+    private $pagos;
+
+    /**
+     * @var string
+     */
+    private $montosParticulares;
+
+    /**
+     * @var string
+     */
+    private $montosParticularesProcesados;
+
+    /**
      * @var boolean
      */
     private $activo;
@@ -163,6 +183,98 @@ class Inscripcion
     public function getAlumnos()
     {
         return $this->alumnos;
+    }
+
+    /**
+     * Set facturas
+     *
+     * @param string $facturas
+     * @return Inscripcion
+     */
+    public function setFacturas($facturas)
+    {
+        $this->facturas = $facturas;
+
+        return $this;
+    }
+
+    /**
+     * Get facturas
+     *
+     * @return string
+     */
+    public function getFacturas()
+    {
+        return $this->facturas;
+    }
+
+    /**
+     * Set pagos
+     *
+     * @param string $pagos
+     * @return Inscripcion
+     */
+    public function setPagos($pagos)
+    {
+        $this->pagos = $pagos;
+
+        return $this;
+    }
+
+    /**
+     * Get pagos
+     *
+     * @return string
+     */
+    public function getPagos()
+    {
+        return $this->pagos;
+    }
+
+    /**
+     * Set montosParticulares
+     *
+     * @param string $montosParticulares
+     * @return Inscripcion
+     */
+    public function setMontosParticulares($montosParticulares)
+    {
+        $this->montosParticulares = $montosParticulares;
+
+        return $this;
+    }
+
+    /**
+     * Get montosParticulares
+     *
+     * @return string
+     */
+    public function getMontosParticulares()
+    {
+        return $this->montosParticulares;
+    }
+
+    /**
+     * Set montosParticularesProcesados
+     *
+     * @param string $montosParticularesProcesados
+     * @return Inscripcion
+     */
+    public function setMontosParticularesProcesados($montosParticularesProcesados)
+    {
+        $this->montosParticularesProcesados = $montosParticularesProcesados;
+
+        return $this;
+    }
+
+    /**
+     * Get montosParticularesProcesados
+     *
+     * @return string
+     */
+    public function getMontosParticularesProcesados()
+    {
+        return $this->montosParticularesProcesados;
     }
 
     /**

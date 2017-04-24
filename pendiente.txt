@@ -12,11 +12,9 @@ rutina finalizacion año escolar
 
 reportes por etapas y grados !!!!!!!!!!!!!
 
-definir historicos
-
 procesar alumnos inscritos buscando si tienen montos particulares !!!!!!!!!!!!
 
-agregar boton para quitar representante durante la inscripcion
+agregar boton para quitar representante durante la inscripcion ----------------- listo
 
 ajustar funcion agregar alumno a nuevo formato de inscripción !!!!!!!!!!!!!
 
@@ -45,6 +43,7 @@ montos de inscripcion no varian entre alumnos, solo los de mensualidad
 !al crear monto particular muestra los montos actuales
 
 reporte de alumnos completo: direccion de los representantes y cedula del estudiante
+
 reestructurar montos
 
 separar aporte por familia y seguro escolar de la inscripcion (se depositan por separado) !!!!!!!!!!!

@@ -32,7 +32,8 @@ class AlumnosTypeAggRep extends AbstractType
                         ->where('alumnos.id in (:id)')
                         ->andWhere('usuario.activo = true')
                         ->setParameter('id', $this->lista_id)
-                        ->distinct();}))
+                        ->distinct();})
+            )
             ;
     }
     public function buildView(FormView $view, FormInterface $form, array $options)

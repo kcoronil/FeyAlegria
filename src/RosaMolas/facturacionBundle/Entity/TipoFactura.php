@@ -20,6 +20,11 @@ class TipoFactura
     private $activo;
 
     /**
+     * @var boolean
+     */
+    private $inscripcion = false;
+
+    /**
      * @var integer
      */
     private $id;
@@ -89,6 +94,29 @@ class TipoFactura
     }
 
     /**
+     * Set inscripcion
+     *
+     * @param boolean $inscripcion
+     * @return TipoFactura
+     */
+    public function setInscripcion($inscripcion)
+    {
+        $this->inscripcion = $inscripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get inscripcion
+     *
+     * @return boolean
+     */
+    public function getInscripcion()
+    {
+        return $this->inscripcion;
+    }
+
+    /**
      * Get id
      *
      * @return integer 
@@ -153,9 +181,6 @@ class TipoFactura
     {
         return $this->tipoDatoVencimiento;
     }
-
-
-
 
 
     public function __toString(){

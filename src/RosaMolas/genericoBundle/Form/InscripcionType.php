@@ -1,15 +1,14 @@
 <?php
 
-namespace Test\inicialBundle\Form;
+namespace RosaMolas\genericoBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class CursoSeccionType extends AbstractType
+class InscripcionType extends AbstractType
 {
     public function __construct ($titulo, $tipo_panel = null)
     {
@@ -18,7 +17,7 @@ class CursoSeccionType extends AbstractType
             $this->tipo_panel = $tipo_panel;
         }
         else{
-            $this->tipo_panel = null;
+        $this->tipo_panel = null;
         }
     }
     /**
@@ -28,11 +27,7 @@ class CursoSeccionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('etapa')
-            ->add('seccion')
-            ->add('curso')
-            ->add('cupos')
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
+            ->add('guardar', 'submit', array('label'=>'Continuar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button btn btn-default')))
         ;
     }
 
@@ -43,14 +38,13 @@ class CursoSeccionType extends AbstractType
             $view->vars['tipo_panel'] = $this->tipo_panel;
         }
     }
-    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Test\inicialBundle\Entity\CursoSeccion'
+            'data_class' => 'RosaMolas\genericoBundle\Entity\Inscripcion'
         ));
     }
 
@@ -59,6 +53,6 @@ class CursoSeccionType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_cursoseccion';
+        return 'test_inicialbundle_inscripcion';
     }
 }

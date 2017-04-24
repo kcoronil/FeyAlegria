@@ -9,6 +9,10 @@
         <field name="estatus" type="integer" column="estatus" nullable="true"/>
         <field name="representantes" type="text" column="representantes" nullable="true"/>
         <field name="alumnos" type="text" column="alumnos" nullable="true"/>
+        <field name="facturas" type="text" column="facturas" nullable="true"/>
+        <field name="pagos" type="text" column="pagos" nullable="true"/>
+        <field name="montosParticulares" type="text" column="montos_particulares" nullable="true"/>
+        <field name="montosParticularesProcesados" type="text" column="montos_particulares_procesados" nullable="true"/>
         <field name="activo" type="boolean" column="activo" nullable="false"/>
         <many-to-one field="usuario" target-entity="RosaMolas\usuariosBundle\Entity\Usuarios">
             <join-columns>

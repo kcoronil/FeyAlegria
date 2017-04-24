@@ -45,31 +45,42 @@
 {% endblock %}
 {% block content %}
     <div class="row text-center">
-        {% if form is defined %}
-            <h3 class="clase">{{ accion }}</h3>
-            <div class="col-sm-12 text-left">
-                <div class="col-sm-6 col-sm-offset-3">
-                    {{ form(form) }}
-                    <table class="table table-bordered table-hover table-responsive">
-                        <tr>
-                            <th colspan="2" class="text-center">Estudiante: </th>
-                        </tr>
-                        <tr>
-                            <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }} </td>
-                            <td>{{ estudiante.cedula }}</td>
-                        </tr>
-                        <tr>
-                            <th colspan="2" class="text-center">Factura: </th>
-                        </tr>
-                        <tr>
-                            <td>{{ factura.fecha|date('d/m/Y')}}</td>
-                            <td>{{ factura.monto }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        {% endif %}
-
+        <div class="col-sm-12 text-left">
+            {% if form is defined %}
+                {% if form %}
+                    {{ form_start(form) }}
+                        {{ form_row(form.fechaDeposito) }}
+                        {{ form_row(form.numeroDeposito) }}
+                        {{ form_row(form.monto) }}
+                        {{ form_row(form.banco) }}
+                        {{ form_row(form.guardar) }}
+                        <table class="table table-bordered table-hover table-responsive">
+                            {% for factura in facturas %}
+                                <tr>
+                                    <td><label><input type="checkbox" name="facturas[]" value="{{ factura.id }}"> Seleccionar para pagar</label></td>
+                                    <th colspan="3" class="text-center">Datos de la Factura</th>
+                                </tr>
+                                <tr>
+                                    <td>Estudiante:
+                                        {{ factura.periodoEscolarCursoAlumnos.alumno.primerNombre }}
+                                        {{ factura.periodoEscolarCursoAlumnos.alumno.primerApellido }}
+                                    </td>
+                                    <td>
+                                        {% if factura.periodoEscolarCursoAlumnos.alumno.cedula %}
+                                            {{ factura.periodoEscolarCursoAlumnos.alumno.cedula }}
+                                        {% else %}
+                                            {{ factura.periodoEscolarCursoAlumnos.alumno.cedulaEstudiantil }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ factura.fecha|date('d/m/Y')}}</td>
+                                    <td>{{ factura.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {{ form_end(form) }}
+                {% endif %}
+            {% endif %}
+        </div>
         {% if datos is not defined %}
             {% if accion != 'Agregar Pago' %}
                 <h3 class="clase">{{ accion }}</h3>

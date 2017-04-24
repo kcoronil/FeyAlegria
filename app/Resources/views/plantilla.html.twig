@@ -21,7 +21,7 @@
         <title>Sistema Maria Rosa Molas{% block title %}{% endblock %}</title>
     </head>
     <body>
-        <div class="container" id="wrap">
+        <div class="container-fluid" id="wrap">
             <!--Encabezado-->
             <div id="cabecera">
                 <div id="cabecera2">
@@ -191,6 +191,7 @@
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Periodo Escolar</a>
                                                 <ul class="dropdown-menu" role="menu">
                                                     <li><a href="{{ path('inicial_agregar_grado') }}" >· Grado</a></li>
+                                                    <li><a href="{{ path('inicial_agregar_etapa') }}" >· Etapas</a></li>
                                                     <li><a href="{{ path('inicial_agregar_curso') }}" >· Cursos</a></li>
                                                     <li><a href="{{ path('inicial_agregar_seccion') }}" >· Secciones</a></li>
                                                     <li><a href="{{ path('inicial_agregar_periodo') }}" >· Periodo Escolar</a></li>
@@ -235,7 +236,7 @@
         </div>
     </body>
     <footer>
-        <div class="container" id="footer">
+        <div class="container-fluid" id="footer">
             <div class="footer text-center">
                 <div>
                     <p><strong>Unidad Educativa Maria Rosa Molas</strong>

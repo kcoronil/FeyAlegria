@@ -1,0 +1,308 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% if formPagos is defined and formPagos is not empty %}
+    {% form_theme formPagos "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+        <div data-content="{{ name }}" class="test_attr">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                    <h4>Nuevo Estudiante</h4>
+                </div>
+                <div class="col-sm-1 text-left">
+                    <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+                </div>
+            </div>
+            <div class="row">
+                {{ form_widget(form) }}
+            </div>
+        </div>
+{% endmacro %}
+
+{% block extra_head %}
+    <style>
+        .form-inline .form-control{
+            max-width: 100%;
+        }
+        .form-inline .filter_select  select{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+                if($('#crear_estudiante #cont_curso').children().length<1) {
+                    agregar_form($('#curso-add'));
+                }
+                if($('#cont_curso_edit').children().length<1) {
+                    agregar_form($('#curso-add_edit'));
+                }
+                {% if form.vars.datos_secciones is defined %}
+                    var cant_seccion = {{ form.vars.datos_secciones|json_encode|raw }};
+                {% endif %}
+                $(document).on('change','#test_inicialbundle_alumnos_simple_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
+                    $(this).closest('.control-group').removeClass('has-success', 'has-warning');
+                    var cupos_disp = cant_seccion[this.value]['cupos']-cant_seccion[this.value]['alumnos'];
+                    if(cant_seccion[this.value]['cupos'] > cant_seccion[this.value]['alumnos']){
+                        $(this).after('<p class="edd_info_field">Cupos disponibles '+cupos_disp+' de '+cant_seccion[this.value]['cupos']+'<p>')
+                    }
+                    else{
+                        if(cant_seccion[this.value]['cupos'] == cant_seccion[this.value]['alumnos']) {
+                            $(this).closest('div').addClass('has-warning');
+                            $(this).after('<p class="edd_info_field">Cupos llenos para esta seccion' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                        }
+                        else
+                        {
+                            $(this).closest('div').addClass('has-error');
+                            $(this).after('<p class="edd_info_field edd_info_field_warning">Cupos para esta seccion excedidos ' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                        }
+                    }
+                });
+            $(document).on('click','.btn-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','#contacto-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','.btn-remove', function() {
+                borrar_form($(this));
+                renombrar_forms($(this).attr('data-target'));
+            });
+            $(document).on('click','.enlace_inscripcion', function(event) {
+                var apellido = $(this).closest('td').next('td').text().trim();
+                var nombre = $(this).closest('td').next('td').next('td').text().trim();
+                if (confirm('Representante: '+nombre+' '+apellido+'\nEsta seguro?')){
+                }
+                else{
+                    event.preventDefault();
+                }
+            });
+            var datatable_usuarios = $('#tbl_usuarios').dataTable({
+                "dom": 'rtip',
+                "bInfo": false,
+                "bLengthChange": false,
+                "bPaginate": false,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            });
+
+            var datatable_estudiantes = $('#tbl_estudiantes').dataTable({
+                "dom": 'rtip',
+                "bInfo": false,
+                "bLengthChange": false,
+                "bPaginate": false,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            });
+            $(".representante_principal").click(function(){
+                var grupo = $(this).closest('.alumno_rep_datos_container').find('input:checkbox.representante_principal');
+                //$(grupo).attr("checked",false);
+                $(grupo).not(this).prop("checked",false);
+                //$(this).attr("checked",true);
+            });
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {#{% if form is defined %}#}
+            <div class="col-sm-12 text-left">
+                <div class="col-sm-12">
+                    <div class="panel panel-info inscripcion_panel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Agregar Pago</h2>
+                            {#<a href="#crear_representante" data-toggle="modal" class="campaignModalLink btn btn-default btn-sm">Nuevo Representante</a>#}
+                            {#<a href="#editar_estudiante" data-toggle="modal" class="campaignModalLink btn btn-default btn-sm agregar_representante_existente" data-url="{{ path('generico_lista_agregar_representante') }}">Agregar Representante Existente</a>#}
+                        </div>
+                        <div class="panel-body">
+                            {% if formPagos %}
+                                {{ form_start(formPagos) }}
+                                    {{ form_row(formPagos.fechaDeposito) }}
+                                    {{ form_row(formPagos.numeroDeposito) }}
+                                    {{ form_row(formPagos.monto) }}
+                                    {{ form_row(formPagos.banco) }}
+                                    {{ form_row(formPagos.guardar) }}
+                                <table class="table table-bordered table-hover table-responsive">
+                                    {% for factura in facturasPorPagos %}
+                                        <tr>
+                                            <td><label><input type="checkbox" name="facturas[]" value="{{ factura.id }}"> Seleccionar para pagar</label></td>
+                                            <th colspan="3" class="text-center">Datos de la Factura</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Estudiante:
+                                                {{ factura.periodoEscolarCursoAlumnos.alumno.primerNombre }}
+                                                {{ factura.periodoEscolarCursoAlumnos.alumno.primerApellido }}
+                                            </td>
+                                            <td>
+                                                {% if factura.periodoEscolarCursoAlumnos.alumno.cedula %}
+                                                    {{ factura.periodoEscolarCursoAlumnos.alumno.cedula }}
+                                                {% else %}
+                                                    {{ factura.periodoEscolarCursoAlumnos.alumno.cedulaEstudiantil }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ factura.fecha|date('d/m/Y')}}</td>
+                                            <td>{{ factura.monto }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                                {{ form_end(formPagos) }}
+                            {% endif %}
+                            {% if accion == 'Resumen Inscripción' %}
+                                <h3>Resumen del proceso de Inscripción</h3>
+                                <table class="table table-bordered table-responsive table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">Representantes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for representante in representantes %}
+                                    <tr>
+                                        <th>nombre:</th>
+                                        <td>{{ representante.primerNombre }} {{ representante.primerApellido }}</td>
+                                        <th>cedula:</th>
+                                        <td>{{ representante.cedula}}</td>
+                                    </tr>
+                                    </tbody>
+                                    {% endfor %}
+                                </table>
+                                <table class="table table-bordered table-responsive table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">Estudiantes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for estudiante in alumnosInscripcion %}
+                                        <tr>
+                                        <th>nombre:</th>
+                                        <td>{{ estudiante.primerNombre }} {{ estudiante.primerApellido }}</td>
+                                        <td>{{ estudiante.cedula }}</td>
+                                            {% for periodos in periodos_alumnos %}
+                                                {% for periodo in periodos %}
+                                                    {% if periodo.Alumno.id == estudiante.id %}
+                                                        <td>
+                                                            {{ periodo.cursoSeccion.nombre }}
+                                                        </td>
+                                                    {% endif %}
+                                                    {% for factura in facturas %}
+                                                        {% if periodo.id == factura.PeriodoEscolarCursoAlumnos.id and factura.PeriodoEscolarCursoAlumnos.alumno.id == estudiante.id %}
+                                                            <td>
+                                                                <a href="{{ path('generico_recibo_pago', { 'id': factura.id }) }}">Recibo cobro inscripción</a>
+                                                            </td>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                            </tr>
+                                            <tr>
+                                            <td colspan="2" class="text-center">
+                                                <a href="{{ path('generico_constancia_inscripcion', { 'id': estudiante.id }) }}">Constancia inscripción</a>
+                                            </td>
+                                            <td colspan="3" class="text-center">
+                                                <a href="{{ path('generico_constancia_estudios', { 'id': estudiante.id }) }}">Constancia de Estudios</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {#{% endif %}#}
+    </div>
+
+    <div style="display: none;" aria-hidden="true" role="dialog" tabindex="-1" id="crear_representante" class="crear-modal modal fade">
+        <div class="modal-content">
+            <div data-dismiss="modal" class="close-modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            {{render(controller("genericoBundle:Default:formulario_crear_representante_generico"))}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none;" aria-hidden="true" role="dialog" tabindex="-1" id="crear_estudiante" class="form_estudiante crear-modal modal fade">
+        <div class="modal-content">
+            <div data-dismiss="modal" class="close-modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            {{render(controller("genericoBundle:Default:formulario_crear_estudiante_generico"))}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none;" aria-hidden="true" role="dialog" tabindex="-1" id="editar_estudiante" class="form_estudiante crear-modal modal fade">
+        <div class="modal-content">
+            <div data-dismiss="modal" class="close-modal close_ajax_modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div id="ajax_modal_content" class="col-md-10 col-md-offset-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

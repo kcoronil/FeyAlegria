@@ -196,11 +196,14 @@ class FuncionesGenericas extends Controller
 
         return array('resultado' => true);
     }
-    public function crear_factura($estudiante, $tipo_factura)
+    public function crear_factura($estudiante_id, $tipo_factura)
     {
         $nueva_fact = New Factura();
         $monto_factura = 0;
         $nueva_fact->setActivo(true);
+        $estudiante = $this->getDoctrine()
+            ->getRepository('alumnosBundle:Alumnos')
+            ->find($estudiante_id);
         $periodo_alumno = $this->getDoctrine()
             ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->findOneBy(array('alumno' => $estudiante, 'activo'=> 'true'));
@@ -214,21 +217,27 @@ class FuncionesGenericas extends Controller
                 $nueva_fact_detalle->setActivo(true);
                 $nueva_fact_detalle->setConcepto($concepto_tipo);
                 $nueva_fact_detalle->setFactura($nueva_fact);
-                if($estudiante->getTipoFacturacion() == 'particular') {
+                if($estudiante->getTipoFacturacion() == 'particular' and !$tipo_factura->getInscripcion()) {
                     $p = $this->getDoctrine()
                         ->getRepository('facturacionBundle:MontosAlumnos')
                         ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura' => $concepto_tipo, 'activo'=>true));
                     $nueva_fact_detalle->setMonto($p->getMonto());
+                    var_dump('particular');
+                    var_dump($p->getMonto());
                     //print_r($nueva_fact_detalle->getMonto().'<br>');
                 }
                 else {
                     $concepto_monto = $this->getDoctrine()
                         ->getRepository('facturacionBundle:TipoMontoConceptos')
                         ->findOneBy(array('conceptosFactura' => $concepto_tipo, 'activo'=>true));
+                    var_dump($concepto_tipo->getId());
+                    var_dump($concepto_monto->getMonto());
                     $nueva_fact_detalle->setMonto($concepto_monto->getMonto());
                     //print_r($nueva_fact_detalle->getMonto() . '<br>');
                 }
+
                 $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
+                var_dump($monto_factura);
                 $nueva_fact->addDetalleFactura($nueva_fact_detalle);
             }
         }
@@ -236,7 +245,7 @@ class FuncionesGenericas extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($nueva_fact);
         $em->flush();
-        return array('factura'=>$nueva_fact);
+        return $nueva_fact;
     }
     public function agregar_pago_generico($facturas, $request)
     {

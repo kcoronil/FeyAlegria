@@ -2,8 +2,12 @@
 
 namespace RosaMolas\genericoBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos;
 use RosaMolas\alumnosBundle\Entity\Alumnos;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRepsDatos;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeInscripcion;
 use RosaMolas\facturacionBundle\Entity\DetalleFactura;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeAggRep;
 use RosaMolas\facturacionBundle\Entity\Factura;
@@ -13,6 +17,7 @@ use RosaMolas\facturacionBundle\Form\TipoFacturaType;
 use RosaMolas\genericoBundle\Entity\Inscripcion;
 use RosaMolas\genericoBundle\Entity\Pagos;
 use RosaMolas\genericoBundle\Entity\Parentescos;
+use RosaMolas\genericoBundle\Form\InscripcionType;
 use RosaMolas\genericoBundle\Form\PagosType;
 use RosaMolas\genericoBundle\Form\ParentescosType;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
@@ -20,6 +25,7 @@ use RosaMolas\usuariosBundle\Form\UsuariosTypeInscripcion;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
@@ -202,15 +208,50 @@ class DefaultController extends Controller
             ->find($id);
         $estudiante = $factura->getPeriodoEscolarCursoAlumnos()->getAlumno();
         $p = new Pagos();
-        $p->setFactura($factura);
         $p->setFechaRegistro(new \DateTime("now"));
         $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
         $formulario-> handleRequest($request);
 
+//        $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
+//            ->createQueryBuilder('factura')
+//            ->select('factura.fecha', 'factura.monto', 'factura.id', 'factura.periodoEscolarCursoAlumnos')
+//            ->where('factura.periodoEscolarCursoAlumnos = :periodo_alumno')
+//            ->andwhere('factura.pagada = false')
+//            ->andwhere('factura.activo = true')
+//            ->setParameter('periodo_alumno',$factura->getPeriodoEscolarCursoAlumnos()->getId())
+//            ->getQuery();
+//        $facturas = $query_factura->getArrayResult();
+        $facturas = $this->getDoctrine()
+            ->getRepository('facturacionBundle:Factura')
+            ->findBy(array(
+                'periodoEscolarCursoAlumnos'=> $factura->getPeriodoEscolarCursoAlumnos()->getId(),
+                'pagada'=>false,
+                'activo'=>true
+            ));
+
         if($request->getMethod()=='POST') {
             if ($formulario->isValid()) {
+
+
+                $facturaSeleccionadas = $request->request->get('facturas');
+
+                $pagoFacturas = $this->getDoctrine()
+                    ->getRepository('facturacionBundle:Factura')
+                    ->findBy(array('id'=> $facturaSeleccionadas));
+
                 $p->setActivo(true);
-                $p->getFactura()->setPagada(true);
+                $monto_facturas_seleccionadas = 0;
+
+                foreach($pagoFacturas as $factura){
+                    $factura->setPagada(true);
+                    $p->addFactura($factura);
+                    $monto_facturas_seleccionadas = $monto_facturas_seleccionadas + $factura->getMonto();
+                }
+                if($p->getMonto()<$monto_facturas_seleccionadas){
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Monto del pago insuficiente para cubrir las facturas seleccionadas');
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                }
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($p);
                 $em->flush();
@@ -226,8 +267,15 @@ class DefaultController extends Controller
                 }
             }
         }
-        return $this->render('genericoBundle:Default:agregar_pago.html.twig', array('form'=>$formulario->createView(),
-            'accion'=>'Agregar Pago', 'factura'=>$factura, 'estudiante'=>$estudiante));
+        return $this->render('genericoBundle:Default:agregar_pago.html.twig',
+            array(
+                'form'=>$formulario->createView(),
+                'accion'=>'Agregar Pago',
+                'factura'=>$factura,
+                'estudiante'=>$estudiante,
+                'facturas'=>$facturas
+
+            ));
     }
 
     public function crear_generico($request, $modelo, $formulario_base, $objeto, $accion, $url_redireccion, $url_editar, $url_borrar, $plantilla, $datos = null, $remover = null)
@@ -400,402 +448,321 @@ class DefaultController extends Controller
         return $this->render('inicialBundle:Default:borrar' . '.html.twig', $resultado);
     }
 
-    public function inscripcion_completaAction($id_rep, Request $request)
+    public function inscripcion_completaAction($id_rep, $id_agg_rep, Request $request)
     {
         $session = $this->getRequest()->getSession();
-        if (!$session->get('inscripcion'))
-        {
-            $inscripcion = $this->getDoctrine()
-                ->getRepository('genericoBundle:Inscripcion')
-                ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
-
-            if(empty($inscripcion)){
-                $inscripcion = new Inscripcion();
-                $inscripcion->setFecha(new \DateTime("now"));
-                $inscripcion->setIscripcionHash(md5($inscripcion->getFecha()->format('Y-m-d-H-i-s').$this->getUser()->getUsername()));
-                $inscripcion->setActivo(true);
-                $inscripcion->setEstatus(1);
-                $inscripcion->setUsuario($this->getUser()->getUsuario());
-
-            }
-            $session->set("inscripcion", $inscripcion);
-        }
-        var_dump($session->get('inscripcion'));
-        if($request->get('_route')=='generico_inscripcion_agregar_alumno' or $request->get('_route') == 'inicial_agregar_alumno' ){
-
-            if($id_rep){
-                $p = $this->getDoctrine()
-                    ->getRepository('usuariosBundle:Usuarios')
-                    ->find($id_rep);
-                $alumnos = $p->getAlumno();
-                $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                    ->createQueryBuilder('usuario')
-                    ->select('usuario')
-                    ->innerJoin('usuario.alumno', 'alumnos')
-                    ->where('alumnos.id in (:id)')
-                    ->andWhere('usuario.activo = true')
-                    ->andWhere('usuario.principal = false')
-                    ->andWhere('usuario.tipoUsuario=5')
-                    ->setParameter('id', $lista_id)
-                    ->distinct('usuario.id')
-                    ->getQuery();
-                $test = $query->getResult();
-                if (!$session->get('representantes_agg_alumno')) {
-                    $session->set("representantes_agg_alumno", array());
-                }
-                $array_representantes = $session->get('representantes_agg_alumno');
-                foreach($test as $representante){
-                    array_push($array_representantes, $representante);
-                }
-                $session->set("representantes_agg_alumno", $array_representantes);
-                //print_r($array_representantes[0]->getprimerNombre());
-            }
-
-            if (!$session->get('representantes_alumno')) {
-                $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                    ->createQueryBuilder('usuario')
-                    ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                    ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                    ->where('usuario.activo = true')
-                    ->andWhere('tipo_usuario.id=5')
-                    ->orderBy('usuario.id', 'DESC')
-                    ->getQuery();
-                $datos = $query->getArrayResult();
-                $elemento = 'Seleccione Representante';
-
-                return $this->render('genericoBundle:Default:crear_generico2.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
-            }
-        }
-
-        else{
+        $inscripcion = $this->getDoctrine()
+            ->getRepository('genericoBundle:Inscripcion')
+            ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+        if(empty($inscripcion)){
+            $inscripcion = new Inscripcion();
+            $inscripcion->setFecha(new \DateTime("now"));
+            $inscripcion->setIscripcionHash(md5($inscripcion->getFecha()->format('Y-m-d-H-i-s').$this->getUser()->getUsername()));
+            $inscripcion->setActivo(true);
+            $inscripcion->setEstatus(1);
+            $inscripcion->setUsuario($this->getUser()->getUsuario());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($inscripcion);
+            $em->flush();
 
         }
-        if (!$session->get('representantes_finalizado')){
-//            $remover = null;
-//            $resultado = $this->get('usuarios_funciones_genericas')->crear_representante_generico($request, false, $remover, null, 'Crear Representante');
-//            if (array_key_exists('representante', $resultado)) {
-//                if($resultado['representante']!='') {
-//                    if (!$session->get('representantes')) {
-//                        $session->set("representantes", array());
-//                    }
-//                    $array_representantes = $session->get('representantes');
-//                    array_push($array_representantes, $resultado['representante']);
-//                    $session->set("representantes", $array_representantes);
-//                }
-//                if(array_key_exists('representantes_finalizado', $resultado)){
-//                    $session->set("representantes_finalizado", true);
-//                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-//
-//                }
-//                else{
-//                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-//                }
-//            }
-        }
-        else {
-            if (!$session->get('alumnos_finalizado')) {
-                $remover = null;
-                $id_representantes = [];
-                foreach($session->get('representantes') as $rep){
-                    array_push($id_representantes, $rep->getId());
-                }
-                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $id_representantes);
-                if (array_key_exists('alumnos', $resultado)){
-                    if(!$session->get('alumnos_inscripcion')){
-                        $session->set("alumnos_inscripcion", array());
-                    }
-
-                    $array_alumnos = $session->get('alumnos_inscripcion');
-                    array_push($array_alumnos, $resultado['alumnos']);
-                    $session->set("alumnos_inscripcion",$array_alumnos);
-
-                    if(array_key_exists('alumnos_finalizado', $resultado)){
-                        $session->set("alumnos_finalizado", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                    }
-                    else{
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                    }
-                }
-            }
-            else{
-                if(!$session->get('datos_facturacion')) {
-                    if(!$session->get('alumnos_montos_procesados')){
-                        $session->set("alumnos_montos_procesados", array());
-                    }
-                    $estudiante_monto = null;
-                    foreach($session->get('alumnos_inscripcion') as $estudiante){
-                        if ($estudiante->getTipoFacturacion()=='particular'){
-                            if(!in_array($estudiante->getId(), $session->get('alumnos_montos_procesados')) ){
-                                $estudiante_monto = $estudiante;
-                                break;
-                            }
-                        }
-                        else{
-                            $array_alumnos_prc = $session->get('alumnos_montos_procesados');
-                            array_push($array_alumnos_prc, $estudiante->getId());
-                            $session->set("alumnos_montos_procesados", $array_alumnos_prc);
-                        }
-                    }
-                    if($estudiante_monto){
-                        $resultado = $this->get('alumnos_funciones_genericas')->agregar_monto_alumno($request, $estudiante_monto->getId());
-                        if (array_key_exists('monto_creado', $resultado)) {
-                            $array_alumnos_prc = $session->get('alumnos_montos_procesados');
-                            array_push($array_alumnos_prc, $resultado['alumno']->getId());
-                            $session->set("alumnos_montos_procesados", $array_alumnos_prc);
-                            //return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                        }
-                    }
-                    if (sizeof($session->get('alumnos_inscripcion')) == sizeof($session->get('alumnos_montos_procesados'))) {
-                        $session->set("datos_facturacion", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                    }
-
-                }
-                else{
-                    if (!$session->get('faturacion_finalizado')) {
-                        $array_facturas=[];
-                        $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
-                        foreach($session->get('alumnos_inscripcion') as $estudiante){
-                            $fact = $this->get('funciones_genericas')->crear_factura($estudiante, $tipo_factura);
-                            array_push($array_facturas, $fact['factura']);
-                        }
-                        $session->set("facturas", $array_facturas);
-                        if (sizeof($session->get('alumnos_inscripcion')) == sizeof($session->get('facturas'))) {
-                            $session->set("faturacion_finalizado", true);
-                            return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                        }
-                    }
-                    else {
-                        if (!$session->get('pagos_finalizado')) {
-                            $factura_form=[];
-                            foreach ($session->get('facturas') as $facturas) {
-                                if ($facturas->getPagada() == false) {
-                                    //$factura_form = $facturas;
-                                    array_push($factura_form, $facturas);
-                                }
-                            }
-                            $resultado = $this->get('funciones_genericas')->agregar_pago_generico($factura_form, $request);
-                            if (array_key_exists('pago', $resultado)) {
-
-                                foreach ($session->get('facturas') as $fact) {
-                                    if ($fact->getId() == $resultado['factura']->getId()) {
-                                        $fact->setPagada(true);
-                                    }
-                                }
-                                if (!$session->get('pagos')) {
-                                    $session->set("pagos", array());
-                                }
-                                $array_pagos = $session->get('pagos');
-                                array_push($array_pagos, $resultado['pago']);
-                                $session->set("pagos", $array_pagos);
-                                if (sizeof($session->get('facturas')) == sizeof($session->get('pagos'))) {
-                                    $session->set("pagos_finalizado", true);
-                                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                                }
-                                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                            }
-                        }
-                        else {
-                            if(!$session->get('resumen_visto')){
-                                if($request->getMethod()=='POST') {
-                                    $session->set("resumen_visto", true);
-                                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                                }
-                                $estudiantes=[];
-                                $periodos_alumnos=[];
-                                foreach($session->get('alumnos_inscripcion') as $estudiante_sesion) {
-                                    $estudiante = $this->getDoctrine()
-                                        ->getRepository('alumnosBundle:Alumnos')
-                                        ->find($estudiante_sesion->getId());
-                                    array_push($estudiantes, $estudiante);
-                                }
-                                foreach($session->get('alumnos_inscripcion') as $estudiante_sesion) {
-                                    $periodo_alumno = $this->getDoctrine()
-                                        ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
-                                        ->findby(array('alumno'=>$estudiante_sesion->getId(), 'activo'=>'true'));
-                                    array_push($periodos_alumnos, $periodo_alumno);
-                                }
-
-                                $resultado = array('accion'=>'Resumen Inscripción', 'estudiantes'=>$estudiantes, 'periodos_alumnos'=>$periodos_alumnos);
-                            }
-                            else {
-                                //$mail = $this->get('funciones_genericas')->email_inscripcion($session->get('representantes')[0], $session->get('alumnos_inscripcion'));
-                                $session->remove('representantes_finalizado');
-                                $session->remove('representantes');
-                                $session->remove('alumnos_finalizado');
-                                $session->remove('alumnos_inscripcion');
-                                $session->remove('datos_facturacion');
-                                $session->remove('alumnos_montos_procesados');
-                                $session->remove('faturacion_finalizado');
-                                $session->remove('facturas');
-                                $session->remove('pagos_finalizado');
-                                $session->remove('pagos');
-                                $session->remove('resumen_visto');
-                                $this->get('session')->getFlashBag()->add(
-                                    'success', 'Inscripción realizada con éxito');
-                                return $this->redirect($this->generateUrl('inicial_homepage'));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $this->render('genericoBundle:Default:crear_generico2.html.twig');
-    }
-
-
-    public function agregar_alumno_inscripcionAction($id_rep, Request $request)
-    {
-        $session = $this->getRequest()->getSession();
-
-        if($id_rep){
-            $p = $this->getDoctrine()
+        if(!empty($id_agg_rep)){
+            $representante = $this->getDoctrine()
                 ->getRepository('usuariosBundle:Usuarios')
-                ->find($id_rep);
-            $alumnos = $p->getAlumno();
-            $lista_id = $alumnos->map(function($entity){return $entity->getId();})->toArray();
-            $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario')
-                ->innerJoin('usuario.alumno', 'alumnos')
-                ->where('alumnos.id in (:id)')
-                ->andWhere('usuario.activo = true')
-                ->andWhere('usuario.principal = false')
-                ->andWhere('usuario.tipoUsuario=5')
-                ->setParameter('id', $lista_id)
-                ->distinct('usuario.id')
-                ->getQuery();
-            $test = $query->getResult();
-            if (!$session->get('representantes_agg_alumno')) {
-                $session->set("representantes_agg_alumno", array());
-            }
-            $array_representantes = $session->get('representantes_agg_alumno');
-            foreach($test as $representante){
-                array_push($array_representantes, $representante);
-            }
-            $session->set("representantes_agg_alumno", $array_representantes);
-            //print_r($array_representantes[0]->getprimerNombre());
-        }
-
-        if (!$session->get('representantes_agg_alumno')) {
-            $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
-                ->createQueryBuilder('usuario')
-                ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
-                ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
-                ->where('usuario.activo = true')
-                ->andWhere('tipo_usuario.id=5')
-                ->orderBy('usuario.id', 'DESC')
-                ->getQuery();
-            $datos = $query->getArrayResult();
-            $elemento = 'Seleccione Representante';
-
-            return $this->render('genericoBundle:Default:crear_generico.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
-        }
-
-        else {
-            if (!$session->get('alumnos_agg_finalizado')) {
-                $remover = null;
-
-                $id_representantes = [];
-                foreach($session->get('representantes_agg_alumno') as $reps){
-                    array_push($id_representantes, $reps->getId());
-                }
-                $resultado = $this->get('alumnos_funciones_genericas')->crear_alumno_generico($request, $remover, $id_representantes);
-                if (array_key_exists('alumnos', $resultado)){
-                    if(!$session->get('alumnos_agg_inscripcion')){
-                        $session->set("alumnos_agg_inscripcion", array());
-                    }
-                    $array_alumnos = $session->get('alumnos_agg_inscripcion');
-                    array_push($array_alumnos, $resultado['alumnos']);
-                    $session->set("alumnos_agg_inscripcion",$array_alumnos);
-
-                    if(array_key_exists('alumnos_finalizado', $resultado)){
-                        $session->set("alumnos_agg_finalizado", true);
-                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                    }
-                    else{
-                        return $this->redirect($this->generateUrl('generico_inscripcion_agregar_alumno'));
-                    }
-                }
+                ->find($id_agg_rep);
+            if (!$representante)
+            {
+                throw $this -> createNotFoundException('No existe representante con este id: '.$id_agg_rep);
             }
             else{
-                if(!$session->get('datos_facturacion_agg_alumno')) {
-                    if(!$session->get('alumnos_agg_fact_procesados')){
-                        $session->set("alumnos_agg_fact_procesados", array());
+                $representantes = $inscripcion->getRepresentantes();
+                $ids =explode(',', $representantes);
+                if(!in_array($id_agg_rep, $ids)){
+                    if(empty($representantes)){
+                        $representantes = $id_agg_rep;
                     }
-                    foreach($session->get('alumnos_agg_inscripcion') as $estudiante){
-                        if ($estudiante->getTipoFacturacion()=='particular'){
-                            if($estudiante->getId() ){
-
-                            }
-                        }
-                        else{
-                            print_r('pudrete');
-                        }
+                    else{
+                        $representantes = $representantes.','.$id_agg_rep;
                     }
-                    $p = New TipoFactura();
-                    $formulario = $this->createForm(new TipoFacturaType('Crear Tipo Factura'), $p);
-                    $formulario-> handleRequest($request);
-
-                    if($request->getMethod()=='POST') {
-                        if ($formulario->isValid()) {
-                            $p->setActivo(true);
-
-                            foreach($p->getConceptosFactura() as $concepto_factura){
-                                foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
-                                    $tipo_monto_con->setConceptosFactura($concepto_factura);
-                                }
-                                $concepto_factura->setActivo(true);
-                            }
-                            $em = $this->getDoctrine()->getManager();
-                            $em->persist($p);
-                            $em->flush();
-                            $this->get('session')->getFlashBag()->add(
-                                'success', 'Tipo Factura creada con éxito');
-
-                            if ($formulario->get('guardar')->isClicked()) {
-                                return $this->redirect($this->generateUrl('inicial_homepage'));
-                            }
-                            if ($formulario->get('guardar_crear')->isClicked()){
-                                return $this->redirect($this->generateUrl('inicial_agregar_tfactura'));
-                            }
-                        }
-                    }
-                    return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
-                        'accion'=>'Crear Tipo Factura',));
+                    $inscripcion->setRepresentantes($representantes);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->flush();
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Representante Asignado con éxito');
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                 }
                 else {
-                    $session->remove('representantes_agg_alumno');
-                    $session->remove('alumnos_agg_finalizado');
-                    $session->remove('alumnos_agg_inscripcion');
-                    $session->remove('datos_facturacion_agg_alumno');
-                    $session->remove('alumnos_agg_fact_procesados');
-                    $session->remove('representante_inscripcion');
-                    $session->remove('representantes_adic_nuevo_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_nuevo_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_finalizado');
-                    $session->remove('representantes_adic_anteriores');
-                    $session->remove('representantes_agg_alumno');
-                    $session->remove('representante_inscripcion');
-                    $session->remove('alumnos_inscripcion');
-                    $session->remove('alumnos_finalizado');
-                    $session->remove('representantes_adic_anteriores');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representante_inscripcion');
-                    $session->remove('representantes_adic_nuevo_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_nuevo_finalizado');
-                    $session->remove('representantes_adic_inscripcion');
-                    $session->remove('representantes_adic_finalizado');
-                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                    $this->get('session')->getFlashBag()->add(
+                        'warning', 'Representante ya esta asignado a esta inscripción');
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                 }
             }
         }
-        return $this->render('genericoBundle:Default:crear_generico.html.twig', $resultado);
+        $session->set("inscripcion", $inscripcion);
+
+        $representantes = null;
+        $representantes_ids = $inscripcion->getRepresentantes();
+        if(!empty($representantes_ids)){
+            $ids =explode(',', $representantes_ids);
+            $representantes = $this->getDoctrine()
+                ->getRepository('usuariosBundle:Usuarios')
+                ->findBy(array('id'=> $ids));
+        }
+        $alumnosInscripcion = null;
+        $alumnosInscripcion_ids = $inscripcion->getAlumnos();
+        if(!empty($alumnosInscripcion_ids)){
+            $ids =explode(',', $alumnosInscripcion_ids);
+            $alumnosInscripcion = $this->getDoctrine()
+                ->getRepository('alumnosBundle:Alumnos')
+                ->findBy(array('id'=> $ids));
+        }
+        $facturasInscripcion = null;
+        $facturasInscripcion_ids = $inscripcion->getFacturas();
+        if(!empty($facturasInscripcion_ids)){
+            $ids =explode(',', $facturasInscripcion_ids);
+            $facturasInscripcion = $this->getDoctrine()
+                ->getRepository('facturacionBundle:Factura')
+                ->findBy(array('id'=> $ids));
+        }
+        $pagosFacturas = null;
+        $pagosFacturas_ids = $inscripcion->getPagos();
+        if(!empty($pagosFacturas_ids)){
+            $ids = explode(',', $pagosFacturas_ids);
+            $pagosFacturas = $this->getDoctrine()
+                ->getRepository('facturacionBundle:Factura')
+                ->findBy(array('id'=> $ids));
+        }
+        $alumnosRepresentantesDatos = new ArrayCollection();
+        if(!empty($alumnosInscripcion) and !empty($representantes)){
+            foreach($alumnosInscripcion as $alumnos_tmp){
+                foreach($representantes as $rep){
+                    $alumnoRepDatos = $this->getDoctrine()
+                        ->getRepository('alumnosBundle:AlumnoRepresentanteDatos')
+                        ->findOneBy(array('representante'=> $rep->getId(), 'alumno'=>$alumnos_tmp->getId()));
+                    if(empty($alumnoRepDatos)){
+                        $alumnoRepDatos = new AlumnoRepresentanteDatos();
+                        $alumnoRepDatos->setAlumno($alumnos_tmp);
+                        $alumnoRepDatos->setRepresentante($rep);
+                    }
+                    $alumnosRepresentantesDatos->add($alumnoRepDatos);
+                }
+            }
+        }
+        $alumnosRepDatosForm =$this->createForm( new AlumnosTypeAggRepsDatos('Datos de parentesco'), array('test' => $alumnosRepresentantesDatos));
+        $alumnosRepDatosForm-> handleRequest($request);
+        $formInscripcion = $this->createForm(new InscripcionType('test'), $inscripcion);
+        $formInscripcion-> handleRequest($request);
+
+        $estudiante_monto_particular = new ArrayCollection();
+        if($inscripcion->getEstatus() == 2) {
+            $montosParticulares = $inscripcion->getMontosParticulares();
+            $ids =explode(',', $montosParticulares);
+            foreach($alumnosInscripcion as $estudiante){
+                if ($estudiante->getTipoFacturacion()=='particular'){
+                    if(!in_array($estudiante->getId(), $ids)){
+                        if(empty($montosParticulares )){
+                            $montosParticulares = $estudiante->getId();
+                        }
+                        else{
+                            $montosParticulares = $montosParticulares .','.$estudiante->getId();
+                        }
+                        $estudiante_monto_particular->add($estudiante);
+                        $em = $this->getDoctrine()->getManager();
+                        $inscripcion->setMontosParticulares($montosParticulares);
+                        $em->flush();
+                    }
+                }
+            }
+            if(empty($estudiante_monto_particular)){
+                $em = $this->getDoctrine()->getManager();
+                $inscripcion->setEstatus(3);
+                $em->flush();
+            }
+        }
+
+        if($inscripcion->getEstatus() == 3 and count($alumnosInscripcion) != count($inscripcion->getFacturas())) {
+            $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
+
+            if(empty($facturasInscripcion)){
+                foreach ($alumnosInscripcion as $estudiante) {
+                    $fact = $this->get('funciones_genericas')->crear_factura($estudiante->getId(), $tipo_factura);
+                    if(empty($facturasInscripcion_ids)){
+                        $facturasInscripcion_ids = $fact->getId();
+                    }
+                    else{
+                        $facturasInscripcion_ids = $facturasInscripcion_ids.','.$fact->getId();
+                    }
+                }
+                $inscripcion->setFacturas($facturasInscripcion_ids);
+                $inscripcion->setEstatus(4);
+                $em = $this->getDoctrine()->getManager();
+
+                $em->flush();
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+        if($inscripcion->getEstatus() == 4 and count(explode(',',$inscripcion->getAlumnos())) > count(explode(',',$inscripcion->getPagos()))) {
+            $p = new Pagos();
+            $facturasPorPagos = [];
+            $totalFacturado = 0;
+
+            foreach ($facturasInscripcion as $factura) {
+                if(!$factura->getPagada()){
+                    $totalFacturado = $totalFacturado + $factura->getMonto();
+                    $facturasPorPagos[] = $factura;
+                }
+            }
+
+            $formularioPagos = $this->createForm(new PagosType('Agregar Pago'), $p);
+            $formularioPagos->handleRequest($request);
+
+            if ($request->getMethod() == 'POST') {
+                if ($formularioPagos->isValid()) {
+                    $facturaSeleccionadas = $request->request->get('facturas');
+
+                    $pagoFacturas = $this->getDoctrine()
+                        ->getRepository('facturacionBundle:Factura')
+                        ->findBy(array('id'=> $facturaSeleccionadas));
+
+                    $p->setActivo(true);
+                    $monto_facturas_seleccionadas = 0;
+
+                    foreach($pagoFacturas as $factura){
+                        $factura->setPagada(true);
+                        $p->addFactura($factura);
+                        $monto_facturas_seleccionadas = $monto_facturas_seleccionadas + $factura->getMonto();
+                    }
+                    if($p->getMonto()<$monto_facturas_seleccionadas){
+                        $this->get('session')->getFlashBag()->add(
+                            'success', 'Monto del pago insuficiente para cubrir las facturas seleccionadas');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($p);
+                    $pagosFacturaIds = $inscripcion->getPagos();
+                    if(empty($pagosFacturaIds )){
+                        $pagosFacturaIds = $p->getId();
+                    }
+                    else{
+                        $pagosFacturaIds = $pagosFacturaIds .','.$p->getId();
+                    }
+                    $inscripcion->setPagos($pagosFacturaIds);
+                    $em->flush();
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Pago creado con éxito'
+                    );
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                }
+            }
+        }
+        elseif($inscripcion->getEstatus() == 4 and count(explode(',',$inscripcion->getAlumnos())) == count(explode(',',$inscripcion->getPagos()))) {
+            $em = $this->getDoctrine()->getManager();
+            $inscripcion->setEstatus(5);
+            $em->flush();
+        }
+        if ($inscripcion->getEstatus() == 5 and $inscripcion->getActivo()){
+            $accion = 'Resumen Inscripción';
+            $periodos_alumnos=[];
+            foreach($alumnosInscripcion as $estudiante) {
+                $periodo_alumno = $this->getDoctrine()
+                    ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                    ->findby(array('alumno' => $estudiante->getId(), 'activo' => 'true'));
+                array_push($periodos_alumnos, $periodo_alumno);
+            }
+
+        }
+        if($request->getMethod()=='POST') {
+            if ($alumnosRepDatosForm->get('guardar')->isClicked()) {
+
+                if ($alumnosRepDatosForm->isValid()) {
+
+                    $em = $this->getDoctrine()->getManager();
+                    foreach ($alumnosRepresentantesDatos as $alumnoRepDatos) {
+                        $em->persist($alumnoRepDatos);
+                    }
+                    $em->flush();
+                    $this->get('session')->getFlashBag()->add(
+                        'success', 'Datos Actualizados con éxito');
+                    return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                }
+            }
+            if ($formInscripcion->get('guardar')->isClicked()) {
+                if($inscripcion->getEstatus()==1){
+                    if (count($alumnosRepresentantesDatos) == count($alumnosInscripcion) * count($representantes)) {
+                        $em = $this->getDoctrine()->getManager();
+                        $inscripcion->setEstatus(2);
+                        $em->flush();
+                        $this->get('session')->getFlashBag()->add(
+                            'success', 'Datos Actualizados con éxito');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                    else {
+                        $this->get('session')->getFlashBag()->add(
+                            'warning', 'Debe completar los datos de parentezco');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                }
+                elseif($inscripcion->getEstatus()==2) {
+                    if (count($inscripcion->getMontosParticulares()) == count($inscripcion->getMontosParticularesProcesados())) {
+                        $em = $this->getDoctrine()->getManager();
+                        $inscripcion->setEstatus(3);
+                        $em->flush();
+                        $this->get('session')->getFlashBag()->add(
+                            'success', 'Datos Actualizados con éxito');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    } else {
+                        $this->get('session')->getFlashBag()->add(
+                            'warning', 'Agregar todos los montos particulares');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                }
+                elseif($inscripcion->getEstatus()==3){
+                    if(count($inscripcion->getFacturas())== count($inscripcion->getPagos())){
+                        $em = $this->getDoctrine()->getManager();
+                        $inscripcion->setEstatus(4);
+                        $inscripcion->setActivo(false);
+                        $em->flush();
+                        $this->get('session')->getFlashBag()->add(
+                            'success', 'Datos Actualizados con éxito');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                    else {
+                        $this->get('session')->getFlashBag()->add(
+                            'warning', 'Agregar todos los montos particulares');
+                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+                    }
+                }
+                elseif($inscripcion->getEstatus()==5){
+
+                }
+            }
+        }
+
+        if($inscripcion->getEstatus() == 1){
+            $template = 'genericoBundle:Default:crear_generico2.html.twig';
+        }
+        elseif($inscripcion->getEstatus()==2){
+            $template = 'genericoBundle:Default:crear_generico4.html.twig';
+        }
+        elseif($inscripcion->getEstatus()>=4){
+            $template = 'genericoBundle:Default:crear_generico3.html.twig';
+        }
+
+        return $this->render($template,
+            array(
+                'representantes'=>$representantes,
+                'inscripcion'=>$inscripcion,
+                'alumnosInscripcion' => $alumnosInscripcion,
+                'alumnosRepDatosForm' =>$alumnosRepDatosForm ? $alumnosRepDatosForm->createView(): '',
+                'formInscripcion' => $formInscripcion->createView(),
+                'formPagos' => isset($formularioPagos) ? $formularioPagos->createView():'',
+                'facturas' => isset($facturasInscripcion) ? $facturasInscripcion :'',
+                'facturasPorPagos' => isset($facturasPorPagos) ? $facturasPorPagos :'',
+                'totalFacturado' => isset($totalFacturado) ? $totalFacturado : '',
+                'accion'=>isset($accion) ? $accion : '',
+                'periodos_alumnos' => isset($periodos_alumnos) ? $periodos_alumnos : ''
+            )
+        );
     }
 
     public function formulario_crear_representante_genericoAction(Request $request){
@@ -817,14 +784,24 @@ class DefaultController extends Controller
 
             if ($formulario->isValid()) {
 
+                $inscripcion = $this->getDoctrine()
+                    ->getRepository('genericoBundle:Inscripcion')
+                    ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+
                 $em = $this->getDoctrine()->getManager();
+                $p->setInscripcion($inscripcion);
                 $em->persist($p);
-                $session = $this->getRequest()->getSession();
-                $inscripcion = $session->get('inscripcion');
-                $inscripcion->setRepresentantes($inscripcion->getAlumnos().','.$p->getId());
-//                $em->persist();
+
+                $representantes = $inscripcion->getRepresentantes();
+                if(empty($representantes)){
+                    $representantes = $p->getId();
+                }
+                else{
+                    $representantes = $representantes.','.$p->getId();
+                }
+                $inscripcion->setRepresentantes($representantes);
                 $em->flush();
-                $session->set("inscripcion", $inscripcion);
+//                $session->set("inscripcion", $inscripcion);
                 $this->get('session')->getFlashBag()->add(
                     'success', 'Representante Creado con éxito');
 //                return array('representante'=>$p,);
@@ -835,13 +812,16 @@ class DefaultController extends Controller
         return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
     }
 
+    public function formulario_actualizar_representante_genericoAction(Request $request, $id){
+        $p = $this->getDoctrine()
+            ->getRepository('usuariosBundle:Usuarios')
+            ->find($id);
+        if (!$p)
+        {
+            throw $this -> createNotFoundException('No existe Estudiante con este id: '.$id);
+        }
 
-    public function formulario_crear_alumnos_genericoAction(Request $request){
-        $p = new Alumnos();
         $titulo= 'Crear Representante';
-
-        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', $ids_representantes, $cant_seccion), $p);
-
         $formulario = $this->createForm(new UsuariosTypeInscripcion($titulo), $p);
         $formulario -> remove('tipoUsuario');
         $formulario -> remove('principal');
@@ -859,23 +839,240 @@ class DefaultController extends Controller
             if ($formulario->isValid()) {
 
                 $em = $this->getDoctrine()->getManager();
-                $em->persist($p);
-                $session = $this->getRequest()->getSession();
-                $inscripcion = $session->get('inscripcion');
-                $inscripcion->setRepresentantes($inscripcion->getAlumnos().','.$p->getId());
-//                $em->persist();
                 $em->flush();
-                $session->set("inscripcion", $inscripcion);
                 $this->get('session')->getFlashBag()->add(
-                    'success', 'Representante Creado con éxito');
-//                return array('representante'=>$p,);
+                    'success', 'Representante Actualizado con éxito');
                 return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
             }
         }
-//        return array('form'=>$formulario->createView(), 'accion'=>'Crear Representante');
-        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Representante'));
+        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Actualizar Representante'));
     }
 
+    public function quitar_representante_inscripcionAction(Request $request, $id){
+        $inscripcion = $this->getDoctrine()
+            ->getRepository('genericoBundle:Inscripcion')
+            ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+        $representantes = $inscripcion->getRepresentantes();
+        if(!empty($representantes)) {
+            $representantes = str_replace($id, '', $representantes);
+            $representantes = str_replace(',,', ',', $representantes);
+            $representantes = ltrim($representantes, ',');
+            $representantes = rtrim($representantes, ',');
+            $inscripcion->setRepresentantes($representantes);
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'warning', 'Representante removido con éxito');
+        }
+        return new JsonResponse(true, 200);
+    }
+    public function quitar_alumno_inscripcionAction(Request $request, $id){
+        $inscripcion = $this->getDoctrine()
+            ->getRepository('genericoBundle:Inscripcion')
+            ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+        $alumnos = $inscripcion->getAlumnos();
+        if(!empty($alumnos)) {
+            $alumno = $this->getDoctrine()
+                ->getRepository('alumnosBundle:Alumnos')
+                ->find($id);
+            if (!$alumno)
+            {
+                throw $this -> createNotFoundException('No existe Estudiante con este id: '.$id);
+            }
+            $alumnos = str_replace($id, '', $alumnos);
+            $alumnos = str_replace(',,', ',', $alumnos);
+            $alumnos = ltrim($alumnos, ',');
+            $alumnos = rtrim($alumnos, ',');
+            $em = $this->getDoctrine()->getManager();
+            $inscripcion->setAlumnos($alumnos);
+            $em->flush();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+            $em->remove($alumno);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'warning', 'Estudiante eliminado con éxito');
+        }
+        return new JsonResponse(true, 200);
+    }
+
+    public function formulario_crear_estudiante_genericoAction(Request $request){
+        $alumno = new Alumnos();
+
+        $cursos = $this->getDoctrine()
+            ->getRepository('inicialBundle:CursoSeccion')
+            ->findBy(array('activo'=>true));
+
+        $cant_seccion = [];
+        foreach($cursos as $curso){
+            $alumnos = $this->getDoctrine()
+                ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('cursoSeccion'=>$curso->getId(), 'activo'=>true));
+            $cant_seccion[$curso->getId()] =  array('cupos'=>$curso->getCupos(), 'alumnos'=>count($alumnos));
+        }
+
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Crear Estudiante', null, $cant_seccion), $alumno);
+
+        $formulario -> remove('activo');
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+                $inscripcion = $this->getDoctrine()
+                    ->getRepository('genericoBundle:Inscripcion')
+                    ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+                $alumno->setActivo(true);
+
+                $periodo_activo = $this->getDoctrine()
+                    ->getRepository('inicialBundle:PeriodoEscolar')
+                    ->findOneBy(array('activo'=>true));
+
+                foreach($alumno->getPeriodoEscolarCursoAlumno() as $periodo_alumno){
+                    $periodo_alumno->setPeriodoEscolar($periodo_activo);
+                    $periodo_alumno->setActivo(true);
+                }
+
+                $em = $this->getDoctrine()->getManager();
+                $alumno->setInscripcion($inscripcion);
+                $em->persist($alumno);
+
+                $alumnosInscripcionIds = $inscripcion->getAlumnos();
+                if(empty($alumnosInscripcionIds )){
+                    $alumnosInscripcion = $alumno->getId();
+                }
+                else{
+                    $alumnosInscripcion = $alumnosInscripcionIds .','.$alumno->getId();
+                }
+                $inscripcion->setAlumnos($alumnosInscripcion);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Estudiante Creado con éxito');
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+        return $this->render('genericoBundle:Default/parts:crear_estudiante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Crear Estudiante'));
+    }
+
+    public function formulario_actualizar_estudiante_genericoAction(Request $request, $id)
+    {
+
+        $alumno = $this->getDoctrine()
+            ->getRepository('alumnosBundle:Alumnos')
+            ->find($id);
+        if (!$alumno)
+        {
+            throw $this -> createNotFoundException('No existe Estudiante con este id: '.$id);
+        }
+
+        $cursos = $this->getDoctrine()
+            ->getRepository('inicialBundle:CursoSeccion')
+            ->findBy(array('activo'=>true));
+
+        $cant_seccion = [];
+        foreach($cursos as $curso){
+            $alumnos = $this->getDoctrine()
+                ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('cursoSeccion'=>$curso->getId(), 'activo'=>true));
+            $cant_seccion[$curso->getId()] =  array('cupos'=>$curso->getCupos(), 'alumnos'=>count($alumnos));
+        }
+
+        $formulario = $this->createForm(new AlumnosTypeInscripcion('Actualizar Estudiante', null, $cant_seccion), $alumno);
+        $formulario -> remove('alumnoRepresentanteDatos');
+        $formulario-> handleRequest($request);
+        if($request->getMethod()=='POST') {
+
+            if ($formulario->isValid()) {
+
+                $em = $this->getDoctrine()->getManager();
+
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Estudiante Actualizado con éxito');
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+        return $this->render('genericoBundle:Default/parts:editar_estudiante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Actualizar Estudiante'));
+    }
+
+    public function inscripcion_lista_agregar_representanteAction(Request $request)
+    {
+        $query = $this->getDoctrine()->getRepository('usuariosBundle:Usuarios')
+            ->createQueryBuilder('usuario')
+            ->select('usuario.cedula, usuario.primerApellido, usuario.primerNombre, usuario.fechaNacimiento, usuario.direccion, usuario.id')
+            ->innerJoin('usuariosBundle:TipoUsuario', 'tipo_usuario', 'WITH', 'usuario.tipoUsuario = tipo_usuario.id')
+            ->where('usuario.activo = true')
+            ->andWhere('tipo_usuario.id=5')
+            ->orderBy('usuario.id', 'DESC')
+            ->getQuery();
+        $datos = $query->getArrayResult();
+        $elemento = 'Seleccione Representante';
+
+        return $this->render('genericoBundle:Default/parts:agregar_representante_existente.html.twig', array('accion'=>$elemento, 'lista_representante'=>$datos));
+    }
+
+    public function formulario_agregar_monto_estudiante_genericoAction(Request $request, $id){
+        $p = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->findBy(array('activo' => 'true', 'inscripcion'=>false));
+
+        foreach ($p as $tfact) {
+            foreach ($tfact->getConceptosFactura() as $con_fact) {
+                $con_fact->addMontosAlumno(New MontosAlumnos());
+            }
+        }
+        $formulario = $this->createForm('collection', $p, array('type' => new TipoFacturaType('Crear Tipo Factura', null, true), 'allow_add' => true, 'allow_delete' => false,
+            'by_reference' => false, 'prototype' => false, 'label' => false, 'cascade_validation' => false,
+            'error_bubbling' => false));
+        $formulario->handleRequest($request);
+        $estudiante = $this->getDoctrine()
+            ->getRepository('alumnosBundle:Alumnos')
+            ->find($id);
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                // $p->setActivo(true);
+
+                foreach ($p as $tipo_factura) {
+                    foreach($tipo_factura->getConceptosFactura() as $concepto_factura) {
+                        foreach ($concepto_factura->getMontosAlumnos() as $monto_alumno) {
+                            $monto_alumno->setConceptoFactura($concepto_factura);
+                            $monto_alumno->setAlumno($estudiante);
+                            $monto_alumno->setActivo(true);
+                        }
+                    }
+                }
+                $inscripcion = $this->getDoctrine()
+                    ->getRepository('genericoBundle:Inscripcion')
+                    ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
+
+                $alumnosMontoParticularIds = $inscripcion->getAlumnos();
+                if(empty($alumnosMontoParticularIds )){
+                    $alumnosInscripcion = $estudiante->getId();
+                }
+                else{
+                    $alumnosInscripcion = $alumnosMontoParticularIds .','.$estudiante->getId();
+                }
+                $inscripcion->setMontosParticularesProcesados($alumnosInscripcion);
+
+                $em = $this->getDoctrine()->getManager();
+                foreach ($p as $tipo_factura) {
+                    $em->persist($tipo_factura);
+                }
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Montos particulares del estudiante creados con éxito');
+                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+            }
+        }
+        return $this->render('genericoBundle:Default/parts:crear_montos_estudiante.html.twig',
+            array('form'=>$formulario->createView(),
+                'accion'=>'Crear Montos para Estudiante',
+                'estudiante'=>$estudiante
+            )
+        );
+    }
     public function finalizarAnioAction(Request $request){
 
     }

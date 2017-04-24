@@ -1,0 +1,48 @@
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+    <div class="col-sm-12 text-left">
+        {% set form_url =  path('generico_formulario_agregar_monto_estudiante', {'id':estudiante.id}) %}
+        <div class="col-sm-12">
+            {{ form_start
+            (
+            form, {
+            'action': form_url,
+            'attr': {'id': 'form_ajax'}
+            }
+            ) }}
+
+            <div class="row text-center">
+                Crear montos para el estudiante: {{ estudiante.primerNombre }} {{ estudiante.primerApellido }}
+                <br>
+                <br>
+            </div>
+            {{ form_errors(form) }}
+            {% for subform in form.children %}
+                <div class="col-sm-6">
+                    {% if not loop.last %}
+                        {{ form_row(subform.nombre) }}
+                    {% endif %}
+                    {% for item in subform %}
+                        <div class="col-sm-10 col-sm-offset-1">
+                            {% for elemento in item %}
+                                {{ form_row(elemento.nombre) }}
+                                {% if elemento.montosAlumnos is defined %}
+                                    {% for monto in elemento.montosAlumnos %}
+                                        {{ form_row(monto.monto) }}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+
+            <div class="col-sm-12 text-center ">
+                <br>
+                <button type="submit" id="guardar" name="[guardar]" class="btn-default data-first-button data-last-button btn">Guardar</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endif %}

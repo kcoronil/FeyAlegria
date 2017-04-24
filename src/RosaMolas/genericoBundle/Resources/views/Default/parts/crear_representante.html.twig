@@ -2,10 +2,11 @@
     {% form_theme form "::formulario_bootstrap_div.html.twig" %}
     <div class="col-sm-12 text-left">
         <div class="col-sm-12">
+            {% set form_url = accion == 'Crear Representante'?  path('generico_formulario_crear_representante') : path('generico_formulario_actualizar_representante', {'id':form.vars.data.id}) %}
             {{ form_start
             (
             form, {
-            'action': path('generico_formulario_crear_representante'),
+            'action': form_url,
             'attr': {'id': 'form_ajax'}
             }
             ) }}

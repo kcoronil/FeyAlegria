@@ -586,6 +586,10 @@ input[type=number] {
     
 }
 
+#cabecera2 img {
+    width: 100%;
+}
+
 .botones{
     padding: 1em 3em;
     margin: 1em 25%;
@@ -681,4 +685,23 @@ input[type=number] {
 }
 .modal-body .container {
     background: rgba(0,0,0,0.4);
+}
+
+
+.table_modal_container {
+    background-color: #fff;
+}
+.inscripcion_panel .panel-heading h2{
+    display: inline;
+}
+
+.inscripcion_panel .panel-heading a.btn {
+    display: inline;
+    float: right;
+}
+
+#alumnosbundle_alumnos_agg_reps_datos_guardar {
+    float: right;
+    display: inline;
+    margin-top: -52px;
 }

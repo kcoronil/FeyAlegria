@@ -16,7 +16,7 @@
         <field name="primerNombre" type="string" column="primer_nombre" length="30" nullable="false"/>
         <field name="segundoApellido" type="string" column="segundo_apellido" length="30" nullable="true"/>
         <field name="segundoNombre" type="string" column="segundo_nombre" length="30" nullable="true"/>
-        <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="false"/>
+        <field name="fechaNacimiento" type="date" column="fecha_nacimiento" nullable="true"/>
         <field name="direccion" type="text" column="direccion" nullable="false"/>
         <field name="email" type="string" column="email" length="256" nullable="true"/>
         <field name="principal" type="boolean" column="principal" nullable="false"/>
@@ -34,6 +34,11 @@
         <many-to-one field="tipoUsuario" target-entity="TipoUsuario">
             <join-columns>
                 <join-column name="tipo_usuario_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="inscripcion" target-entity="RosaMolas\genericoBundle\Entity\Inscripcion">
+            <join-columns>
+                <join-column name="inscripcion_id" referenced-column-name="id" nullable="true"/>
             </join-columns>
         </many-to-one>
         <many-to-many field="alumno" target-entity="RosaMolas\alumnosBundle\Entity\Alumnos" mapped-by="representante">

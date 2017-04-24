@@ -122,3 +122,63 @@ $('#form_ajax').submit(function(e){
         //msj_container.toggle(!success);
     });
 });
+
+$(document).on('click', '.enlace_editar_estudiante', function(e){
+    e.preventDefault();
+    var form_container = $('#ajax_modal_content');
+    $.ajax({
+        url: $(this).data('url'),
+        type: 'GET'
+    }).done(function (data) {
+        var success = true;
+        form_container.html(data);
+        if(form_container.find('.cont_curso').children().length<1) {
+            agregar_form($('#curso-add'));
+        }
+
+    }).fail(function (response, textStatus, jqXHR) {
+    });
+});
+
+$(document).on('click', '.enlace_quitar_representante', function(e){
+    e.preventDefault();
+
+    var apellido = $(this).closest('tr').find('td:eq(1)').text().trim();
+    var nombre = $(this).closest('tr').find('td:eq(2)').text().trim();
+    var url_redirect = $(this).data('redirect');
+    console.log(url_redirect);
+    if (confirm('Remover Item: '+nombre+' '+apellido+'\nEsta seguro?')){
+        $.ajax({
+            url: $(this).data('url'),
+            type: 'GET'
+        }).done(function() {
+            location.href = url_redirect;
+        }).fail(function (response, textStatus, jqXHR) {
+        });
+    }
+    else{
+        event.preventDefault();
+    }
+});
+
+$(document).on('click', '.agregar_representante_existente', function(e){
+    e.preventDefault();
+    var list_container = $('#ajax_modal_content');
+    $.ajax({
+        url: $(this).data('url'),
+        type: 'GET'
+    }).done(function (data) {
+        var success = true;
+        list_container.html(data);
+        if(list_container.find('.cont_curso').children().length<1) {
+            agregar_form($('#curso-add'));
+        }
+
+    }).fail(function (response, textStatus, jqXHR) {
+    });
+});
+
+$(document).on('click','.close_ajax_modal', function(e) {
+    e.preventDefault();
+    $('#ajax_modal_content').html('');
+});

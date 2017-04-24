@@ -7,7 +7,7 @@
       <index name="inscripcion_IDX_FE46CA105BA311FC" columns="parentesco_id"/>
     </indexes>
     <unique-constraints>
-      <unique-constraint name="alumno_representante_unico" columns="alumno_id,representante_id"/>
+      <unique-constraint name="inscripcion_alumno_representante_unico" columns="alumno_id,representante_id"/>
     </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
