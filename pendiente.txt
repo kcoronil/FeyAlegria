@@ -8,25 +8,27 @@ creacion de facturacion mensual claculado montos regulares o particulares
 
 limitar cupos por seccion cantidad recomendada, debe permitir exceder la cantidad -------------listo
 
-rutina finalizacion año escolar
+rutina finalizacion año escolar------------- proceso
 
 reportes por etapas y grados !!!!!!!!!!!!!
 
-procesar alumnos inscritos buscando si tienen montos particulares !!!!!!!!!!!!
+procesar alumnos inscritos buscando si tienen montos particulares ----------- listo
 
 agregar boton para quitar representante durante la inscripcion ----------------- listo
 
-ajustar funcion agregar alumno a nuevo formato de inscripción !!!!!!!!!!!!!
+ajustar funcion agregar alumno a nuevo formato de inscripción ---------listo
 
 cambiar a mpdf !!!!!!!!!!!!!
 
 verificar viabilidad de multiples escalas de montos !!!!!!!!!!!!!!
 
-permitir pago de multiples mensualidades e multiples alumnos con un solo deposito
+permitir pago de multiples mensualidades con un deposito ---------- listo
+
+permitir pago multiples alumnos con un solo deposito !!!!!!!!!!!!!
 
 cambiar logo
 
-cambiar termino representante principal por representante legal
+cambiar termino representante principal por representante legal ------------ listo
 
 separar etapa de grado en las secciones de seleccion
 
@@ -36,7 +38,7 @@ agregar tabla datos colegio para ingreso de datos de director, telefonos, direcc
 
 ajustes proceso inscripción separar conceptos: aporte por familia y seguro escolar debido a que se pagan por banesco
 
-montos de inscripcion no varian entre alumnos, solo los de mensualidad
+montos de inscripcion no varian entre alumnos, solo los de mensualidad -------------- listo
 
 !error no suma todos los montos al facturar
 
@@ -50,7 +52,7 @@ separar aporte por familia y seguro escolar de la inscripcion (se depositan por 
 
 ## {% if is_granted('IS_AUTHENTICATED_FULLY') %} -> validacion completa de usuario logueado
 
-Cambiar representante principal por representante legal !!!!!!!!!!!!!
+Cambiar representante principal por representante legal ---------- listo
 
 separar etapa de grado en inscripcion !!!!!!!!!!!!!!!!!!!
 
@@ -60,7 +62,5 @@ crear informacion del colegio parametrizable !!!!!!!!!!!!!!!!!
 reporte contactos incluir cedula de alumno o cedula escolar y direcciones !!!!!!!!!!!!!!!
 
 cambiar logos
-
-permitir pago de multiples facturas de multiples alumnos con un solo pago !!!!!!!!!!!!!!!!!
 
 generar nomina profesores

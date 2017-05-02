@@ -1,0 +1,217 @@
+{% extends '::plantilla.html.twig' %}
+{# bootstrap_3_layout.html.twig #}
+{% if form is defined %}
+    {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+{% if alumnosRepDatosForm is defined %}
+    {% form_theme alumnosRepDatosForm "::formulario_bootstrap_div.html.twig" %}
+{% endif %}
+
+{% macro widget_prototype(widget, remove_text) %}
+    {% if widget.vars.prototype is defined %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+    <div data-content="{{ name }}" class="test_attr">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2 text-center panel-heading">
+                <h4>Nuevo Estudiante</h4>
+            </div>
+            <div class="col-sm-1 text-left">
+                <a class="btn-remove btn btn-danger btn-xs" data-target="post_usuario" data-related="{{ name }}">{{ remove_text }}</a>
+            </div>
+        </div>
+        <div class="row">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% block extra_head %}
+    <style>
+        .form-inline .form-control{
+            max-width: 100%;
+        }
+        .form-inline .filter_select  select{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if($('#cont_curso').children().length<1) {
+                agregar_form($('#curso-add'));
+            }
+            if($('#cont_curso_edit').children().length<1) {
+                agregar_form($('#curso-add_edit'));
+            }
+            {% if form.vars.datos_secciones is defined %}
+            var cant_seccion = {{ form.vars.datos_secciones|json_encode|raw }};
+            {% endif %}
+            $(document).on('change','#test_inicialbundle_alumnos_simple_periodoEscolarCursoAlumno_0_cursoSeccion', function() {
+                $(this).closest('.control-group').removeClass('has-success', 'has-warning');
+                var cupos_disp = cant_seccion[this.value]['cupos']-cant_seccion[this.value]['alumnos'];
+                if(cant_seccion[this.value]['cupos'] > cant_seccion[this.value]['alumnos']){
+                    $(this).after('<p class="edd_info_field">Cupos disponibles '+cupos_disp+' de '+cant_seccion[this.value]['cupos']+'<p>')
+                }
+                else{
+                    if(cant_seccion[this.value]['cupos'] == cant_seccion[this.value]['alumnos']) {
+                        $(this).closest('div').addClass('has-warning');
+                        $(this).after('<p class="edd_info_field">Cupos llenos para esta seccion' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                    }
+                    else
+                    {
+                        $(this).closest('div').addClass('has-error');
+                        $(this).after('<p class="edd_info_field edd_info_field_warning">Cupos para esta seccion excedidos ' + cupos_disp + ' de ' + cant_seccion[this.value]['cupos'] + '<p>')
+                    }
+                }
+            });
+            $(document).on('click','.btn-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','#contacto-add', function() {
+                agregar_form($(this));
+            });
+            $(document).on('click','.btn-remove', function() {
+                borrar_form($(this));
+                renombrar_forms($(this).attr('data-target'));
+            });
+            $(document).on('click','.enlace_inscripcion', function(event) {
+                var apellido = $(this).closest('td').next('td').text().trim();
+                var nombre = $(this).closest('td').next('td').next('td').text().trim();
+                if (confirm('Representante: '+nombre+' '+apellido+'\nEsta seguro?')){
+                }
+                else{
+                    event.preventDefault();
+                }
+            });
+            var datatable_usuarios = $('#tbl_usuarios').dataTable({
+                "dom": 'rtip',
+                "bInfo": false,
+                "bLengthChange": false,
+                "bPaginate": false,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            });
+
+            var datatable_estudiantes = $('#tbl_estudiantes').dataTable({
+                "dom": 'rtip',
+                "bInfo": false,
+                "bLengthChange": false,
+                "bPaginate": false,
+                "aaSorting": [],
+                language:{
+                    "sZeroRecords": "No hay registros que coincidan",
+                    "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                    search: "Búsqueda",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Anterior",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    }
+                }
+            });
+            $(".representante_principal").click(function(){
+                var grupo = $(this).closest('.alumno_rep_datos_container').find('input:checkbox.representante_principal');
+                //$(grupo).attr("checked",false);
+                $(grupo).not(this).prop("checked",false);
+                //$(this).attr("checked",true);
+            });
+        });
+    </script>
+{% endblock %}
+{% block enlace_atajo %}
+
+{% endblock %}
+{% block content %}
+    <div class="row text-center">
+        {#{% if form is defined %}#}
+        <div class="col-sm-12 text-left">
+            <div class="col-sm-12">
+
+                <div id="div_tbl_usuarios" >
+                    <div class="panel panel-info inscripcion_panel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Alumnos Reprobados</h2>
+                            <a href="#mostrar_lista_modal" data-toggle="modal" class="campaignModalLink btn btn-default btn-sm agregar_representante_existente" data-url="{{ path('generico_lista_alumnos_reprob') }}">Agregar Alumno</a>
+                        </div>
+                        <div class="panel-body">
+                            {% if alumnosReprobados is defined and alumnosReprobados is not empty %}
+                                <table id="tbl_usuarios" class="table-bordered table-hover table-responsive"  width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Cédula</th>
+                                        <th>Apellido</th>
+                                        <th>Nombre</th>
+                                        <th>Fecha de Nacimiento</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for dato in alumnosReprobados %}
+                                        <tr>
+                                            <td>
+                                                {% if dato.cedula %}
+                                                    {{ dato.cedula }}
+                                                {% else %}
+                                                    {{ dato.cedulaEstudiantil }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ dato.primerApellido }}</td>
+                                            <td>{{ dato.primerNombre }}</td>
+                                            <td>{{ dato.fechaNacimiento|date('d/m/Y') }}</td>
+                                            <td>
+                                                <a href="#" data-toggle="modal" data-url="{{ path('generico_quitar_representante_inscripcion', { 'id': dato.id }) }}" data-redirect="{{ path('generico_inscripcion_completa') }}" class="btn btn-default btn-xs enlace_quitar_representante">borrar</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No hay representantes asignados a este proceso de inscripcion</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                {#{{ form_start(formInscripcion) }}#}
+                {#{{ form_widget(formInscripcion) }}#}
+                {#{{ form_end(formInscripcion) }}#}
+            </div>
+        </div>
+        {#{% endif %}#}
+    </div>
+    <div style="display: none;" aria-hidden="true" role="dialog" tabindex="-1" id="mostrar_lista_modal" class="form_estudiante crear-modal modal fade">
+        <div class="modal-content">
+            <div data-dismiss="modal" class="close-modal close_ajax_modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div id="ajax_modal_content_list" class="col-md-10 col-md-offset-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

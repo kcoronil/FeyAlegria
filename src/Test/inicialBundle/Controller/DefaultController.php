@@ -36,6 +36,75 @@ class DefaultController extends Controller
     public function indexAction(request $request)
     {
         $session = $this->getRequest()->getSession();
+
+//        $alumnosInscripcion = $this->getDoctrine()
+//            ->getRepository('alumnosBundle:Alumnos')
+//            ->findAll();
+//        $cedula_alumno = '';
+//        $rep_ppal = 0;
+//        $representante_ppal = '';
+//        foreach($alumnosInscripcion as $alumno){
+//            foreach($alumno->getAlumnoRepresentanteDatos() as $alumno_rep_datos){
+//                if($alumno_rep_datos->getPrincipal()==true){
+////                    $rep_ppal=  $rep_ppal + 1;
+//                    if($cedula_alumno == false){
+//                        $representante_ppal = $this->getDoctrine()
+//                            ->getRepository('usuariosBundle:Usuarios')
+//                            ->find($alumno_rep_datos->getRepresentante()->getId());
+//                    }
+//                }
+//            }
+//            if($cedula_alumno == false){
+//                if($representante_ppal->getAlumnoRepresentanteDatos()){
+////                    if(!$alumno->getCedulaEstudiantil()) {
+//                        $cant_alumnos_anio = 0;
+//                        $ced_escolar = $alumno->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+////                        foreach ($representante_ppal->getAlumnoRepresentanteDatos() as $alum_rep_datos) {
+//
+//                            $alumnoced = $this->getDoctrine()
+//                                ->getRepository('alumnosBundle:Alumnos')
+//                                ->findOneBy(array('cedulaEstudiantil' => $ced_escolar));
+//                            var_dump($ced_escolar);
+//                            var_dump(isset($alumnoced));
+//                            var_dump(empty($alumnoced));
+////                            var_dump($alumnoced);
+//                            if(!empty($alumnoced)){
+////                                var_dump($representante_ppal->getAlumnoRepresentanteDatos());
+//                                var_dump('cant alum '.count($representante_ppal->getAlumnoRepresentanteDatos()));
+//                                while($cant_alumnos_anio <= count($representante_ppal->getAlumnoRepresentanteDatos())) {
+//                                    var_dump('true');
+//                                    var_dump($cant_alumnos_anio);
+//                                    $cant_alumnos_anio = $cant_alumnos_anio +1;
+//                                    $ced_escolar = $cant_alumnos_anio . $alumno->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+//                                    $alumnoced = $this->getDoctrine()
+//                                        ->getRepository('alumnosBundle:Alumnos')
+//                                        ->findOneBy(array('cedulaEstudiantil' => $ced_escolar));
+//                                    if(empty($alumnoced)){
+//                                        break;
+//                                    }
+//                                }
+//                            }
+////
+////                            if ($alum_rep_datos->getAlumno()->getId() != $alumno->getId() and $alum_rep_datos->getAlumno()->getFechaNacimiento() == $alumno->getFechaNacimiento()) {
+////                                $cant_alumnos_anio = $cant_alumnos_anio + 1;
+////
+////                            }
+////                        }
+////
+////                        var_dump('id '.$alumno->getId());
+////                        var_dump('ced esc '.$ced_escolar);
+//                        $alumno->setCedulaEstudiantil($ced_escolar);
+//
+//
+////                    }
+//                }
+////                else{
+////                    $alumno->setCedulaEstudiantil($alumno->getFechaNacimiento()->format('y').$representante_ppal->getCedula());
+////                }
+//            }
+//        }
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
 //        print_r($session->get("autenticado"));
 //        print_r('<br>');
         //$test = $this->container->get('security.context')->getToken()->getUser();

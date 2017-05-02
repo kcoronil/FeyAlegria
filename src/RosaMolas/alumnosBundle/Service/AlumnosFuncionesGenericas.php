@@ -166,8 +166,6 @@ class AlumnosFuncionesGenericas extends Controller
                 $em = $this->getDoctrine()->getManager();
                 foreach($instancias as $objeto){
                     foreach($formulario->get($i)->getData()->getRepresentante() as $representante){
-                        print_r($formulario->get($i)->getData()->getRepresentante()->getNombres());
-
                         $objeto->addUsuario($representante);
                     }
                     $em->persist($objeto);
@@ -224,7 +222,6 @@ class AlumnosFuncionesGenericas extends Controller
                 return array('alumno'=>$estudiante, 'monto_creado'=>true);
             }
             else{
-                print_r('no valido');
                 return array('form'=>$formulario->createView(), 'accion'=>'Crear Montos para Estudiante', 'estudiante'=>$estudiante);
             }
         }

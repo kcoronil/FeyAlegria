@@ -217,27 +217,22 @@ class FuncionesGenericas extends Controller
                 $nueva_fact_detalle->setActivo(true);
                 $nueva_fact_detalle->setConcepto($concepto_tipo);
                 $nueva_fact_detalle->setFactura($nueva_fact);
-                if($estudiante->getTipoFacturacion() == 'particular' and !$tipo_factura->getInscripcion()) {
+                if(strtolower($estudiante->getTipoFacturacion()->getNombre()) == 'particular' and !$tipo_factura->getInscripcion()) {
                     $p = $this->getDoctrine()
                         ->getRepository('facturacionBundle:MontosAlumnos')
                         ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura' => $concepto_tipo, 'activo'=>true));
                     $nueva_fact_detalle->setMonto($p->getMonto());
-                    var_dump('particular');
-                    var_dump($p->getMonto());
                     //print_r($nueva_fact_detalle->getMonto().'<br>');
                 }
                 else {
                     $concepto_monto = $this->getDoctrine()
                         ->getRepository('facturacionBundle:TipoMontoConceptos')
                         ->findOneBy(array('conceptosFactura' => $concepto_tipo, 'activo'=>true));
-                    var_dump($concepto_tipo->getId());
-                    var_dump($concepto_monto->getMonto());
                     $nueva_fact_detalle->setMonto($concepto_monto->getMonto());
                     //print_r($nueva_fact_detalle->getMonto() . '<br>');
                 }
 
                 $monto_factura = floatval($monto_factura) + floatval($nueva_fact_detalle->getMonto());
-                var_dump($monto_factura);
                 $nueva_fact->addDetalleFactura($nueva_fact_detalle);
             }
         }
@@ -316,7 +311,6 @@ class FuncionesGenericas extends Controller
 
         $fecha_actual = new \DateTime("now");
         $html = $this->renderView('genericoBundle:Default:index.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
-        print_r($html);
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,

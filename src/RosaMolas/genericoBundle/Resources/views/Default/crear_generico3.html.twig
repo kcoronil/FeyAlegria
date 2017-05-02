@@ -240,7 +240,9 @@
                                     </tbody>
                                 </table>
                             {% endif %}
-
+                            {{ form_start(formInscripcion) }}
+                                {{ form_widget(formInscripcion) }}
+                            {{ form_end(formInscripcion) }}
                         </div>
                     </div>
                 </div>

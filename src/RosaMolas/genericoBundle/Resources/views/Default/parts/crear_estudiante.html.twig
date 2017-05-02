@@ -25,12 +25,11 @@
                         {{ form_widget(form_periodoEscolarCursoAlumno) }}
                     {% endfor %}
                 </div>
-                <a id="curso-add" class="btn btn-default" data-target="cont_curso_edit" title="agregar curso" style="display: none">test</a>
+                <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
             {% endif %}
             <div class="col-sm-12 text-center ">
                 <br>
                 {{ form_row(form.guardar) }}
-                {{ form_row(form.guardar_crear) }}
             </div>
             {{ form_end(form) }}
         </div>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+<entity name="RosaMolas\genericoBundle\Entity\PeriodoEscolarFinalizado" table="periodo_escolar_finalizado">
+    <id name="id" type="integer" column="id">
+        <generator strategy="SEQUENCE"/>
+    </id>
+    <field name="proceso_hash" type="string" column="proceso_hash" nullable="true"/>
+    <field name="fecha" type="date" column="fecha" nullable="true"/>
+    <field name="estatus" type="integer" column="estatus" nullable="true"/>
+    <field name="alumnosReprobados" type="text" column="alumnos_reprobados" nullable="true"/>
+    <field name="activo" type="boolean" column="activo" nullable="false"/>
+    <field name="finalizado" type="boolean" column="finalizado" nullable="false"/>
+    <many-to-one field="usuario" target-entity="RosaMolas\usuariosBundle\Entity\Usuarios">
+        <join-columns>
+            <join-column name="usuario_id" referenced-column-name="id"/>
+        </join-columns>
+    </many-to-one>
+    <many-to-one field="periodoEscolarFinalizado" target-entity="Test\inicialBundle\Entity\PeriodoEscolar">
+        <join-columns>
+            <join-column name="periodo_escolar_finalizado_id" referenced-column-name="id"/>
+        </join-columns>
+    </many-to-one>
+    <many-to-one field="periodoEscolarIniciado" target-entity="Test\inicialBundle\Entity\PeriodoEscolar">
+        <join-columns>
+            <join-column name="periodo_escolar_iniciado_id" referenced-column-name="id"/>
+        </join-columns>
+    </many-to-one>
+</entity>
+</doctrine-mapping>

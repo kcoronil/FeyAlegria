@@ -12,17 +12,19 @@ $(document).ready(function() {
 function agregar_form(boton){
     var collectionHolder = $('#' + boton.attr('data-target'));
     var prototype = collectionHolder.attr('data-prototype');
-    var form = prototype.replace(/__name__/g, collectionHolder.children().length);
-    collectionHolder.append(form);
-    $('.fecha_nacimiento').not('.hasDatePicker').datepicker({
-        format: "dd-mm-yyyy",
-        startView: 2,
-        language: "es",
-        endDate: '+0d'
-    });
-    $('.fecha_nacimiento').on('change', function(){
-        $('.datepicker').hide();
-    });
+    if(prototype){
+        var form = prototype.replace(/__name__/g, collectionHolder.children().length);
+        collectionHolder.append(form);
+        $('.fecha_nacimiento').not('.hasDatePicker').datepicker({
+            format: "dd-mm-yyyy",
+            startView: 2,
+            language: "es",
+            endDate: '+0d'
+        });
+        $('.fecha_nacimiento').on('change', function(){
+            $('.datepicker').hide();
+        });
+    }
     return false;
 }
 function agregar_form_anidados(boton){
@@ -163,7 +165,7 @@ $(document).on('click', '.enlace_quitar_representante', function(e){
 
 $(document).on('click', '.agregar_representante_existente', function(e){
     e.preventDefault();
-    var list_container = $('#ajax_modal_content');
+    var list_container = $('#ajax_modal_content_list');
     $.ajax({
         url: $(this).data('url'),
         type: 'GET'

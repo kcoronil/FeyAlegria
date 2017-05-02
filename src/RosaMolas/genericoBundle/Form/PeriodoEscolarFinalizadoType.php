@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class BancosType extends AbstractType
+class PeriodoEscolarFinalizadoType extends AbstractType
 {
     public function __construct ($titulo, $tipo_panel = null)
     {
@@ -27,8 +27,7 @@ class BancosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre' ,'text',  array('attr'=>array('class'=>'campo_unico')))
-            ->add('guardar', 'submit', array('label'=>'Guardar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button')))
+            ->add('guardar', 'submit', array('label'=>'Continuar', 'attr'=>array('class'=>'btn-default data-first-button data-last-button btn btn-default')))
         ;
     }
 
@@ -45,7 +44,7 @@ class BancosType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RosaMolas\genericoBundle\Entity\Bancos'
+            'data_class' => 'RosaMolas\genericoBundle\Entity\PeriodoEscolarFinalizado'
         ));
     }
 
@@ -54,6 +53,6 @@ class BancosType extends AbstractType
      */
     public function getName()
     {
-        return 'test_inicialbundle_bancos';
+        return 'test_inicialbundle_periodoescolarfinalizado';
     }
 }

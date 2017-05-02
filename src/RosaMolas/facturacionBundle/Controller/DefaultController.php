@@ -107,6 +107,7 @@ class DefaultController extends Controller
                 foreach($p->getConceptosFactura() as $concepto_factura){
                     foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
                         $tipo_monto_con->setConceptosFactura($concepto_factura);
+                        $tipo_monto_con->setActivo(true);
                     }
                     $concepto_factura->setActivo(true);
                 }
@@ -141,6 +142,7 @@ class DefaultController extends Controller
                 foreach($p->getConceptosFactura() as $concepto_factura){
                     foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
                         $tipo_monto_con->setConceptosFactura($concepto_factura);
+                        $tipo_monto_con->setActivo(true);
                     }
                     $concepto_factura->setActivo(true);
                 }

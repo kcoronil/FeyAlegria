@@ -329,7 +329,6 @@ class DefaultController extends Controller
 
         $datos = $query->getArrayResult();
 
-        print_r($datos);
 
         if (!$datos)
         {

@@ -42,6 +42,11 @@ class Inscripcion
     /**
      * @var string
      */
+    private $facturasPagadas;
+
+    /**
+     * @var string
+     */
     private $pagos;
 
     /**
@@ -206,6 +211,29 @@ class Inscripcion
     public function getFacturas()
     {
         return $this->facturas;
+    }
+
+    /**
+     * Set facturasPagadas
+     *
+     * @param string $facturasPagadas
+     * @return Inscripcion
+     */
+    public function setFacturasPagadas($facturasPagadas)
+    {
+        $this->facturasPagadas = $facturasPagadas;
+
+        return $this;
+    }
+
+    /**
+     * Get facturasPagadas
+     *
+     * @return string
+     */
+    public function getFacturasPagadas()
+    {
+        return $this->facturasPagadas;
     }
 
     /**

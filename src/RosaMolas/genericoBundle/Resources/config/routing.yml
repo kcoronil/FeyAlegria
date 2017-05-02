@@ -22,6 +22,10 @@ generico_inscripcion_completa:
     path:     /inscripcion/{id_agg_rep}
     defaults: { _controller: genericoBundle:Default:inscripcion_completa, id_rep: null, id_agg_rep: null }
 
+generico_finalizar_periodo_escolar:
+    path:     /finalizar_periodo_escolar/{id_alumn_rep}
+    defaults: { _controller: genericoBundle:Default:finalizarPeriodo, id_alumn_rep: null }
+
 generico_formulario_crear_representante:
     path:     /formulario_crear_representante_generico
     defaults: { _controller: genericoBundle:Default:formulario_crear_representante_generico }
@@ -41,6 +45,10 @@ generico_formulario_actualizar_estudiante:
 generico_lista_agregar_representante:
     path:     /generico_lista_agregar_representante/
     defaults: { _controller: genericoBundle:Default:inscripcion_lista_agregar_representante }
+
+generico_lista_alumnos_reprob:
+    path:     /lista_alumnos_reprobados/
+    defaults: { _controller: genericoBundle:Default:finalizar_periodo_lista_alumnos_reprob }
 
 generico_quitar_representante_inscripcion:
     path:     /generico_quitar_representante_inscripcion/{id}

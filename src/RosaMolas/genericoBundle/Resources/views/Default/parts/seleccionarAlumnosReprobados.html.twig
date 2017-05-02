@@ -1,0 +1,76 @@
+{% if lista_alumnos is defined %}
+    <script>
+        var datatable_usuarios_modal = $('#tbl_usuarios_modal').dataTable({
+            "dom": 'rtip',
+            "bInfo": true,
+            "bLengthChange": false,
+            "bPaginate": true,
+            "aaSorting": [],
+            language:{
+                "sZeroRecords": "No hay registros que coincidan",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                search: "Búsqueda",
+                paginate: {
+                    first: "Primero",
+                    previous: "Anterior",
+                    next: "Siguiente",
+                    last: "Ultimo"
+                }
+            }
+        }).columnFilter({
+            sPlaceHolder: "head:after"
+        });
+
+    </script>
+    <div class="col-sm-12 text-left">
+        <div class="col-sm-12 table_modal_container">
+            <h2 class="text-center">{{ accion|title }}</h2>
+            <div id="div_tbl_usuarios_modal">
+                <table id="tbl_usuarios_modal" class="table-bordered table-hover table-responsive"  width="100%">
+                    <thead>
+                        <tr>
+                            {% for campo in lista_alumnos.0|keys %}
+                                {% if campo == 'id' or '_id' in campo or campo  == 'cedulaEstudiantil' %}
+                                {% else %}
+                                    <th>{{ campo }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for campo in lista_alumnos.0|keys %}
+                                {% if campo == 'id' or '_id' in campo or campo  == 'cedulaEstudiantil' %}
+                                {% else %}
+                                    <th>{{ campo }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dato in lista_alumnos %}
+                            <tr>
+                                {% for  key, elemento in dato %}
+                                    {% if key == 'id'  or  '_id' in key  or key  == 'cedulaEstudiantil' %}
+                                    {% else %}
+                                        <td>
+                                            {% if elemento.timestamp is defined %}
+                                                {{ elemento|date('d/m/Y') }}
+                                            {% elseif key == 'cedula' %}
+                                                {% if not elemento %}
+                                                    <a href="{{ path('generico_finalizar_periodo_escolar', { 'id_alumn_rep': dato.id }) }}" class="enlace_inscripcion">{{ dato.cedulaEstudiantil }}</a>
+                                                {% else %}
+                                                    <a href="{{ path('generico_finalizar_periodo_escolar', { 'id_alumn_rep': dato.id }) }}" class="enlace_inscripcion">{{ elemento }}</a>
+                                                {% endif %}
+                                            {% else %}
+                                                {{ elemento }}
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endif %}
