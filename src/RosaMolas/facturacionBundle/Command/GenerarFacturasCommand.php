@@ -19,7 +19,7 @@ class GenerarFacturasCommand extends ContainerAwareCommand
         $date_start = new \DateTime('midnight first day of this month');
         $date_end = new \DateTime('last day of this month');
         $test = $date_end->format('‌​Y-m-d H:i:s');
-        $tipo_factura = $this->getContainer()->get('doctrine')->getRepository('facturacionBundle:TipoFactura')->find(3);
+        $tipo_factura = $this->getContainer()->get('doctrine')->getRepository('facturacionBundle:TipoFactura')->find(2);
         $periodo_alumno = $this->getContainer()->get('doctrine')
             ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->findBy(array('activo'=> 'true'));

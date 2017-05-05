@@ -6,6 +6,10 @@ generico_listado_alumnos_contactos:
     path:     /listado_alumnos_contactos/
     defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos }
 
+generico_listado_alumnos_contactos_fpdf:
+    path:     /listado_alumnos_contactos_fpdf/
+    defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos_fpdf }
+
 generico_constancia_inscripcion:
     path:     /constancia_inscripcion/{id}
     defaults: { _controller: genericoBundle:Default:constancia_inscripcion }

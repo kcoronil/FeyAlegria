@@ -27,6 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use RosaMolas\facturacionBundle\lib\FPDF;
 
 class DefaultController extends Controller
 {
@@ -86,7 +87,36 @@ class DefaultController extends Controller
             200,
             array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
     }
+    public function listado_alumnos_contactos_fpdfAction(Request $request)
+    {
+        $pdf = new FPDF();
 
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->createQueryBuilder('periodo_alumno')
+            ->select('periodo_alumno', 'alumnos')
+            ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('alumnos.representante', 'representantes')
+            ->Join('representantes.representanteContacto', 'contactos')
+            ->where('periodo_alumno.activo = true')
+            ->andwhere('alumnos.activo = true')
+            ->andwhere('representantes.activo = true')
+            ->orderBy('alumnos.id', 'DESC')
+            ->getQuery();
+
+        $datos = $query->getResult();
+
+
+        $fecha_actual = new \DateTime("now");
+//        $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
+        // Header
+        $path = $this->get('kernel')->getRootDir();
+//        var_dump($path);
+        exit;
+        return new Response(
+            $this->$pdf->Output(),
+            200,
+            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+    }
     public function recibo_pagoAction($id, Request $request)
     {
         $facturas = $this->getDoctrine()
@@ -212,20 +242,29 @@ class DefaultController extends Controller
         $p->setFechaRegistro(new \DateTime("now"));
         $formulario = $this->createForm(new PagosType('Agregar Pago'), $p);
         $formulario-> handleRequest($request);
+        foreach ($estudiante->getAlumnoRepresentanteDatos() as $alumno_rep_datos) {
+            if ($alumno_rep_datos->getPrincipal() == true) {
+                $representante_ppal = $this->getDoctrine()
+                    ->getRepository('usuariosBundle:Usuarios')
+                    ->find($alumno_rep_datos->getRepresentante()->getId());
+            }
+        }
+        $alumnos_rep = '';
+        foreach ($representante_ppal->getAlumnoRepresentanteDatos() as $alumno_tmp) {
+            $alumnos_rep[] = $alumno_tmp->getAlumno();
+        }
+        $periodo_alumnos = $this->getDoctrine()
+            ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->findby(array('alumno' => $alumnos_rep, 'activo' => 'true'));
+        $periodos_ids ='';
+        foreach ($periodo_alumnos as $per_alumno_tmp) {
+            $periodos_ids[] = $per_alumno_tmp->getId();
+        }
 
-//        $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
-//            ->createQueryBuilder('factura')
-//            ->select('factura.fecha', 'factura.monto', 'factura.id', 'factura.periodoEscolarCursoAlumnos')
-//            ->where('factura.periodoEscolarCursoAlumnos = :periodo_alumno')
-//            ->andwhere('factura.pagada = false')
-//            ->andwhere('factura.activo = true')
-//            ->setParameter('periodo_alumno',$factura->getPeriodoEscolarCursoAlumnos()->getId())
-//            ->getQuery();
-//        $facturas = $query_factura->getArrayResult();
         $facturas = $this->getDoctrine()
             ->getRepository('facturacionBundle:Factura')
             ->findBy(array(
-                'periodoEscolarCursoAlumnos'=> $factura->getPeriodoEscolarCursoAlumnos()->getId(),
+                'periodoEscolarCursoAlumnos'=> $periodos_ids,
                 'pagada'=>false,
                 'activo'=>true
             ));
@@ -240,8 +279,7 @@ class DefaultController extends Controller
                         'warning', 'Debe seleccionar al menos una factura');
                     return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                 }
-                var_dump($facturaSeleccionadas);
-                exit;
+
                 $pagoFacturas = $this->getDoctrine()
                     ->getRepository('facturacionBundle:Factura')
                     ->findBy(array('id'=> $facturaSeleccionadas));
@@ -566,7 +604,6 @@ class DefaultController extends Controller
             $ids =explode(',', $montosParticulares);
             foreach($alumnosInscripcion as $estudiante){
 //                var_dump($estudiante->getTipoFacturacion()->getNombre());
-                var_dump('hola3');
                 if (strtolower($estudiante->getTipoFacturacion()->getNombre())=='particular'){
                     if(!in_array($estudiante->getId(), $ids)){
                         if(empty($montosParticulares )){
@@ -579,12 +616,10 @@ class DefaultController extends Controller
                         $em = $this->getDoctrine()->getManager();
                         $inscripcion->setMontosParticulares($montosParticulares);
                         $em->flush();
-                        var_dump('hola2');
                     }
                 }
             }
             if($estudiante_monto_particular->isEmpty()){
-                var_dump('hola');
                 $em = $this->getDoctrine()->getManager();
                 $inscripcion->setEstatus(3);
                 $em->flush();

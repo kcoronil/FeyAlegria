@@ -82,6 +82,7 @@ class DefaultController extends Controller
             return $this->redirect($this->generateUrl('inicial_lista_alumno'));
         }
         else {
+
             $query_factura = $this->getDoctrine()->getRepository('facturacionBundle:Factura')
                 ->createQueryBuilder('factura')
                 ->select('factura.fecha', 'factura.monto', 'factura.id')
