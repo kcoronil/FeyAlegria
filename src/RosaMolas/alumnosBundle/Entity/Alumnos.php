@@ -458,9 +458,18 @@ class Alumnos
 
     public function getNombreApellido()
     {
-        return $this->primerNombre.' '.$this->primerApellido;
+        return $this->primerNombre . ' ' . $this->primerApellido;
     }
 
+    public function getApellidoNombreCompleto()
+    {
+        return $this->primerApellido . ' ' .$this->segundoApellido . ', ' . $this->primerNombre. ' ' . $this->segundoNombre;
+    }
+
+    public function getApellidoNombre()
+    {
+        return $this->primerNombre.' '.$this->primerApellido;
+    }
 
     /**
      * Remove representante

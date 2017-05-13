@@ -1,5 +1,4 @@
 <?php
-namespace RosaMolas\facturacionBundle\lib;
 
 /*******************************************************************************
 * FPDF                                                                         *

@@ -27,8 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use RosaMolas\facturacionBundle\lib\FPDF;
-
+//use fpdf\FPDF;
 class DefaultController extends Controller
 {
     public function indexAction($id, Request $request)
@@ -89,13 +88,14 @@ class DefaultController extends Controller
     }
     public function listado_alumnos_contactos_fpdfAction(Request $request)
     {
-        $pdf = new FPDF();
+        $pdf = new \FPDF();
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->createQueryBuilder('periodo_alumno')
             ->select('periodo_alumno', 'alumnos')
             ->Join('periodo_alumno.alumno', 'alumnos')
-            ->Join('alumnos.representante', 'representantes')
+            ->Join('alumnos.alumnoRepresentanteDatos', 'alumno_representantes')
+            ->Join('alumno_representantes.representante', 'representantes')
             ->Join('representantes.representanteContacto', 'contactos')
             ->where('periodo_alumno.activo = true')
             ->andwhere('alumnos.activo = true')
@@ -103,19 +103,105 @@ class DefaultController extends Controller
             ->orderBy('alumnos.id', 'DESC')
             ->getQuery();
 
-        $datos = $query->getResult();
+        $header = array('Country', 'Capital', 'Area (sq km)', 'Pop. (thousands)');
 
+        $datos = $query->getResult();
+//        var_dump($datos[0]->getAlumno()->getAlumnoRepresentanteDatos()->getRepresentante());
+        // Column widths
+        $data = array(['Austria','Vienna',83859,8075],
+            ['Belgium','Brussels',30518,10192],
+            ['Denmark','Copenhagen',43094,5295],
+            ['Finland','Helsinki',304529,5147],
+            ['France','Paris',543965,58728],
+            ['Germany','Berlin',357022,82057],
+            ['Greece','Athens',131625,10511],
+            ['Ireland','Dublin',70723,3694],
+            ['Italy','Roma',301316,57563],
+            ['Luxembourg','Luxembourg',2586,424],
+            ['Netherlands','Amsterdam',41526,15654],
+            ['Portugal','Lisbon',91906,9957],
+            ['Spain','Madrid',504790,39348],
+            ['Sweden','Stockholm',410934,8839],
+            ['United Kingdom','London',243820,58862],
+            [iconv('utf-8', 'windows-1252', 'añó'), 'acentuación', 321321,13245]);
+
+        $pdf->SetFont('Arial','',6);
+//        $pdf->SetLeftMargin(5);
+        $pagewidthMargin = $pdf->GetPageWidth()-20;
+        $pdf->AddPage('P', 'Letter');
+        foreach($datos as $dato){
+            $cedula = $dato->getAlumno()->getCedula();
+            if(empty($cedula)){
+                $cedula = $dato->getAlumno()->getCedulaEstudiantil();
+            }
+            $estudianteInfo = strtoupper($dato->getAlumno()->getApellidoNombreCompleto()).'   Cedula: '.$cedula;
+            $lugarNacimiento = $dato->getAlumno()->getLugarNacimiento();
+            if(!empty($lugarNacimiento)){
+                $estudianteInfo = $estudianteInfo.'    Lugar de Nacimiento: '.$lugarNacimiento;
+            }
+            $estudianteInfo = $estudianteInfo."\n";
+            $rep = '';
+            $direccion = '';
+            foreach($dato->getAlumno()->getAlumnoRepresentanteDatos() as $representanteDatos){
+                $contacto ='Teléfono: ';
+                if($representanteDatos->getPrincipal()){
+                    foreach($representanteDatos->getRepresentante()->getRepresentanteContacto() as $representanteContacto){
+                        $contacto = $contacto.' '. $representanteContacto->getContacto();
+                    }
+                    $repPpal = 'Representante Legal: '.$representanteDatos->getRepresentante()->getNombreApellido(). '    Cedula: '. $representanteDatos->getRepresentante()->getCedula().'    parentesco: '.$representanteDatos->getParentesco()->getNombre()."\n";
+                    $direccion = 'dirección: '.$representanteDatos->getRepresentante()->getDireccion();
+                }
+                else{
+                    foreach($representanteDatos->getRepresentante()->getRepresentanteContacto() as $representanteContacto){
+                        $contacto = $contacto.' '. $representanteContacto->getContacto();
+                    }
+                    $rep= $rep.'Representante: '.$representanteDatos->getRepresentante()->getNombreApellido. '    parentesco: '.$representanteDatos->getParentesco()->getNombre().' '.$contacto."\n";
+                }
+            }
+            $estudianteInfo = iconv('utf-8', 'windows-1252', $estudianteInfo);
+            $direccion = iconv('utf-8', 'windows-1252', $direccion);
+            $contacto = iconv('utf-8', 'windows-1252', $contacto);
+            $rep = iconv('utf-8', 'windows-1252', $rep);
+            $pdf->Multicell($pagewidthMargin, 7, $estudianteInfo);
+            $pdf->Multicell($pagewidthMargin, 7, 'Fecha de Nacimiento: '.$dato->getAlumno()->getFechaNacimiento()->format('d/m/Y').'    Edad: '.$dato->getAlumno()->getEdad());
+            $pdf->Multicell($pagewidthMargin, 7, $direccion);
+            $pdf->Multicell($pagewidthMargin, 5, $repPpal.' '.$contacto);
+            $pdf->Multicell($pagewidthMargin, 5, $rep);
+
+        }
+
+        $pdf->AddPage();
+        $w = array(40, 35, 40, 45);
+        // Header
+        for($i=0;$i<count($header);$i++)
+            $pdf->Cell($w[$i],7,$header[$i],1,0,'C');
+        $pdf->Ln();
+        // Data
+        foreach($data as $row)
+        {
+            $pdf->Cell($w[0],8,$row[0],'LR');
+            $pdf->Cell($w[1],8,$row[1],'LR');
+            $pdf->Cell($w[2],8,number_format($row[2]),'LR',0,'R');
+            $pdf->Cell($w[3],8,number_format($row[3]),'LR',0,'R');
+            $pdf->Ln();
+        }
+        // Closing line
+        $pdf->Cell(array_sum($w),0,'','T');
 
         $fecha_actual = new \DateTime("now");
 //        $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
         // Header
-        $path = $this->get('kernel')->getRootDir();
+//        $path = $this->get('kernel')->getRootDir();
 //        var_dump($path);
-        exit;
+//        return new Response($pdf->Output(), 200, array(
+//            'Content-Type' => 'application/pdf'));
+//
+
+//        exit;
         return new Response(
-            $this->$pdf->Output(),
+            $pdf->Output(),
             200,
-            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+            array('Content-Type' => 'application/pdf'));
     }
     public function recibo_pagoAction($id, Request $request)
     {
