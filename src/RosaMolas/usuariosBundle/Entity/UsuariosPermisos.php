@@ -20,12 +20,12 @@ class UsuariosPermisos
     private $id;
 
     /**
-     * @var \Test\inicialBundle\Entity\Usuarios
+     * @var \RosaMolas\usuariosBundle\Entity\Usuarios
      */
     private $usuario;
 
     /**
-     * @var \Test\inicialBundle\Entity\Permisos
+     * @var \RosaMolas\usuariosBundle\Entity\Permisos
      */
     private $permiso;
 
@@ -66,10 +66,10 @@ class UsuariosPermisos
     /**
      * Set usuario
      *
-     * @param \Test\inicialBundle\Entity\Usuarios $usuario
+     * @param \RosaMolas\usuariosBundle\Entity\Usuarios $usuario
      * @return UsuariosPermisos
      */
-    public function setUsuario(\Test\inicialBundle\Entity\Usuarios $usuario = null)
+    public function setUsuario(\RosaMolas\usuariosBundle\Entity\Usuarios $usuario = null)
     {
         $this->usuario = $usuario;
 
@@ -79,7 +79,7 @@ class UsuariosPermisos
     /**
      * Get usuario
      *
-     * @return \Test\inicialBundle\Entity\Usuarios 
+     * @return \RosaMolas\usuariosBundle\Entity\Usuarios
      */
     public function getUsuario()
     {
@@ -89,10 +89,10 @@ class UsuariosPermisos
     /**
      * Set permiso
      *
-     * @param \Test\inicialBundle\Entity\Permisos $permiso
+     * @param \RosaMolas\usuariosBundle\Entity\Permisos $permiso
      * @return UsuariosPermisos
      */
-    public function setPermiso(\Test\inicialBundle\Entity\Permisos $permiso = null)
+    public function setPermiso(\RosaMolas\usuariosBundle\Entity\Permisos $permiso = null)
     {
         $this->permiso = $permiso;
 
