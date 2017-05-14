@@ -27,7 +27,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-//use fpdf\FPDF;
+use RosaMolas\genericoBundle\Service\pdfService;
+
 class DefaultController extends Controller
 {
     public function indexAction($id, Request $request)
@@ -88,48 +89,64 @@ class DefaultController extends Controller
     }
     public function listado_alumnos_contactos_fpdfAction(Request $request)
     {
-        $pdf = new \FPDF();
+        $pdf =  new pdfService();
+        $directoryPath = $this->container->getParameter('kernel.root_dir');
+        $pdf->SetFont('Arial','',8);
+//        exit;
+//        $pdf->SetLeftMargin(5);
+        $pdf->setHeaderImage($directoryPath."/../web/public/images/fe-y-alegria_fav.png");
+//        $pdf->setheaderTitle("U.E. Col Maria Rosa Molas - Fé y Alegría\nTeléfono: 0212-8702598 Fax: 02128702598\n\nDIRECTORIO DE ALUMNOS");
+        $title = array(iconv('utf-8', 'windows-1252', 'U.E. Col Maria Rosa Molas - Fé y Alegría'),
+            iconv('utf-8', 'windows-1252', 'Teléfono: 0212-8702598 Fax: 02128702598')
+        );
+        $periodo_activo = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolar')
+            ->findOneBy(array('activo'=>true));
+
+        $pdf->setheaderTitle($title);
+        $pdf->setHeaderfontSize(9);
+        $date = new \DateTime();
+        $topright = array($date->format('d/m/Y h:i:s A'),
+            iconv('utf-8', 'windows-1252', 'Año Escolar: '.$periodo_activo->getNombre())
+        );
+        $pdf->setHeaderTopRight($topright);
+//        $pdf->AddPage('P', 'Letter');
 
         $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->createQueryBuilder('periodo_alumno')
             ->select('periodo_alumno', 'alumnos')
             ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('periodo_alumno.cursoSeccion', 'cursoSeccion')
             ->Join('alumnos.alumnoRepresentanteDatos', 'alumno_representantes')
             ->Join('alumno_representantes.representante', 'representantes')
             ->Join('representantes.representanteContacto', 'contactos')
             ->where('periodo_alumno.activo = true')
             ->andwhere('alumnos.activo = true')
             ->andwhere('representantes.activo = true')
-            ->orderBy('alumnos.id', 'DESC')
+            ->orderBy('cursoSeccion.id', 'ASC')
+            ->addOrderBy('alumnos.primerApellido', 'ASC')
             ->getQuery();
 
-        $header = array('Country', 'Capital', 'Area (sq km)', 'Pop. (thousands)');
-
         $datos = $query->getResult();
-//        var_dump($datos[0]->getAlumno()->getAlumnoRepresentanteDatos()->getRepresentante());
-        // Column widths
-        $data = array(['Austria','Vienna',83859,8075],
-            ['Belgium','Brussels',30518,10192],
-            ['Denmark','Copenhagen',43094,5295],
-            ['Finland','Helsinki',304529,5147],
-            ['France','Paris',543965,58728],
-            ['Germany','Berlin',357022,82057],
-            ['Greece','Athens',131625,10511],
-            ['Ireland','Dublin',70723,3694],
-            ['Italy','Roma',301316,57563],
-            ['Luxembourg','Luxembourg',2586,424],
-            ['Netherlands','Amsterdam',41526,15654],
-            ['Portugal','Lisbon',91906,9957],
-            ['Spain','Madrid',504790,39348],
-            ['Sweden','Stockholm',410934,8839],
-            ['United Kingdom','London',243820,58862],
-            [iconv('utf-8', 'windows-1252', 'añó'), 'acentuación', 321321,13245]);
-
-        $pdf->SetFont('Arial','',6);
-//        $pdf->SetLeftMargin(5);
         $pagewidthMargin = $pdf->GetPageWidth()-20;
-        $pdf->AddPage('P', 'Letter');
+        $pageHeightMargin = $pdf->GetPageHeight()-20;
+        $currentCurso = '';
+        $first_loop = true;
         foreach($datos as $dato){
+//            if($first_loop == true){
+//                $first_loop = false;
+//                $pdf->SetFont('Arial','',10);
+//                $pdf->Cell($pagewidthMargin, 8, 'DIRECTORIO DE ALUMNOS', 0, 0, 'C');
+//                $pdf->Ln(6);
+//                $pdf->SetFont('Arial','',8);
+//                $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+//                $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
+//                $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+//                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', $curso_str), 0, 0, 'C');
+//                $pdf->Ln(6);
+//                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', 'No   Estudiante'), 1, 0, 'L');
+//                $pdf->Ln(6);
+//            }
             $cedula = $dato->getAlumno()->getCedula();
             if(empty($cedula)){
                 $cedula = $dato->getAlumno()->getCedulaEstudiantil();
@@ -162,33 +179,47 @@ class DefaultController extends Controller
             $direccion = iconv('utf-8', 'windows-1252', $direccion);
             $contacto = iconv('utf-8', 'windows-1252', $contacto);
             $rep = iconv('utf-8', 'windows-1252', $rep);
-            $pdf->Multicell($pagewidthMargin, 7, $estudianteInfo);
-            $pdf->Multicell($pagewidthMargin, 7, 'Fecha de Nacimiento: '.$dato->getAlumno()->getFechaNacimiento()->format('d/m/Y').'    Edad: '.$dato->getAlumno()->getEdad());
-            $pdf->Multicell($pagewidthMargin, 7, $direccion);
-            $pdf->Multicell($pagewidthMargin, 5, $repPpal.' '.$contacto);
-            $pdf->Multicell($pagewidthMargin, 5, $rep);
-
+            if(intval($pdf->GetY()+30)>240 or $currentCurso != $dato->getCursoSeccion()->getId()){
+                $pdf->AddPage('P', 'Letter');
+                $pdf->SetFont('Arial','',10);
+                $pdf->Cell($pagewidthMargin, 8, 'DIRECTORIO DE ALUMNOS', 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->SetFont('Arial','',8);
+                $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+                $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
+                $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', $curso_str), 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', 'No   Estudiante'), 1, 0, 'L');
+                $pdf->Ln(6);
+            }
+            $pdf->Multicell($pagewidthMargin, 6, $estudianteInfo);
+            $pdf->Multicell($pagewidthMargin, 5, 'Fecha de Nacimiento: '.$dato->getAlumno()->getFechaNacimiento()->format('d/m/Y').'    Edad: '.$dato->getAlumno()->getEdad());
+            $pdf->Multicell(0, 4, $direccion);
+            $pdf->Multicell($pagewidthMargin, 6, $repPpal.' '.$contacto);
+            $pdf->Multicell($pagewidthMargin, 5, $rep, 'B');
+            $currentCurso = $dato->getCursoSeccion()->getId();
         }
-
-        $pdf->AddPage();
-        $w = array(40, 35, 40, 45);
-        // Header
-        for($i=0;$i<count($header);$i++)
-            $pdf->Cell($w[$i],7,$header[$i],1,0,'C');
-        $pdf->Ln();
-        // Data
-        foreach($data as $row)
-        {
-            $pdf->Cell($w[0],8,$row[0],'LR');
-            $pdf->Cell($w[1],8,$row[1],'LR');
-            $pdf->Cell($w[2],8,number_format($row[2]),'LR',0,'R');
-            $pdf->Cell($w[3],8,number_format($row[3]),'LR',0,'R');
-            $pdf->Ln();
-        }
-        // Closing line
-        $pdf->Cell(array_sum($w),0,'','T');
-
-        $fecha_actual = new \DateTime("now");
+//
+//        $pdf->AddPage();
+//        $w = array(40, 35, 40, 45);
+//        // Header
+//        for($i=0;$i<count($header);$i++)
+//            $pdf->Cell($w[$i],7,$header[$i],1,0,'C');
+//        $pdf->Ln();
+//        // Data
+//        foreach($data as $row)
+//        {
+//            $pdf->Cell($w[0],8,$row[0],'LR');
+//            $pdf->Cell($w[1],8,$row[1],'LR');
+//            $pdf->Cell($w[2],8,number_format($row[2]),'LR',0,'R');
+//            $pdf->Cell($w[3],8,number_format($row[3]),'LR',0,'R');
+//            $pdf->Ln();
+//        }
+//        // Closing line
+//        $pdf->Cell(array_sum($w),0,'','T');
+//
+//        $fecha_actual = new \DateTime("now");
 //        $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
         // Header
 //        $path = $this->get('kernel')->getRootDir();

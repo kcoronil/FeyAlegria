@@ -7,3 +7,7 @@ services:
     class: RosaMolas\genericoBundle\Service\FuncionesGenericas
     arguments:
       container: "@service_container"
+  RM_pdf_service:
+    class: RosaMolas\genericoBundle\Service\pdfService
+    arguments:
+      container: "@service_container"
