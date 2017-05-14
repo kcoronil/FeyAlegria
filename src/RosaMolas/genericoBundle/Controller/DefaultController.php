@@ -61,34 +61,6 @@ class DefaultController extends Controller
 
     public function listado_alumnos_contactosAction(Request $request)
     {
-        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
-            ->createQueryBuilder('periodo_alumno')
-            ->select('periodo_alumno', 'alumnos')
-            ->Join('periodo_alumno.alumno', 'alumnos')
-            ->Join('alumnos.representante', 'representantes')
-            ->Join('representantes.representanteContacto', 'contactos')
-            ->where('periodo_alumno.activo = true')
-            ->andwhere('alumnos.activo = true')
-            ->andwhere('representantes.activo = true')
-            ->orderBy('alumnos.id', 'DESC')
-            ->getQuery();
-
-        $datos = $query->getResult();
-
-
-        $fecha_actual = new \DateTime("now");
-        $html = $this->renderView('genericoBundle:Default:listado_alumnos_contactos.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'datos' => $datos));
-
-        $mpdfService = $this->get('tfox.mpdfport');
-        $clase_mpdf = $mpdfService->getMpdf();
-
-        return new Response(
-            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
-            200,
-            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
-    }
-    public function listado_alumnos_contactos_fpdfAction(Request $request)
-    {
 
         $periodo_activo = $this->getDoctrine()
             ->getRepository('inicialBundle:PeriodoEscolar')
