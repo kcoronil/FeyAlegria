@@ -248,6 +248,12 @@ class Factura
 
     /*many to many pagos */
 
+    public function getPagos()
+    {
+        return $this->pagos;
+    }
+
+
     public function addPagos(Pagos $pagos)
     {
         $this->pagos->add($pagos);

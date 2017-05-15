@@ -221,7 +221,7 @@
                                                     {% for factura in facturas %}
                                                         {% if periodo.id == factura.PeriodoEscolarCursoAlumnos.id and factura.PeriodoEscolarCursoAlumnos.alumno.id == estudiante.id %}
                                                             <td>
-                                                                <a href="{{ path('generico_recibo_pago', { 'id': factura.id }) }}">Recibo cobro inscripción</a>
+                                                                <a href="{{ path('generico_recibo_pago', { 'id': factura.id }) }}" target="_blank">Recibo cobro inscripción</a>
                                                             </td>
                                                         {% endif %}
                                                     {% endfor %}
@@ -230,10 +230,10 @@
                                             </tr>
                                             <tr>
                                             <td colspan="2" class="text-center">
-                                                <a href="{{ path('generico_constancia_inscripcion', { 'id': estudiante.id }) }}">Constancia inscripción</a>
+                                                <a href="{{ path('generico_constancia_inscripcion', { 'id': estudiante.id }) }}" target="_blank">Constancia inscripción</a>
                                             </td>
                                             <td colspan="3" class="text-center">
-                                                <a href="{{ path('generico_constancia_estudios', { 'id': estudiante.id }) }}">Constancia de Estudios</a>
+                                                <a href="{{ path('generico_constancia_estudios', { 'id': estudiante.id }) }}" target="_blank">Constancia de Estudios</a>
                                             </td>
                                         </tr>
                                     {% endfor %}

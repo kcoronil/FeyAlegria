@@ -127,7 +127,7 @@ class DefaultController extends Controller
                     foreach($representanteDatos->getRepresentante()->getRepresentanteContacto() as $representanteContacto){
                         $contacto = $contacto.' '. $representanteContacto->getContacto();
                     }
-                    $rep= $rep.'Representante: '.$representanteDatos->getRepresentante()->getNombreApellido. '    parentesco: '.$representanteDatos->getParentesco()->getNombre().' '.$contacto."\n";
+                    $rep= $rep.'Representante: '.$representanteDatos->getRepresentante()->getNombreApellido(). '    parentesco: '.$representanteDatos->getParentesco()->getNombre().' '.$contacto."\n";
                 }
             }
             $estudianteInfo = iconv('utf-8', 'windows-1252', $estudianteInfo);
@@ -171,17 +171,22 @@ class DefaultController extends Controller
             ->getRepository('facturacionBundle:Factura')
             ->find($id);
 
+        $pagosId = array();
+        foreach($facturas->getPagos() as $pagos){
+            $pagosId[]= $pagos->getId();
+        }
         $pago = $this->getDoctrine()
             ->getRepository('genericoBundle:Pagos')
-            ->findOneBy(array('factura'=>$id));
+            ->findBy(array('id'=>$pagosId));
+
 
         $fecha_actual = new \DateTime("now");
-        $html = $this->renderView('genericoBundle:Default:recibo_pago.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pago'=>$pago));
+        $html = $this->renderView('genericoBundle:Default:recibo_pago.html.twig', array('accion'=>'Listado de Alumnos', 'fecha'=>$fecha_actual, 'facturas' => $facturas, 'pagos'=>$pago));
         //print_r($html);
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
-            array('Content-Type' => 'application/pdf', 'Content-Disposition' => 'attachment; filename="file.pdf"'));
+            array('Content-Type' => 'application/pdf'));
     }
     public function constancia_inscripcionAction($id, Request $request)
     {
@@ -214,8 +219,7 @@ class DefaultController extends Controller
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
             array(
-                'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+                'Content-Type' => 'application/pdf'
             )
         );
     }
@@ -250,8 +254,7 @@ class DefaultController extends Controller
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
             array(
-                'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+                'Content-Type' => 'application/pdf'
             )
         );
     }
@@ -275,8 +278,7 @@ class DefaultController extends Controller
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
             200,
             array(
-                'Content-Type'          => 'application/pdf',
-                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+                'Content-Type' => 'application/pdf'
             )
         );
     }
@@ -801,10 +803,12 @@ class DefaultController extends Controller
             if ($formInscripcion->get('guardar')->isClicked()) {
                 if($inscripcion->getEstatus()==1){
                     if (count($alumnosRepresentantesDatos) == count($alumnosInscripcion) * count($representantes)) {
+                        $alumn_ced_procesada = 1;
                         foreach($alumnosInscripcion as $p) {
                             $cedula_alumno = '';
                             $rep_ppal = 0;
                             $representante_ppal = '';
+                            $ced_rep = false;
                             if (!$p->getCedula()) {
                                 $cedula_alumno = false;
                             }
@@ -827,23 +831,26 @@ class DefaultController extends Controller
                             }
 
                             if ($cedula_alumno == false) {
-                                if ($representante_ppal->getAlumnoRepresentanteDatos()) {
-                                    $cant_alumnos_anio = 0;
+                                if ($representante_ppal->getAlumnoRepresentanteDatos()->count()>1) {
                                     foreach ($representante_ppal->getAlumnoRepresentanteDatos() as $alum_rep_datos) {
-                                        if ($alum_rep_datos->getAlumno()->getId() != $p->getId() and $alum_rep_datos->getAlumno()->getFechaNacimiento() == $p->getFechaNacimiento()) {
-                                            $cant_alumnos_anio = $cant_alumnos_anio + 1;
+                                        if ($alum_rep_datos->getAlumno()->getId() != $p->getId()) {
+                                            if($alum_rep_datos->getAlumno()->getFechaNacimiento() == $p->getFechaNacimiento()) {
+                                                $ced_rep = true;
+                                            }
                                         }
                                     }
-                                    if ($cant_alumnos_anio > 0) {
-                                        $p->setCedulaEstudiantil($cant_alumnos_anio . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
-                                    } else {
+                                    if($ced_rep == true){
+                                        $p->setCedulaEstudiantil($alumn_ced_procesada . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
+                                        $alumn_ced_procesada = $alumn_ced_procesada +1;
+                                    }
+                                    else{
                                         $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
                                     }
+
                                 } else {
                                     $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
                                 }
                             }
-
                         }
 
                         $em = $this->getDoctrine()->getManager();

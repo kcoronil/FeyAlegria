@@ -13,18 +13,14 @@
 <body>
     <div class="container">
         <div>
-            <table class="table">
-                <tr>
-                    <td>
-                        <div id="cabecera">
-                            <div id="cabecera2">
-                                <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
-                            </div>
-                        </div>
-                    </td>
-                    <td>FECHA DE INSCRIPCION:</td><td>{{ pago.fechaDeposito|date('d/m/y') }}</td>
-                </tr>
-            </table>
+            <div id="cabecera">
+                <div id="cabecera_pdf">
+                    <img src= "{{ app.request.scheme ~'://'~ app.request.httpHost ~ asset('public/images/logo-FyA.jpg') }}">
+                </div>
+            </div>
+            <div class="text-right">
+                    FECHA DE INSCRIPCION:</td><td>{{ fecha|date('d/m/y') }}</td>
+            </div>
             <br>
             <div class="text-center"><h4>RECIBO DE {{ facturas.tipoFactura.nombre|upper }} AÑO {{ facturas.periodoEscolarCursoAlumnos.periodoEscolar.nombre}}</h4></div>
             <br>
@@ -53,11 +49,13 @@
             </table>
             <br>
             <table class="table table-bordered">
+                {% for pago in pagos %}
                 <tr>
                     <td>BANCO: {{ pago.banco.nombre }}</td>
                     <td>No DEPOSITO {{ pago.numeroDeposito }}</td>
                     <td>TOTAL DEPOSITO: {{ pago.monto }}</td>
                 </tr>
+                {% endfor %}
             </table>
             <br>
             <br>

@@ -590,6 +590,10 @@ input[type=number] {
     width: 100%;
 }
 
+#cabecera_pdf img {
+    width: 20%;
+}
+
 .botones{
     padding: 1em 3em;
     margin: 1em 25%;

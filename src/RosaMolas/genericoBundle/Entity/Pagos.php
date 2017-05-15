@@ -230,12 +230,6 @@ class Pagos
         return $this->banco;
     }
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Factura", inversedBy="pagos", cascade={"persist"})
-     * @ORM\JoinTable(name="pagos_facturas",joinColumns={@ORM\JoinColumn(name="pago_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="factura_id", referencedColumnName="id")}
-     * )
-     **/
 
     /**
      * Get factura

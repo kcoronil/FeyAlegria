@@ -55,8 +55,8 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
             <li><a href="{{ path('inicial_editar_alumno', { 'id': datos.0.id }) }}" > Editar </a></li>
             <li><a href="{{ path('inicial_borrar_alumno', { 'id': datos.0.id }) }}">Borrar</a></li>
-            <li><a href="{{ path('generico_constancia_estudios', { 'id': datos.0.id }) }}">Constancia de Estudios</a></li>
-            <li><a href="{{ path('generico_constancia_inscripcion', { 'id': datos.0.id }) }}">Constancia de Incripcion</a></li>
+            <li><a href="{{ path('generico_constancia_estudios', { 'id': datos.0.id }) }}" target="_blank">Constancia de Estudios</a></li>
+            <li><a href="{{ path('generico_constancia_inscripcion', { 'id': datos.0.id }) }}" target="_blank">Constancia de Incripcion</a></li>
         </ul>
     </li>
     <li><a href="{{ path('inicial_agregar_alumno') }}">Nuevo Estudiante</a></li>
