@@ -545,7 +545,6 @@ class DefaultController extends Controller
 
     public function inscripcion_completaAction($id_rep, $id_agg_rep, Request $request)
     {
-        $session = $this->getRequest()->getSession();
         $inscripcion = $this->getDoctrine()
             ->getRepository('genericoBundle:Inscripcion')
             ->findOneBy(array('usuario'=>$this->getUser(), 'activo'=>true));
@@ -593,7 +592,6 @@ class DefaultController extends Controller
                 }
             }
         }
-//        $session->set("inscripcion", $inscripcion);
 
         $representantes = null;
         $representantes_ids = $inscripcion->getRepresentantes();
@@ -653,7 +651,6 @@ class DefaultController extends Controller
             $montosParticulares = $inscripcion->getMontosParticulares();
             $ids =explode(',', $montosParticulares);
             foreach($alumnosInscripcion as $estudiante){
-//                var_dump($estudiante->getTipoFacturacion()->getNombre());
                 if (strtolower($estudiante->getTipoFacturacion()->getNombre())=='particular'){
                     if(!in_array($estudiante->getId(), $ids)){
                         if(empty($montosParticulares )){
@@ -840,6 +837,15 @@ class DefaultController extends Controller
                                         }
                                     }
                                     if($ced_rep == true){
+                                        $queryCedula = true;
+                                        while(!empty($queryCedula)){
+                                            $cedulaEstudiantil = $alumn_ced_procesada . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+                                            $queryCedula = $this->queryCedulaEstudiantil($cedulaEstudiantil);
+                                            if(!empty($queryCedula)){
+                                                $alumn_ced_procesada = $alumn_ced_procesada +1;
+                                            }
+
+                                        }
                                         $p->setCedulaEstudiantil($alumn_ced_procesada . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
                                         $alumn_ced_procesada = $alumn_ced_procesada +1;
                                     }
@@ -852,7 +858,6 @@ class DefaultController extends Controller
                                 }
                             }
                         }
-
                         $em = $this->getDoctrine()->getManager();
                         $inscripcion->setEstatus(2);
                         $em->flush();
@@ -914,6 +919,9 @@ class DefaultController extends Controller
         elseif($inscripcion->getEstatus()==2){
             $template = 'genericoBundle:Default:crear_generico4.html.twig';
         }
+        elseif($inscripcion->getEstatus()==3){
+            $template = 'genericoBundle:Default:crear_generico4.html.twig';
+        }
         elseif($inscripcion->getEstatus()>=4){
             $template = 'genericoBundle:Default:crear_generico3.html.twig';
         }
@@ -933,6 +941,13 @@ class DefaultController extends Controller
                 'periodos_alumnos' => isset($periodos_alumnos) ? $periodos_alumnos : ''
             )
         );
+    }
+
+    private function queryCedulaEstudiantil($ced_test){
+        $verifyced = $this->getDoctrine()
+            ->getRepository('alumnosBundle:Alumnos')
+            ->findOneBy(array('cedulaEstudiantil'=>$ced_test, 'activo'=>true));
+        return $verifyced;
     }
 
     public function formulario_crear_representante_genericoAction(Request $request){
