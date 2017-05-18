@@ -4,6 +4,7 @@ namespace RosaMolas\alumnosBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use RosaMolas\facturacionBundle\Entity\MontosAlumnos;
 use RosaMolas\usuariosBundle\Entity\Usuarios;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\alumnosBundle\Entity\AlumnoRepresentante;
@@ -84,6 +85,11 @@ class Alumnos
     private $periodoEscolarCursoAlumno;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $montosAlumnos;
+
+    /**
      * @var \RosaMolas\genericoBundle\Entity\Inscripcion
      */
     private $inscripcion;
@@ -97,6 +103,7 @@ class Alumnos
         $this->representante = new ArrayCollection();
         $this->alumnoRepresentanteDatos = new ArrayCollection();
         $this->periodoEscolarCursoAlumno = new ArrayCollection();
+        $this->montosAlumnos = new ArrayCollection();
         //$this->periodoEscolarCurso = new ArrayCollection();
     }
 
@@ -447,6 +454,29 @@ class Alumnos
         $this->periodoEscolarCursoAlumno[] = $periodoEscolarCursoAlumno;
     }
 
+    public function getMontosAlumnos()
+    {
+        return $this->montosAlumnos->toArray();
+    }
+
+    public function setMontosAlumnos(PeriodoEscolarCursoAlumno $montosAlumnos = null)
+    {
+        $this->montosAlumnos = $montosAlumnos;
+    }
+
+    /**
+     * Add montosAlumnos
+     *
+     * @param \RosaMolas\facturacionBundle\Entity\MontosAlumnos $montosAlumnos
+     * @return Alumnos
+     */
+
+    public function addMontosAlumnos(MontosAlumnos $montosAlumnos)
+    {
+        $montosAlumnos->setAlumno($this);
+
+        $this->montosAlumnos[] = $montosAlumnos;
+    }
 
     public function getEdad()
     {

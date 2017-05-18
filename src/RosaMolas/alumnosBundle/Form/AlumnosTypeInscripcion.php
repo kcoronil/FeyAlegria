@@ -2,6 +2,7 @@
 
 namespace RosaMolas\alumnosBundle\Form;
 
+use RosaMolas\facturacionBundle\Form\MontosAlumnosType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -35,16 +36,19 @@ class AlumnosTypeInscripcion extends AbstractType
             ->add('sexo', 'entity', array('required' => true,
                 'class' => 'genericoBundle:Sexo','empty_data' => 'hola', 'multiple'=>false, 'expanded'=>true))
             ->add('alumnoRepresentanteDatos', 'collection',array('type'=>new AlumnoRepresentanteDatosType('Agregar Representante', $this->lista_id), 'allow_add' => true, 'allow_delete' => false,
-        'by_reference' => true,'prototype' => false, 'label' => false, 'cascade_validation'=>true,
-        'error_bubbling'=>false))
+                'by_reference' => true,'prototype' => false, 'label' => false, 'cascade_validation'=>true,
+                'error_bubbling'=>false))
             ->add('periodoEscolarCursoAlumno', 'collection', array('type'=>new PeriodoEscolarCursoAlumnoType('Seleccionar Curso'), 'allow_add' => true, 'allow_delete' => true,
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
-            ->add('tipoFacturacion','entity', array('required' => true,
-                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.activo=true');}))
+            ->add('montosAlumnos', 'collection', array('type'=>new MontosAlumnosType(), 'allow_add' => true, 'allow_delete' => true,
+                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
+                'error_bubbling'=>false))
+//            ->add('tipoFacturacion','entity', array('required' => true,
+//                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,
+//                'query_builder' => function (EntityRepository $er) {
+//                    return $er->createQueryBuilder('u')
+//                        ->where('u.activo=true');}))
 
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
             ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))

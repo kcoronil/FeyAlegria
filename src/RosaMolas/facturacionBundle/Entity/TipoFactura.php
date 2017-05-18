@@ -23,7 +23,10 @@ class TipoFactura
      * @var boolean
      */
     private $inscripcion = false;
-
+    /**
+     * @var boolean
+     */
+    private $mensualidad = false;
     /**
      * @var integer
      */
@@ -114,6 +117,29 @@ class TipoFactura
     public function getInscripcion()
     {
         return $this->inscripcion;
+    }
+
+    /**
+     * Set mensualidad
+     *
+     * @param boolean $mensualidad
+     * @return TipoFactura
+     */
+    public function setMensualidad($mensualidad)
+    {
+        $this->mensualidad = $mensualidad;
+
+        return $this;
+    }
+
+    /**
+     * Get mensualidad
+     *
+     * @return boolean
+     */
+    public function getMensualidadn()
+    {
+        return $this->mensualidad;
     }
 
     /**

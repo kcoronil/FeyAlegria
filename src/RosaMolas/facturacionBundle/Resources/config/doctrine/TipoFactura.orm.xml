@@ -10,6 +10,7 @@
     <field name="nombre" type="string" column="nombre" length="40" nullable="false"/>
     <field name="activo" type="boolean" column="activo" nullable="false"/>
     <field name="inscripcion" type="boolean" column="inscripcion" nullable="true"/>
+    <field name="mensualidad" type="boolean" column="mensualidad" nullable="true"/>
     <many-to-one field="tipoDatoVencimiento" target-entity="RosaMolas\facturacionBundle\Entity\TipoDatoVencimiento">
       <cascade>
         <cascade-persist/>
