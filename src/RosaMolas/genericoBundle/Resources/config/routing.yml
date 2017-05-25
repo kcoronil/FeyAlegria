@@ -1,14 +1,14 @@
 generico_homepage:
-    path:     /test_pdf/{id}
+    path:     /test_pdf/
     defaults: { _controller: genericoBundle:Default:index }
 
 generico_listado_alumnos_contactos:
     path:     /listado_alumnos_contactos/
     defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos }
 
-generico_listado_alumnos_contactos_fpdf:
-    path:     /listado_alumnos_contactos_fpdf/
-    defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos_fpdf }
+generico_relacion_mensualidades_pdf:
+    path:     /relacion_mensualidades_pdf/
+    defaults: { _controller: genericoBundle:Default:relacionMensualidades }
 
 generico_constancia_inscripcion:
     path:     /constancia_inscripcion/{id}

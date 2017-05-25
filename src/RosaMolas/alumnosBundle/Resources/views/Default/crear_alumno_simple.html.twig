@@ -21,9 +21,7 @@
             <div class="col-sm-12 text-left">
                 <div class="col-sm-12">
                     {{ form_start(form) }}
-                    {{ form_row(form.usuario) }}
                     {{ form_row(form.cedula) }}
-                    {{ form_row(form.cedulaEstudiantil) }}
                     {{ form_row(form.primerApellido) }}
                     {{ form_row(form.segundoApellido) }}
                     {{ form_row(form.primerNombre) }}
@@ -31,22 +29,27 @@
                     {{ form_row(form.fechaNacimiento) }}
                     {{ form_row(form.lugarNacimiento) }}
                     {{ form_row(form.sexo) }}
-                    {% if form.periodoEscolarCursoAlumno is defined %}
-                        <div id="cont_curso" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
-                            {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}
-                                {{ form_widget(form_periodoEscolarCursoAlumno) }}
+                    {% if form.montosAlumnos %}
+                        <div id="cont_curso" data-prototype="{{form_widget(form.montosAlumnos.vars.prototype)|e }}">
+                            {% for form_montosAlumnos in form.montosAlumnos %}
+                                {{ form_widget(form_montosAlumnos) }}
                             {% endfor %}
                         </div>
+                        <a id="monto-add" class="btn btn-default" data-target="cont_monto" title="agregar monto" style="display: none">test</a>
                     {% endif %}
-                    {{ form_row(form.tipoFacturacion) }}
+
+                    {% if form.periodoEscolarCursoAlumno %}
+                        <div id="cont_curso_edit" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
+                            {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}
+                                {{ form_row(form_periodoEscolarCursoAlumno) }}
+                            {% endfor %}
+                        </div>
+                        <a id="curso-add_edit" class="btn btn-default" data-target="cont_curso_edit" title="agregar curso" style="display: none">test</a>
+                    {% endif %}
                     <div class="col-sm-12 text-center ">
                         <br>
                         {{ form_row(form.guardar) }}
-                        {% if form.guardar_crear is defined %}
-                            {{ form_row(form.guardar_crear) }}
-                        {% endif %}
                     </div>
-                    <a id="curso-add" class="btn btn-default" data-target="cont_curso" title="agregar curso" style="display: none">test</a>
                     {{ form_end(form) }}
                 </div>
             </div>

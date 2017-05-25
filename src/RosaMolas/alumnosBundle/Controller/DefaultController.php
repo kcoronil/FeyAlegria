@@ -6,6 +6,7 @@ namespace RosaMolas\alumnosBundle\Controller;
 use RosaMolas\alumnosBundle\Entity\AlumnoRepresentanteDatos;
 use RosaMolas\alumnosBundle\Entity\PeriodoEscolarCursoAlumno;
 use RosaMolas\alumnosBundle\Form\AlumnoRepresentanteDatosType;
+use RosaMolas\alumnosBundle\Form\AlumnosTypeInscripcion;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeSimple;
 use RosaMolas\alumnosBundle\Form\AlumnosTypeUsuario;
 use RosaMolas\alumnosBundle\Form\PeriodoEscolarAlumnoType;
@@ -183,7 +184,19 @@ class DefaultController extends Controller
     }
 
     public function editar_alumnoAction($id, Request $request){
-        $form = new AlumnosTypeSimple('Editar Estudiante');
+        $cursos = $this->getDoctrine()
+            ->getRepository('inicialBundle:CursoSeccion')
+            ->findBy(array('activo'=>true));
+
+        $cant_seccion = [];
+        foreach($cursos as $curso){
+            $alumnos = $this->getDoctrine()
+                ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+                ->findBy(array('cursoSeccion'=>$curso->getId(), 'activo'=>true));
+            $cant_seccion[$curso->getId()] =  array('cupos'=>$curso->getCupos(), 'alumnos'=>count($alumnos));
+        }
+
+        $form = new AlumnosTypeInscripcion('Editar Estudiante', null, $cant_seccion);
         return $this->editar_generico($id, $request, $form, 'Alumnos', 'Editar Estudiante', 'inicial_homepage', 'crear_alumno_simple');
     }
 

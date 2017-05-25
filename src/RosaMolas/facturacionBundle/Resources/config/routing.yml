@@ -34,6 +34,10 @@ inicial_editar_tipo_factura:
     path:     /editar_tipo_factura/{id}
     defaults: { _controller: facturacionBundle:Default:editar_tipo_factura }
 
+inicial_editar_tipo_factura_test:
+    path:     /editar_tipo_factura_test/{id}
+    defaults: { _controller: facturacionBundle:Default:editar_full_tipo_factura }
+
 inicial_borrar_tipo_factura:
     path:     /borrar_tipo_factura/{id}
     defaults: { _controller: facturacionBundle:Default:borrar_tipo_factura }

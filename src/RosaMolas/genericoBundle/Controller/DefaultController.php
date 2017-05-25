@@ -31,7 +31,7 @@ use RosaMolas\genericoBundle\Service\pdfService;
 
 class DefaultController extends Controller
 {
-    public function indexAction($id, Request $request)
+    public function indexAction(Request $request)
     {
         $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
             ->createQueryBuilder('periodo_alumno')
@@ -44,7 +44,7 @@ class DefaultController extends Controller
             ->andwhere('alumnos.activo = true')
             ->andwhere('representantes.activo = true')
             ->orderBy('alumnos.id', 'DESC')
-            ->setParameter('id',$id)
+//            ->setParameter('id',$id)
             ->getQuery();
 
         $datos = $query->getResult();
@@ -61,7 +61,6 @@ class DefaultController extends Controller
 
     public function listado_alumnos_contactosAction(Request $request)
     {
-
         $periodo_activo = $this->getDoctrine()
             ->getRepository('inicialBundle:PeriodoEscolar')
             ->findOneBy(array('activo'=>true));
@@ -165,6 +164,101 @@ class DefaultController extends Controller
             200,
             array('Content-Type' => 'application/pdf'));
     }
+    public function relacionMensualidadesAction(Request $request)
+    {
+
+        $periodo_activo = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolar')
+            ->findOneBy(array('activo'=>true));
+        $directoryPath = $this->container->getParameter('kernel.root_dir');
+        $title = array(iconv('utf-8', 'windows-1252', 'U.E. Col Maria Rosa Molas - Fé y Alegría'),
+            iconv('utf-8', 'windows-1252', 'RIF: J-00133027-5          NIT: 0082854118'),
+            iconv('utf-8', 'windows-1252', 'Teléfono: 0212-8702598 Fax: 02128702598')
+        );
+
+        $date = new \DateTime();
+        $topright = array($date->format('d/m/Y h:i:s A'),
+            iconv('utf-8', 'windows-1252', 'Año Escolar: '.$periodo_activo->getNombre())
+        );
+        $periodo_alumnos = $this->getDoctrine()
+            ->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->findBy(
+                array('activo'=>true),
+                array('cursoSeccion' => 'ASC')
+            );
+        $facturaMensualidad = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->findOneBy(array('mensualidad'=>true, 'activo'=>true));
+
+        $pdf =  new pdfService();
+        $pdf->SetFont('Arial','',8);
+        $pdf->setHeaderImage($directoryPath."/../web/public/images/fe-y-alegria_fav.png");
+        $pdf->setheaderTitle($title);
+        $pdf->setHeaderfontSize(9);
+        $pdf->setHeaderTopRight($topright);
+        $pagewidthMargin = $pdf->GetPageWidth()-20;
+        $currentCurso = '';
+        $i=1;
+//        var_dump($facturaMensualidad->getId());
+//        var_dump($periodo_alumnos);
+        $arrayContents = array();
+        $curso = '';
+        $AlumnCount = 0;
+        $total_mensual = 0;
+        $currentCurso = '';
+        $first = true;
+        foreach($periodo_alumnos as $dato){
+            if($currentCurso != $dato->getCursoSeccion()->getCurso()->getId() and !$first) {
+                $arrayContents[] = array('curso'=>$curso, 'cant_alumnos'=>$AlumnCount, 'total_mensual' => $total_mensual);
+                $curso = '';
+                $AlumnCount = 0;
+                $total_mensual = 0;
+            }
+            $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+            foreach($dato->getAlumno()->getMontosAlumnos() as $montosAlumn){
+//                var_dump($curso = $dato->getCursoSeccion()->getCurso()->getNombre());
+                foreach($montosAlumn->getConceptoFactura()->getTipoFactura() as $tipoFact){
+                    if($tipoFact->getId() == $facturaMensualidad->getId()){
+                        $total_mensual = $total_mensual + $montosAlumn->getMonto();
+                    }
+                }
+            }
+
+            $currentCurso = $dato->getCursoSeccion()->getCurso()->getId();
+            $AlumnCount = $AlumnCount+1;
+            if($first){
+                $first = false;
+            }
+        }
+
+
+        $i=1;
+        $pdf->AddPage('P', 'Letter');
+        $pdf->SetFont('Arial','',10);
+        $pdf->Cell($pagewidthMargin, 8, 'RELACION DE MENSUALIDADES', 0, 0, 'C');
+        $pdf->Ln(6);
+        $pdf->SetFont('Arial','',8);
+        $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+        $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
+        $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Curso'), 0, 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'No de Alumnos'), 0, 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Cuota Promedio'), 0, 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Total Mensual'), 0, 0, 'C');
+        $pdf->Ln(6);
+        foreach($arrayContents as $content){
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['curso']), 0, 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['cant_alumnos']), 0, 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['total_mensual']/$content['cant_alumnos']), 0, 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['total_mensual']), 0, 0, 'C');
+            $pdf->Ln(6);
+        }
+        return new Response(
+            $pdf->Output(),
+            200,
+            array('Content-Type' => 'application/pdf'));
+    }
+
     public function recibo_pagoAction($id, Request $request)
     {
         $facturas = $this->getDoctrine()
@@ -1086,7 +1180,16 @@ class DefaultController extends Controller
 
     public function formulario_crear_estudiante_genericoAction(Request $request){
         $alumno = new Alumnos();
-
+        $monto = new MontosAlumnos();
+        $tfact = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->findOneBy(array('activo' => 'true', 'mensualidad'=>true));
+        $conFact = $tfact->getConceptosFactura();
+        foreach($conFact as $cfact){
+            $monto->setConceptoFactura($cfact);
+        }
+        $monto->setActivo(true);
+        $alumno->addMontosAlumnos($monto);
         $cursos = $this->getDoctrine()
             ->getRepository('inicialBundle:CursoSeccion')
             ->findBy(array('activo'=>true));

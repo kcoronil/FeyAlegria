@@ -104,7 +104,6 @@ class Alumnos
         $this->alumnoRepresentanteDatos = new ArrayCollection();
         $this->periodoEscolarCursoAlumno = new ArrayCollection();
         $this->montosAlumnos = new ArrayCollection();
-        //$this->periodoEscolarCurso = new ArrayCollection();
     }
 
     /**
@@ -456,10 +455,10 @@ class Alumnos
 
     public function getMontosAlumnos()
     {
-        return $this->montosAlumnos->toArray();
+        return $this->montosAlumnos;
     }
 
-    public function setMontosAlumnos(PeriodoEscolarCursoAlumno $montosAlumnos = null)
+    public function setMontosAlumnos(MontosAlumnos $montosAlumnos = null)
     {
         $this->montosAlumnos = $montosAlumnos;
     }

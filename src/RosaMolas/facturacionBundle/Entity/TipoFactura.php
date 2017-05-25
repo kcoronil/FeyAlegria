@@ -137,7 +137,7 @@ class TipoFactura
      *
      * @return boolean
      */
-    public function getMensualidadn()
+    public function getMensualidad()
     {
         return $this->mensualidad;
     }

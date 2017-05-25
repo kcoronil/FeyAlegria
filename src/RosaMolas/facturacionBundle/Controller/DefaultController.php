@@ -129,6 +129,41 @@ class DefaultController extends Controller
         return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
             'accion'=>'Crear Tipo Factura',));
     }
+    public function editar_tipo_facturaAction(request $request, $id){
+        $p = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->find($id);
+        $formulario = $this->createForm(new TipoFacturaType('Editar Tipo Factura'), $p);
+        $formulario-> handleRequest($request);
+
+        if($request->getMethod()=='POST') {
+            if ($formulario->isValid()) {
+                $p->setActivo(true);
+
+                foreach($p->getConceptosFactura() as $concepto_factura){
+                    foreach($concepto_factura->getTipoMontoConceptos() as $tipo_monto_con){
+                        $tipo_monto_con->setConceptosFactura($concepto_factura);
+                        $tipo_monto_con->setActivo(true);
+                    }
+                    $concepto_factura->setActivo(true);
+                }
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($p);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Tipo Factura creada con éxito');
+
+                if ($formulario->get('guardar')->isClicked()) {
+                    return $this->redirect($this->generateUrl('inicial_homepage'));
+                }
+                if ($formulario->get('guardar_crear')->isClicked()){
+                    return $this->redirect($this->generateUrl('inicial_agregar_tfactura'));
+                }
+            }
+        }
+        return $this->render('facturacionBundle:Default:crear_tipo_factura.html.twig', array('form'=>$formulario->createView(),
+            'accion'=>'Crear Tipo Factura',));
+    }
     public function editar_tfacturaAction($id, request $request){
         $p = $this->getDoctrine()
             ->getRepository('facturacionBundle:TipoFactura')
@@ -182,18 +217,18 @@ class DefaultController extends Controller
         }
         return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
     }
-    public function editar_tipo_facturaAction($id, Request $request){
-        $form = new TipoFacturaType('Editar Tipo Factura');
-        $clase = 'facturacionBundle:TipoFactura';
-        $titulo = 'Tipo Factura';
-        $url_redireccion = 'inicial_agregar_tipo_factura';
-        $remover = null;
-        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
-        if(array_key_exists('resulado', $resultado)) {
-            return $this->redirect($this->generateUrl($resultado['url']));
-        }
-        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
-    }
+//    public function editar_tipo_facturaAction($id, Request $request){
+//        $form = new TipoFacturaType('Editar Tipo Factura');
+//        $clase = 'facturacionBundle:TipoFactura';
+//        $titulo = 'Tipo Factura';
+//        $url_redireccion = 'inicial_agregar_tipo_factura';
+//        $remover = null;
+//        $resultado = $this->get('funciones_genericas')->editar_generico($id, $request, $form, $clase, $titulo, $url_redireccion, $remover);
+//        if(array_key_exists('resulado', $resultado)) {
+//            return $this->redirect($this->generateUrl($resultado['url']));
+//        }
+//        return $this->render('inicialBundle:Default:mantenimiento' . '.html.twig', $resultado);
+//    }
     public function borrar_tipo_facturaAction($id, Request $request){
         $form = new TipoFacturaType('Borrar Tipo Factura');
         $objeto = 'TipoFactura';

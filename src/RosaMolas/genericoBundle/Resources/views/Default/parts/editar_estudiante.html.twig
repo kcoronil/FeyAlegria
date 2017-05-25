@@ -1,5 +1,8 @@
 {% if form is defined %}
     {% form_theme form "::formulario_bootstrap_div.html.twig" %}
+    {% if alumnosRepDatosForm is defined %}
+        {% form_theme alumnosRepDatosForm "::formulario_bootstrap_div.html.twig" %}
+    {% endif %}
     <div class="col-sm-12 text-left">
         {% set form_url = accion == 'Crear Estudiante'?  path('generico_formulario_crear_estudiante') : path('generico_formulario_actualizar_estudiante', {'id':form.vars.data.id}) %}
         <div class="col-sm-12">
@@ -18,7 +21,15 @@
             {{ form_row(form.fechaNacimiento) }}
             {{ form_row(form.lugarNacimiento) }}
             {{ form_row(form.sexo) }}
-            {{ form_row(form.tipoFacturacion) }}
+            {% if form.montosAlumnos %}
+                <div id="cont_curso" data-prototype="{{form_widget(form.montosAlumnos.vars.prototype)|e }}">
+                    {% for form_montosAlumnos in form.montosAlumnos %}
+                        {{ form_widget(form_montosAlumnos) }}
+                    {% endfor %}
+                </div>
+                <a id="monto-add" class="btn btn-default" data-target="cont_monto" title="agregar monto" style="display: none">test</a>
+            {% endif %}
+
             {% if form.periodoEscolarCursoAlumno %}
                 <div id="cont_curso_edit" data-prototype="{{form_widget(form.periodoEscolarCursoAlumno.vars.prototype)|e }}">
                     {% for form_periodoEscolarCursoAlumno in form.periodoEscolarCursoAlumno %}

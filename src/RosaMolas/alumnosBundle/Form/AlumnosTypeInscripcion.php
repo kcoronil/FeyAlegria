@@ -42,7 +42,7 @@ class AlumnosTypeInscripcion extends AbstractType
                 'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
             ->add('montosAlumnos', 'collection', array('type'=>new MontosAlumnosType(), 'allow_add' => true, 'allow_delete' => true,
-                'by_reference' => false,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
+                'by_reference' => true,'prototype' => true, 'label' => false, 'cascade_validation'=>true,
                 'error_bubbling'=>false))
 //            ->add('tipoFacturacion','entity', array('required' => true,
 //                'class' => 'facturacionBundle:TipoFacturacion','empty_data' => 'Crear Tipo Facturacion', 'multiple'=>false, 'expanded'=>false, 'by_reference' => true,

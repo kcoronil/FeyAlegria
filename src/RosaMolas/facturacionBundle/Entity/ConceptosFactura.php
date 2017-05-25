@@ -30,7 +30,7 @@ class ConceptosFactura
     private $tipoMontoConceptos;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var \RosaMolas\facturacionBundle\Entity\TipoFactura
      */
     private $tipoFactura;
 
@@ -46,7 +46,7 @@ class ConceptosFactura
     public function __construct()
     {
         $this->tipoMontoConceptos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
+//        $this->tipoFactura = new \Doctrine\Common\Collections\ArrayCollection();
         $this->montosAlumnos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -165,7 +165,7 @@ class ConceptosFactura
     /**
      * Get tipoFactura
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \RosaMolas\facturacionBundle\Entity\TipoFactura
      */
     public function getTipoFactura()
     {
