@@ -28,7 +28,7 @@
                 {{ form_row(form.email) }}
                 {% if form.representanteContacto is defined %}
                     <div class="row">
-                    <div id="cont_contacto" class="col-sm-12" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
+                    <div id="cont_contacto" class="col-sm-12 cont_contacto" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
                         {% for form_contacto in form.representanteContacto %}
                             {{ form_widget(form_contacto) }}
                         {% endfor %}

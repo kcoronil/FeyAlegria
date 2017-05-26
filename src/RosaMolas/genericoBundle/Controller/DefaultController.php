@@ -216,9 +216,14 @@ class DefaultController extends Controller
             }
             $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
             foreach($dato->getAlumno()->getMontosAlumnos() as $montosAlumn){
+
 //                var_dump($curso = $dato->getCursoSeccion()->getCurso()->getNombre());
                 foreach($montosAlumn->getConceptoFactura()->getTipoFactura() as $tipoFact){
+//                    var_dump();
+//                    exit;
                     if($tipoFact->getId() == $facturaMensualidad->getId()){
+
+
                         $total_mensual = $total_mensual + $montosAlumn->getMonto();
                     }
                 }
@@ -230,8 +235,6 @@ class DefaultController extends Controller
                 $first = false;
             }
         }
-
-
         $i=1;
         $pdf->AddPage('P', 'Letter');
         $pdf->SetFont('Arial','',10);
@@ -241,18 +244,32 @@ class DefaultController extends Controller
         $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
         $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
         $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+        $pdf->Cell(40);
         $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Curso'), 0, 0, 'C');
         $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'No de Alumnos'), 0, 0, 'C');
         $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Cuota Promedio'), 0, 0, 'C');
         $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'Total Mensual'), 0, 0, 'C');
         $pdf->Ln(6);
+        $totalMensual = 0;
+        $totalalumnos = 0;
         foreach($arrayContents as $content){
-            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['curso']), 0, 0, 'C');
-            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['cant_alumnos']), 0, 0, 'C');
-            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['total_mensual']/$content['cant_alumnos']), 0, 0, 'C');
-            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['total_mensual']), 0, 0, 'C');
+            $pdf->Cell(40);
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['curso']), 'B', 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['cant_alumnos']), 'B', 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', intval($content['total_mensual']/$content['cant_alumnos'])), 'B', 0, 'C');
+            $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $content['total_mensual']), 'B', 0, 'C');
             $pdf->Ln(6);
+            $totalalumnos = $totalalumnos + $content['cant_alumnos'];
+            $totalMensual = $totalMensual + $content['total_mensual'];
+
         }
+        $totalpromedio = ($totalMensual/$totalalumnos);
+        $pdf->SetY(-27);
+        $pdf->Cell(40);
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', 'TOTAL'), 'TB', 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', $totalalumnos), 'TB', 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252', intval($totalpromedio)), 'TB', 0, 'C');
+        $pdf->Cell(30, 6, iconv('utf-8', 'windows-1252',$totalMensual), 'TB', 0, 'C');
         return new Response(
             $pdf->Output(),
             200,

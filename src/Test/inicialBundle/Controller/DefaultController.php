@@ -1,5 +1,6 @@
 <?php
 namespace Test\inicialBundle\Controller;
+use RosaMolas\facturacionBundle\Entity\MontosAlumnos;
 use RosaMolas\facturacionBundle\Form\ConceptosFacturaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,10 +41,25 @@ class DefaultController extends Controller
 //        $alumnosInscripcion = $this->getDoctrine()
 //            ->getRepository('alumnosBundle:Alumnos')
 //            ->findAll();
-//        $cedula_alumno = '';
-//        $rep_ppal = 0;
-//        $representante_ppal = '';
+////        $cedula_alumno = '';
+////        $rep_ppal = 0;
+////        $representante_ppal = '';
+//        $facturaMensualidad = $this->getDoctrine()
+//            ->getRepository('facturacionBundle:TipoFactura')
+//            ->findOneBy(array('mensualidad'=>true, 'activo'=>true));
 //        foreach($alumnosInscripcion as $alumno){
+//            $monto = $alumno->getMontosAlumnos()[0];
+//            if(empty($monto)){
+//                $montosA = new MontosAlumnos();
+//                $montosA->setMonto(350);
+//                $montosA->setActivo(true);
+//                $montosA->setAlumno($alumno);
+//                $montosA->setConceptoFactura($facturaMensualidad->getConceptosFactura()[0]);
+//                $em = $this->getDoctrine()->getManager();
+//                $em->persist($montosA);
+//                $em->flush();
+//            }
+//        }
 //            foreach($alumno->getAlumnoRepresentanteDatos() as $alumno_rep_datos){
 //                if($alumno_rep_datos->getPrincipal()==true){
 ////                    $rep_ppal=  $rep_ppal + 1;

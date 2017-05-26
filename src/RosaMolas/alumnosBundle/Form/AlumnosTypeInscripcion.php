@@ -51,7 +51,6 @@ class AlumnosTypeInscripcion extends AbstractType
 //                        ->where('u.activo=true');}))
 
             ->add('guardar', 'submit', array('attr'=>array('class'=>'data-first-button btn-default')))
-            ->add('guardar_crear', 'submit', array('attr'=>array('label'=>'Guardar y Crear Otro', 'class'=>'data-last-button btn-default')))
         ;
         /*if($this->lista_id){
             $builder->add('representante','entity', array('label'=>'Representantes', 'required' => true,
