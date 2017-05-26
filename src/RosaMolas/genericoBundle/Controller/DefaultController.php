@@ -786,7 +786,7 @@ class DefaultController extends Controller
         }
 
         if($inscripcion->getEstatus() == 3 and count($alumnosInscripcion) != count($inscripcion->getFacturas())) {
-            $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
+            $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->findOneBy(array('inscripcion'=>true));
 
             if(empty($facturasInscripcion)){
                 foreach ($alumnosInscripcion as $estudiante) {

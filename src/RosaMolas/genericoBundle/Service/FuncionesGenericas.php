@@ -217,7 +217,8 @@ class FuncionesGenericas extends Controller
                 $nueva_fact_detalle->setActivo(true);
                 $nueva_fact_detalle->setConcepto($concepto_tipo);
                 $nueva_fact_detalle->setFactura($nueva_fact);
-                if(strtolower($estudiante->getTipoFacturacion()->getNombre()) == 'particular' and !$tipo_factura->getInscripcion()) {
+                $monto = $estudiante->getMontosAlumnos()[0];
+                if($monto and !$tipo_factura->getInscripcion()) {
                     $p = $this->getDoctrine()
                         ->getRepository('facturacionBundle:MontosAlumnos')
                         ->findOneBy(array('alumno' => $estudiante, 'conceptoFactura' => $concepto_tipo, 'activo'=>true));
