@@ -414,15 +414,16 @@ class DefaultController extends Controller
         $query = $this->getDoctrine()->getRepository('alumnosBundle:Alumnos')
             ->createQueryBuilder('alumno')
             ->select('alumno.id','alumno.cedula','alumno.cedulaEstudiantil', 'alumno.primerApellido', 'alumno.primerNombre', 'alumno.fechaNacimiento', 'usuario.primerNombre as Nombre_Representante', 'usuario.primerApellido as Apellido_Representante', 'usuario.id as usuario_id')
-            ->leftJoin('alumno.representante', 'usuario')
+            ->leftJoin('alumno.alumnoRepresentanteDatos', 'alumno_representantes')
+            ->leftJoin('alumno_representantes.representante', 'usuario')
+//            ->leftJoin('alumno.representante', 'usuario')
             ->where('usuario.activo = true')
-            ->where('usuario.principal = true')
+            ->where('alumno_representantes.principal = true')
             ->andwhere('alumno.activo = true')
             ->orderBy('alumno.id', 'DESC')
             ->getQuery();
 
         $datos = $query->getArrayResult();
-
         return $this->render('alumnosBundle:Default:datos_alumno_representante.html.twig', array('accion'=>'Seleccione Alumno', 'datos'=>$datos));
 
     }

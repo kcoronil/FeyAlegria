@@ -6,6 +6,14 @@ generico_listado_alumnos_contactos:
     path:     /listado_alumnos_contactos/
     defaults: { _controller: genericoBundle:Default:listado_alumnos_contactos }
 
+generico_listado_alumnos_mensualidades:
+    path:     /listado_alumnos_mensualidades/
+    defaults: { _controller: genericoBundle:Default:listado_alumnos_mensualidades }
+
+generico_listado_alumnos:
+    path:     /listado_alumnos/
+    defaults: { _controller: genericoBundle:Default:listado_alumnos }
+
 generico_relacion_mensualidades_pdf:
     path:     /relacion_mensualidades_pdf/
     defaults: { _controller: genericoBundle:Default:relacionMensualidades }

@@ -199,8 +199,6 @@ class DefaultController extends Controller
         $pagewidthMargin = $pdf->GetPageWidth()-20;
         $currentCurso = '';
         $i=1;
-//        var_dump($facturaMensualidad->getId());
-//        var_dump($periodo_alumnos);
         $arrayContents = array();
         $curso = '';
         $AlumnCount = 0;
@@ -216,11 +214,8 @@ class DefaultController extends Controller
             }
             $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
             foreach($dato->getAlumno()->getMontosAlumnos() as $montosAlumn){
-
-//                var_dump($curso = $dato->getCursoSeccion()->getCurso()->getNombre());
                 foreach($montosAlumn->getConceptoFactura()->getTipoFactura() as $tipoFact){
-//                    var_dump();
-//                    exit;
+
                     if($tipoFact->getId() == $facturaMensualidad->getId()){
 
 
@@ -275,7 +270,179 @@ class DefaultController extends Controller
             200,
             array('Content-Type' => 'application/pdf'));
     }
+    public function listado_alumnos_mensualidadesAction(Request $request)
+    {
+        $periodo_activo = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolar')
+            ->findOneBy(array('activo'=>true));
+        $directoryPath = $this->container->getParameter('kernel.root_dir');
+        $title = array(iconv('utf-8', 'windows-1252', 'U.E. Col Maria Rosa Molas - Fé y Alegría'),
+            iconv('utf-8', 'windows-1252', 'Teléfono: 0212-8702598 Fax: 02128702598')
+        );
 
+        $date = new \DateTime();
+        $topright = array($date->format('d/m/Y h:i:s A'),
+            iconv('utf-8', 'windows-1252', 'Año Escolar: '.$periodo_activo->getNombre())
+        );
+
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->createQueryBuilder('periodo_alumno')
+            ->select('periodo_alumno', 'alumnos')
+            ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('periodo_alumno.cursoSeccion', 'cursoSeccion')
+            ->where('periodo_alumno.activo = true')
+            ->andwhere('alumnos.activo = true')
+            ->orderBy('cursoSeccion.id', 'ASC')
+            ->addOrderBy('alumnos.primerApellido', 'ASC')
+            ->getQuery();
+
+        $datos = $query->getResult();
+        $pdf =  new pdfService();
+        $pdf->SetFont('Arial','',8);
+        $pdf->setHeaderImage($directoryPath."/../web/public/images/fe-y-alegria_fav.png");
+        $pdf->setheaderTitle($title);
+        $pdf->setHeaderfontSize(9);
+        $pdf->setHeaderTopRight($topright);
+        $pagewidthMargin = $pdf->GetPageWidth()-20;
+        $currentCurso = '';
+        $i=1;
+        $facturaMensualidad = $this->getDoctrine()
+            ->getRepository('facturacionBundle:TipoFactura')
+            ->findOneBy(array('mensualidad'=>true, 'activo'=>true));
+        foreach($datos as $dato){
+
+            $estudianteInfo = strtoupper($dato->getAlumno()->getApellidoNombreCompleto());
+
+            $conceptosFactura = [];
+            foreach($facturaMensualidad->getConceptosFactura() as $conFact){
+                $conceptosFactura = $conFact->getId();
+            }
+            $MontosAlumno = $this->getDoctrine()
+                ->getRepository('facturacionBundle:MontosAlumnos')
+                ->findBy(array('alumno'=>$dato->getAlumno(), 'conceptoFactura'=>$conceptosFactura));
+            $monto = 0;
+            foreach($MontosAlumno as $montoAlumn){
+                $monto = $monto + $montoAlumn->getMonto();
+            }
+
+
+            $estudianteInfo = iconv('utf-8', 'windows-1252', $estudianteInfo);
+            $monto= iconv('utf-8', 'windows-1252', $monto);
+            if(intval($pdf->GetY()+30)>240 or $currentCurso != $dato->getCursoSeccion()->getId()){
+                $i=1;
+                $pdf->AddPage('P', 'Letter');
+                $pdf->SetFont('Arial','',10);
+                $pdf->Cell($pagewidthMargin, 8, 'COMPROMISO ECONOMICO DE LOS ESTUDIANTES', 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->SetFont('Arial','',8);
+                $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+                $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
+                $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', $curso_str), 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', 'No   Estudiante                                                                      APORTE ECONOMICO'), 1, 0, 'L');
+                $pdf->Ln(6);
+            }
+            $pdf->Cell(90, 6, $i.'    '.$estudianteInfo);
+            $pdf->Cell(10, 6, $monto);
+            $pdf->Cell(90, 5, '', 'B');
+            $pdf->Ln(6);
+            $currentCurso = $dato->getCursoSeccion()->getId();
+            $i=$i+1;
+        }
+        return new Response(
+            $pdf->Output(),
+            200,
+            array('Content-Type' => 'application/pdf'));
+    }
+    public function listado_alumnosAction(Request $request)
+    {
+        $periodo_activo = $this->getDoctrine()
+            ->getRepository('inicialBundle:PeriodoEscolar')
+            ->findOneBy(array('activo'=>true));
+        $directoryPath = $this->container->getParameter('kernel.root_dir');
+        $title = array(iconv('utf-8', 'windows-1252', 'U.E. Col Maria Rosa Molas - Fé y Alegría'),
+            iconv('utf-8', 'windows-1252', 'Teléfono: 0212-8702598 Fax: 02128702598')
+        );
+
+        $date = new \DateTime();
+        $topright = array($date->format('d/m/Y h:i:s A'),
+            iconv('utf-8', 'windows-1252', 'Año Escolar: '.$periodo_activo->getNombre())
+        );
+
+
+        $query = $this->getDoctrine()->getRepository('alumnosBundle:PeriodoEscolarCursoAlumno')
+            ->createQueryBuilder('periodo_alumno')
+            ->select('periodo_alumno', 'alumnos')
+            ->Join('periodo_alumno.alumno', 'alumnos')
+            ->Join('periodo_alumno.cursoSeccion', 'cursoSeccion')
+            ->where('periodo_alumno.activo = true')
+            ->andwhere('alumnos.activo = true')
+            ->orderBy('cursoSeccion.id', 'ASC')
+            ->addOrderBy('alumnos.primerApellido', 'ASC')
+            ->getQuery();
+
+        $datos = $query->getResult();
+        $pdf =  new pdfService();
+        $pdf->SetFont('Arial','',7);
+        $pdf->setHeaderImage($directoryPath."/../web/public/images/fe-y-alegria_fav.png");
+        $pdf->setheaderTitle($title);
+        $pdf->setHeaderfontSize(9);
+        $pdf->setHeaderTopRight($topright);
+        $pagewidthMargin = $pdf->GetPageWidth()-20;
+        $currentCurso = '';
+        $i=1;
+        foreach($datos as $dato){
+            $estudianteInfo = strtoupper($dato->getAlumno()->getApellidoNombreCompleto());
+            $estudianteInfo = iconv('utf-8', 'windows-1252', $estudianteInfo);
+            if(intval($pdf->GetY()+30)>240 or $currentCurso != $dato->getCursoSeccion()->getId()){
+                $i=1;
+                $pdf->AddPage('P', 'Letter');
+                $pdf->SetFont('Arial','',9);
+                $pdf->Cell($pagewidthMargin, 8, 'LISTADO DE ALUMNOS', 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->SetFont('Arial','',8);
+                $curso = $dato->getCursoSeccion()->getCurso()->getNombre();
+                $seccion = $dato->getCursoSeccion()->getSeccion()->getNombre();
+                $curso_str = 'Curso: '.$curso.'     '.' Seccion:'.$seccion;
+                $pdf->Cell($pagewidthMargin, 6, iconv('utf-8', 'windows-1252', $curso_str), 0, 0, 'C');
+                $pdf->Ln(6);
+                $pdf->Cell(6, 5, iconv('utf-8', 'windows-1252', 'No'), 1, 0, 'L');
+                $pdf->Cell(100, 5, iconv('utf-8', 'windows-1252', 'Alumnos '), 1, 0, 'C');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Cell(9, 5, '', '1');
+                $pdf->Ln(5);
+            }
+            $pdf->Cell(6, 5, $i, 1);
+            $pdf->Cell(100, 5, $estudianteInfo, 1);
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+            $pdf->Cell(9, 5, '', '1');
+
+            $pdf->Ln(5);
+            $currentCurso = $dato->getCursoSeccion()->getId();
+            $i=$i+1;
+        }
+        return new Response(
+            $pdf->Output(),
+            200,
+            array('Content-Type' => 'application/pdf'));
+    }
     public function recibo_pagoAction($id, Request $request)
     {
         $facturas = $this->getDoctrine()
@@ -757,33 +924,33 @@ class DefaultController extends Controller
         $formInscripcion = $this->createForm(new InscripcionType('test'), $inscripcion);
         $formInscripcion-> handleRequest($request);
 
-        $estudiante_monto_particular = new ArrayCollection();
-        if($inscripcion->getEstatus() == 2) {
-            $montosParticulares = $inscripcion->getMontosParticulares();
-            $ids =explode(',', $montosParticulares);
-            foreach($alumnosInscripcion as $estudiante){
-                if (strtolower($estudiante->getTipoFacturacion()->getNombre())=='particular'){
-                    if(!in_array($estudiante->getId(), $ids)){
-                        if(empty($montosParticulares )){
-                            $montosParticulares = $estudiante->getId();
-                        }
-                        else{
-                            $montosParticulares = $montosParticulares .','.$estudiante->getId();
-                        }
-                        $estudiante_monto_particular->add($estudiante);
-                        $em = $this->getDoctrine()->getManager();
-                        $inscripcion->setMontosParticulares($montosParticulares);
-                        $em->flush();
-                    }
-                }
-            }
-            if($estudiante_monto_particular->isEmpty()){
-                $em = $this->getDoctrine()->getManager();
-                $inscripcion->setEstatus(3);
-                $em->flush();
-                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-            }
-        }
+//        $estudiante_monto_particular = new ArrayCollection();
+//        if($inscripcion->getEstatus() == 2) {
+//            $montosParticulares = $inscripcion->getMontosParticulares();
+//            $ids =explode(',', $montosParticulares);
+//            foreach($alumnosInscripcion as $estudiante){
+//                if (strtolower($estudiante->getTipoFacturacion()->getNombre())=='particular'){
+//                    if(!in_array($estudiante->getId(), $ids)){
+//                        if(empty($montosParticulares )){
+//                            $montosParticulares = $estudiante->getId();
+//                        }
+//                        else{
+//                            $montosParticulares = $montosParticulares .','.$estudiante->getId();
+//                        }
+//                        $estudiante_monto_particular->add($estudiante);
+//                        $em = $this->getDoctrine()->getManager();
+//                        $inscripcion->setMontosParticulares($montosParticulares);
+//                        $em->flush();
+//                    }
+//                }
+//            }
+//            if($estudiante_monto_particular->isEmpty()){
+//                $em = $this->getDoctrine()->getManager();
+//                $inscripcion->setEstatus(3);
+//                $em->flush();
+//                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+//            }
+//        }
 
         if($inscripcion->getEstatus() == 3 and count($alumnosInscripcion) != count($inscripcion->getFacturas())) {
             $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->find(1);
@@ -970,7 +1137,7 @@ class DefaultController extends Controller
                             }
                         }
                         $em = $this->getDoctrine()->getManager();
-                        $inscripcion->setEstatus(2);
+                        $inscripcion->setEstatus(3);
                         $em->flush();
                         $this->get('session')->getFlashBag()->add(
                             'success', 'Datos Actualizados con éxito');
@@ -982,20 +1149,20 @@ class DefaultController extends Controller
                         return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
                     }
                 }
-                elseif($inscripcion->getEstatus()==2) {
-                    if (count($inscripcion->getMontosParticulares()) == count($inscripcion->getMontosParticularesProcesados())) {
-                        $em = $this->getDoctrine()->getManager();
-                        $inscripcion->setEstatus(3);
-                        $em->flush();
-                        $this->get('session')->getFlashBag()->add(
-                            'success', 'Datos Actualizados con éxito');
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                    } else {
-                        $this->get('session')->getFlashBag()->add(
-                            'warning', 'Agregar todos los montos particulares');
-                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-                    }
-                }
+//                elseif($inscripcion->getEstatus()==2) {
+//                    if (count($inscripcion->getMontosParticulares()) == count($inscripcion->getMontosParticularesProcesados())) {
+//                        $em = $this->getDoctrine()->getManager();
+//                        $inscripcion->setEstatus(3);
+//                        $em->flush();
+//                        $this->get('session')->getFlashBag()->add(
+//                            'success', 'Datos Actualizados con éxito');
+//                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+//                    } else {
+//                        $this->get('session')->getFlashBag()->add(
+//                            'warning', 'Agregar todos los montos particulares');
+//                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
+//                    }
+//                }
                 elseif($inscripcion->getEstatus()==3){
                     if(count($inscripcion->getFacturas())== count($inscripcion->getPagos())){
                         $em = $this->getDoctrine()->getManager();
@@ -1141,7 +1308,7 @@ class DefaultController extends Controller
                 return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
             }
         }
-        return $this->render('genericoBundle:Default/parts:crear_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Actualizar Representante'));
+        return $this->render('genericoBundle:Default/parts:editar_representante.html.twig', array('form'=>$formulario->createView(), 'accion'=>'Actualizar Representante'));
     }
 
     public function quitar_representante_inscripcionAction(Request $request, $id){

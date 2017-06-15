@@ -116,7 +116,8 @@
                                     {% else %}
                                         {% if campo is iterable %}
                                             {% for k, c  in campo %}
-                                                {% if k != 'id'  or ('_id' not in k) or ('principal' not in k) or ('activo' not in k)  %}
+                                                {% if k =='id'or ('_id' in k) or ('principal' in k) or ('activo' in k)  %}
+                                                {% else %}
                                                     <th>{{ k }}</th>
                                                 {% endif %}
                                             {% endfor %}
@@ -132,7 +133,8 @@
                                     {% else %}
                                         {% if campo is iterable %}
                                             {% for k, c  in campo %}
-                                                {% if k != 'id' or ('_id' not in k) or ('principal' not in k) or ('activo' not in k) %}
+                                                {% if k =='id'or ('_id' in k) or ('principal' in k) or ('activo' in k)  %}
+                                                {% else %}
                                                     <th>{{ k }}</th>
                                                 {% endif %}
                                             {% endfor %}
@@ -160,7 +162,10 @@
                                                             {% if item.timestamp is defined %}
                                                                 <td>{{ item|date('d/m/Y') }}</td>
                                                             {% else %}
-                                                                <td>{{ item }}</td>
+                                                                {% if k =='id'or ('_id' in k) or ('principal' in k) or ('activo' in k)  %}
+                                                                {% else %}
+                                                                    <td>{{ item }}</td>
+                                                                {% endif %}
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endfor %}

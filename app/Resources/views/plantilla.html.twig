@@ -115,7 +115,6 @@
                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                         {% if  (app.session.get('id_tipo_usuario')== 1) or (app.session.get('id_tipo_usuario')==2) or (app.session.get('id_tipo_usuario')==3) or (app.session.get('id_tipo_usuario')==4)%}
                                             <li><a href="{{ path('inicial_lista_representante') }}" >· Consulta</a></li>
-                                            <li><a href="{{ path('inicial_agregar_representante') }}" >· Agregar</a></li>
                                         {% endif %}
                                     </ul>
                                 </li>
@@ -129,6 +128,7 @@
                                                     {#<li><a href="{{ path('generico_homepage', { 'id': 2 }) }}">· Desarrollo</a></li>#}
                                                     <li><a href="{{ path('generico_listado_alumnos_contactos') }}" target="_blank">· Alumnos contactos</a></li>
                                                     <li><a href="{{ path('generico_relacion_mensualidades_pdf') }}" target="_blank">· Relacion de Mensualidades</a></li>
+                                                    <li><a href="{{ path('generico_listado_alumnos_mensualidades') }}" target="_blank">· Compromisos Mensualidades</a></li>
                                                 </ul>
                                             </li>
                                             <!--<li class="dropdown-submenu">
@@ -167,10 +167,10 @@
                                                     <li><a href="{{ path('inicial_agregar_tipo_contacto') }}">· Tipos de Contacto</a></li>
                                                     <li><a href="{{ path('inicial_agregar_tipo_factura') }}">· Tipos de Factura</a></li>
                                                     <li><a href="{{ path('inicial_agregar_tfactura') }}">· Tipos de Factura completo</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_tipo_facturacion') }}">· Tipos de Facturación</a></li>
+                                                    {#<li><a href="{{ path('inicial_agregar_tipo_facturacion') }}">· Tipos de Facturación</a></li>#}
                                                     <li><a href="{{ path('inicial_agregar_bancos') }}" >· Bancos</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >· Conceptos Factura</a></li>
-                                                    <li><a href="{{ path('facturacion_agregar_tipo_montos') }}">· Tipos de Monto</a></li>
+                                                    {#<li><a href="{{ path('inicial_agregar_conceptos_factura') }}" >· Conceptos Factura</a></li>#}
+                                                    {#<li><a href="{{ path('facturacion_agregar_tipo_montos') }}">· Tipos de Monto</a></li>#}
                                                     <li><a href="{{ path('generico_agregar_parentescos') }}">· Parentescos</a></li>
                                                 </ul>
                                             </li>
@@ -179,13 +179,13 @@
                                                 <ul class="dropdown-menu" role="menu">
                                                     <li><a href="{{ path('inicial_agregar_tipo_usuario') }}">· Tipos de Usuarios</a></li>
                                                     <li><a href="{{ path('inicial_agregar_roles') }}" >· Roles</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_permisos') }}" >· Permisos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_elementos') }}" >· Elementos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_eventos') }}" >· Eventos del Sistema</a></li>
-                                                    <li><a href="{{ path('inicial_agregar_perfil') }}">· Agregar Perfil</a></li>
+                                                    {#<li><a href="{{ path('inicial_agregar_permisos') }}" >· Permisos del Sistema</a></li>#}
+                                                    {#<li><a href="{{ path('inicial_agregar_elementos') }}" >· Elementos del Sistema</a></li>#}
+                                                    {#<li><a href="{{ path('inicial_agregar_eventos') }}" >· Eventos del Sistema</a></li>#}
+                                                    {#<li><a href="{{ path('inicial_agregar_perfil') }}">· Agregar Perfil</a></li>#}
                                                     <li><a href="{{ path('inicial_agregar_usuario') }}">· Agregar Usuario</a></li>
-                                                    <li><a href="{{ path('inicial_lista_usuario') }}" >· Consultas</a></li>
-                                                    <li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">· Consultas PDF</a></li>
+                                                    {#<li><a href="{{ path('inicial_lista_usuario') }}" >· Consultas</a></li>#}
+                                                    {#<li><a href="{{ path('inicial_pdf_usuario') }}" target="_blank">· Consultas PDF</a></li>#}
                                                 </ul>
                                             </li>
                                             <li class="dropdown-submenu">

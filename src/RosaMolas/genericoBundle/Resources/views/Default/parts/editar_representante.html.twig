@@ -28,14 +28,14 @@
                 {{ form_row(form.email) }}
                 {% if form.representanteContacto is defined %}
                     <div class="row">
-                    <div id="cont_contacto_edit" class="col-sm-12 cont_contacto" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
+                    <div id="cont_contacto" class="col-sm-12 cont_contacto" data-prototype="{{form_widget(form.representanteContacto.vars.prototype)|e }}">
                         {% for form_contacto in form.representanteContacto %}
                             {{ form_widget(form_contacto) }}
                         {% endfor %}
                     </div>
                     </div>
                     <div class="col-sm-12">
-                        <a id="contacto-add" data-target="cont_contacto_edit" title="agregar contacto"><img style="width: 40px;border-radius: 10px;" src="{{ asset('public/images/phone_book_add.png') }}"></a>
+                        <a id="contacto-add" data-target="cont_contacto" title="agregar contacto"><img style="width: 40px;border-radius: 10px;" src="{{ asset('public/images/phone_book_add.png') }}"></a>
                     </div>
                 {% endif %}
                 <div class="col-sm-12 text-center">

@@ -107,7 +107,7 @@
                                 <thead>
                                 <tr>
                                     {% for key, campo in datos.0.alumnoRepresentanteDatos.0 %}
-                                        {% if (key == 'id')  or (key == 'activo') or ('_id' in key) %}
+                                        {% if (key == 'id') or ('_id' in key) or (key == 'principal') or key == 'activo' %}
                                         {% else %}
                                             {% if campo is iterable %}
                                                 {% for k, c  in campo %}
@@ -123,7 +123,7 @@
                                 </tr>
                                 <tr>
                                     {% for key, campo in datos.0.alumnoRepresentanteDatos.0 %}
-                                        {% if (key == 'id') or (key == 'activo') or ('_id' in key) %}
+                                        {% if (key == 'id') or ('_id' in key) or (key == 'principal') or 'activo' in key %}
                                         {% else %}
                                             {% if campo is iterable %}
                                                 {% for k, c  in campo %}
@@ -142,7 +142,7 @@
                                 {% for dato in datos.0.alumnoRepresentanteDatos %}
                                     <tr>
                                         {% for  key, elemento in dato %}
-                                            {% if  (key == 'id') or (key == 'activo') or ( '_id' in key ) %}
+                                            {% if (key == 'id') or ('_id' in key) or (key == 'principal') or 'activo' in key %}
                                             {% else %}
                                                 {% if elemento.timestamp is defined %}
                                                     <td>{{ elemento|date('d/m/Y') }}</td>
@@ -151,11 +151,14 @@
                                                 {% else %}
                                                     {% if elemento is iterable %}
                                                         {% for k, item in elemento %}
-                                                            {% if  (k != 'id' ) or ('_id' not in key) %}
+                                                            {% if  (k != 'id' ) or ('_id' not in k) or ('principal' not in k) or ('activo' not in k)  %}
                                                                 {% if item.timestamp is defined %}
                                                                     <td>{{ item|date('d/m/Y') }}</td>
                                                                 {% else %}
+                                                                    {% if k =='id' %}
+                                                                    {% else %}
                                                                     <td>{{ item }}</td>
+                                                                    {% endif %}
                                                                 {% endif %}
                                                             {% endif %}
                                                         {% endfor %}
