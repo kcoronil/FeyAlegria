@@ -903,6 +903,14 @@ class DefaultController extends Controller
                 ->getRepository('facturacionBundle:Factura')
                 ->findBy(array('id'=> $ids));
         }
+        $facturasPagadas = null;
+        $facturasPagadas_ids = $inscripcion->getFacturasPagadas();
+        if(!empty($facturasPagadas_ids)){
+            $ids = explode(',', $facturasPagadas_ids);
+            $facturasPagadas = $this->getDoctrine()
+                ->getRepository('facturacionBundle:Factura')
+                ->findBy(array('id'=> $ids));
+        }
         $alumnosRepresentantesDatos = new ArrayCollection();
         if(!empty($alumnosInscripcion) and !empty($representantes)){
             foreach($alumnosInscripcion as $alumnos_tmp){
@@ -924,33 +932,6 @@ class DefaultController extends Controller
         $formInscripcion = $this->createForm(new InscripcionType('test'), $inscripcion);
         $formInscripcion-> handleRequest($request);
 
-//        $estudiante_monto_particular = new ArrayCollection();
-//        if($inscripcion->getEstatus() == 2) {
-//            $montosParticulares = $inscripcion->getMontosParticulares();
-//            $ids =explode(',', $montosParticulares);
-//            foreach($alumnosInscripcion as $estudiante){
-//                if (strtolower($estudiante->getTipoFacturacion()->getNombre())=='particular'){
-//                    if(!in_array($estudiante->getId(), $ids)){
-//                        if(empty($montosParticulares )){
-//                            $montosParticulares = $estudiante->getId();
-//                        }
-//                        else{
-//                            $montosParticulares = $montosParticulares .','.$estudiante->getId();
-//                        }
-//                        $estudiante_monto_particular->add($estudiante);
-//                        $em = $this->getDoctrine()->getManager();
-//                        $inscripcion->setMontosParticulares($montosParticulares);
-//                        $em->flush();
-//                    }
-//                }
-//            }
-//            if($estudiante_monto_particular->isEmpty()){
-//                $em = $this->getDoctrine()->getManager();
-//                $inscripcion->setEstatus(3);
-//                $em->flush();
-//                return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
-//            }
-//        }
 
         if($inscripcion->getEstatus() == 3 and count($alumnosInscripcion) != count($inscripcion->getFacturas())) {
             $tipo_factura = $this->getDoctrine()->getRepository('facturacionBundle:TipoFactura')->findOneBy(array('inscripcion'=>true));
@@ -973,7 +954,7 @@ class DefaultController extends Controller
                 return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
             }
         }
-        if($inscripcion->getEstatus() == 4 and count(explode(',',$inscripcion->getFacturas())) > count(explode(',',$inscripcion->getFacturasPagadas()))) {
+        if($inscripcion->getEstatus() == 4 and count($facturasInscripcion) > count($facturasPagadas)) {
             $p = new Pagos();
             $facturasPorPagos = [];
             $totalFacturado = 0;
@@ -984,7 +965,6 @@ class DefaultController extends Controller
                     $facturasPorPagos[] = $factura;
                 }
             }
-
             $formularioPagos = $this->createForm(new PagosType('Agregar Pago'), $p);
             $formularioPagos->handleRequest($request);
 
@@ -1044,11 +1024,12 @@ class DefaultController extends Controller
                 }
             }
         }
-        elseif($inscripcion->getEstatus() == 4 and count(explode(',',$inscripcion->getfacturas())) == count(explode(',',$inscripcion->getFacturasPagadas()))) {
+        elseif($inscripcion->getEstatus() == 4 and count($facturasInscripcion) == count($facturasPagadas)) {
             $em = $this->getDoctrine()->getManager();
             $inscripcion->setEstatus(5);
             $em->flush();
         }
+
         if ($inscripcion->getEstatus() == 5 and $inscripcion->getActivo()){
             $accion = 'Resumen Inscripción';
             $periodos_alumnos=[];
@@ -1122,17 +1103,36 @@ class DefaultController extends Controller
                                             if(!empty($queryCedula)){
                                                 $alumn_ced_procesada = $alumn_ced_procesada +1;
                                             }
-
                                         }
                                         $p->setCedulaEstudiantil($alumn_ced_procesada . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
                                         $alumn_ced_procesada = $alumn_ced_procesada +1;
                                     }
                                     else{
-                                        $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
+                                        $alumn_ced_correlativo = 0;
+                                        $cedulaEstudiantil = $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+                                        $queryCedula = $this->queryCedulaEstudiantil($cedulaEstudiantil);
+                                        while(!empty($queryCedula)){
+                                            $cedulaEstudiantil = $alumn_ced_correlativo . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+                                            $queryCedula = $this->queryCedulaEstudiantil($cedulaEstudiantil);
+                                            if(!empty($queryCedula)){
+                                                $alumn_ced_correlativo = $alumn_ced_correlativo +1;
+                                            }
+                                        }
+                                        $p->setCedulaEstudiantil($cedulaEstudiantil);
                                     }
 
                                 } else {
-                                    $p->setCedulaEstudiantil($p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula());
+                                    $alumn_ced_correlativo = 0;
+                                    $cedulaEstudiantil = $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+                                    $queryCedula = $this->queryCedulaEstudiantil($cedulaEstudiantil);
+                                    while(!empty($queryCedula)){
+                                        $cedulaEstudiantil = $alumn_ced_correlativo . $p->getFechaNacimiento()->format('y') . $representante_ppal->getCedula();
+                                        $queryCedula = $this->queryCedulaEstudiantil($cedulaEstudiantil);
+                                        if(!empty($queryCedula)){
+                                            $alumn_ced_correlativo = $alumn_ced_correlativo +1;
+                                        }
+                                    }
+                                    $p->setCedulaEstudiantil($cedulaEstudiantil);
                                 }
                             }
                         }
@@ -1163,6 +1163,7 @@ class DefaultController extends Controller
 //                        return $this->redirect($this->generateUrl('generico_inscripcion_completa'));
 //                    }
 //                }
+
                 elseif($inscripcion->getEstatus()==3){
                     if(count($inscripcion->getFacturas())== count($inscripcion->getPagos())){
                         $em = $this->getDoctrine()->getManager();
@@ -1365,6 +1366,8 @@ class DefaultController extends Controller
     public function formulario_crear_estudiante_genericoAction(Request $request){
         $alumno = new Alumnos();
         $monto = new MontosAlumnos();
+        $periodo_alumno = new PeriodoEscolarCursoAlumno();
+        $alumno->addPeriodoEscolarCursoAlumno($periodo_alumno);
         $tfact = $this->getDoctrine()
             ->getRepository('facturacionBundle:TipoFactura')
             ->findOneBy(array('activo' => 'true', 'mensualidad'=>true));

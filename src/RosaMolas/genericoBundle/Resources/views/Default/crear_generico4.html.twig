@@ -161,7 +161,6 @@
                                         </thead>
                                         <tbody>
                                         {% for dato in alumnosInscripcion %}
-                                            {% if dato.tipoFacturacion.id == 2 %}
                                             <tr>
                                                 {% if dato.cedula  %}
                                                     <td>{{ dato.cedula }}</td>
@@ -176,7 +175,6 @@
                                                     {#<a href="#" data-toggle="modal" data-url="{{ path('generico_quitar_alumno_inscripcion', { 'id': dato.id }) }}" data-redirect="{{ path('generico_inscripcion_completa') }}" class="btn btn-default btn-xs enlace_quitar_representante">borrar</a>#}
                                                 </td>
                                             </tr>
-                                            {% endif %}
                                         {% endfor %}
                                         </tbody>
                                     </table>
